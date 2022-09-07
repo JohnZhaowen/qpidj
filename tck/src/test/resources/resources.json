@@ -1,0 +1,73 @@
+[
+  {
+    "name": "myQueue",
+    "nodeType": "QUEUE",
+    "arguments": {"holdOnPublishEnabled": true}
+  },
+  {
+    "name": "myQueue2",
+    "nodeType": "QUEUE"
+  },
+  {
+    "name": "testQ0",
+    "nodeType": "QUEUE"
+  },
+  {
+    "name": "testQ1",
+    "nodeType": "QUEUE"
+  },
+  {
+    "name": "testQ2",
+    "nodeType": "QUEUE"
+  },
+  {
+    "name": "testQueue2",
+    "nodeType": "QUEUE"
+  },
+  {
+    "name": "q2",
+    "nodeType": "QUEUE"
+  },
+  {
+    "name": "myTopic",
+    "nodeType": "EXCHANGE",
+    "arguments": {
+      "type": "fanout"
+    }
+  },
+  {
+    "name": "myTopic1",
+    "nodeType": "EXCHANGE",
+    "arguments": {
+      "type": "fanout"
+    }
+  },
+  {
+    "name": "myTopic2",
+    "nodeType": "EXCHANGE",
+    "arguments": {
+      "type": "fanout"
+    }
+  },
+  {
+    "name": "testT0",
+    "nodeType": "EXCHANGE",
+    "arguments": {
+      "type": "fanout"
+    }
+  },
+  {
+    "name": "testT1",
+    "nodeType": "EXCHANGE",
+    "arguments": {
+      "type": "fanout"
+    }
+  },
+  {
+    "name": "testT2",
+    "nodeType": "EXCHANGE",
+    "arguments": {
+      "type": "fanout"
+    }
+  }
+]
