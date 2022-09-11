@@ -21,6 +21,5 @@
 
 package org.apache.qpid.server.exchange;
 
-public interface DestinationReferrer
-{
+public interface DestinationReferrer {
 }

@@ -39,55 +39,46 @@ import org.apache.qpid.server.security.access.Operation;
 import org.apache.qpid.server.store.StorableMessageMetaData;
 import org.apache.qpid.server.virtualhost.QueueManagingVirtualHost;
 
-public class DefaultDestination implements MessageDestination, PermissionedObject
-{
+public class DefaultDestination implements MessageDestination, PermissionedObject {
 
     private static final Operation PUBLISH_ACTION = Operation.PERFORM_ACTION("publish");
     private final AccessControl _accessControl;
     private QueueManagingVirtualHost<?> _virtualHost;
 
-    public DefaultDestination(QueueManagingVirtualHost<?> virtualHost, final AccessControl accessControl)
-    {
-        _virtualHost =  virtualHost;
+    public DefaultDestination(QueueManagingVirtualHost<?> virtualHost, final AccessControl accessControl) {
+        _virtualHost = virtualHost;
         _accessControl = accessControl;
     }
 
     @Override
-    public Class<? extends ConfiguredObject> getCategoryClass()
-    {
+    public Class<? extends ConfiguredObject> getCategoryClass() {
         return Exchange.class;
     }
 
     @Override
-    public NamedAddressSpace getAddressSpace()
-    {
+    public NamedAddressSpace getAddressSpace() {
         return _virtualHost;
     }
 
 
     @Override
     public void authorisePublish(final SecurityToken token, final Map<String, Object> arguments)
-            throws AccessControlException
-    {
+            throws AccessControlException {
 
-        if(_accessControl != null)
-        {
+        if (_accessControl != null) {
             Result result = _accessControl.authorise(token, PUBLISH_ACTION, this, arguments);
-            if (result == Result.DEFER)
-            {
+            if (result == Result.DEFER) {
                 result = _accessControl.getDefault();
             }
 
-            if (result == Result.DENIED)
-            {
+            if (result == Result.DENIED) {
                 throw new AccessControlException("Access denied to publish to default exchange with arguments: " + arguments);
             }
         }
     }
 
     @Override
-    public String getName()
-    {
+    public String getName() {
         return ExchangeDefaults.DEFAULT_EXCHANGE_NAME;
     }
 
@@ -95,50 +86,42 @@ public class DefaultDestination implements MessageDestination, PermissionedObjec
     @Override
     public <M extends ServerMessage<? extends StorableMessageMetaData>> RoutingResult<M> route(M message,
                                                                                                String routingAddress,
-                                                                                               InstanceProperties instanceProperties)
-    {
+                                                                                               InstanceProperties instanceProperties) {
         RoutingResult<M> result = new RoutingResult<>(message);
 
         DestinationAddress destinationAddress = new DestinationAddress(_virtualHost, routingAddress, true);
         MessageDestination messageDestination = destinationAddress.getMessageDestination();
-        if (messageDestination != null)
-        {
-            result.add(messageDestination.route(message,destinationAddress.getRoutingKey(), instanceProperties));
+        if (messageDestination != null) {
+            result.add(messageDestination.route(message, destinationAddress.getRoutingKey(), instanceProperties));
         }
         return result;
     }
 
     @Override
-    public boolean isDurable()
-    {
+    public boolean isDurable() {
         return true;
     }
 
     @Override
-    public void linkAdded(final MessageSender sender, final PublishingLink link)
-    {
+    public void linkAdded(final MessageSender sender, final PublishingLink link) {
 
     }
 
     @Override
-    public void linkRemoved(final MessageSender sender, final PublishingLink link)
-    {
+    public void linkRemoved(final MessageSender sender, final PublishingLink link) {
 
     }
 
     @Override
-    public MessageDestination getAlternateBindingDestination()
-    {
+    public MessageDestination getAlternateBindingDestination() {
         return null;
     }
 
     @Override
-    public void removeReference(final DestinationReferrer destinationReferrer)
-    {
+    public void removeReference(final DestinationReferrer destinationReferrer) {
     }
 
     @Override
-    public void addReference(final DestinationReferrer destinationReferrer)
-    {
+    public void addReference(final DestinationReferrer destinationReferrer) {
     }
 }

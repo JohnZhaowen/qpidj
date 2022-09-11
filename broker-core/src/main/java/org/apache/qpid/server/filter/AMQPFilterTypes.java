@@ -24,11 +24,17 @@ package org.apache.qpid.server.filter;
  * Specifies the different filter types for consumers that filter their messages.
  */
 public enum AMQPFilterTypes {
-
+    /**
+     * JMS选择器
+     * 类sql
+     */
     JMS_SELECTOR("x-filter-jms-selector"),
     NO_CONSUME("x-filter-no-consume"),
     AUTO_CLOSE("x-filter-auto-close"),
     NO_LOCAL("x-qpid-no-local"),
+    /**
+     * 过滤某个时间区间的msg
+     */
     REPLAY_PERIOD("x-qpid-replay-period");
 
     /**

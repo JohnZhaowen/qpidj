@@ -43,35 +43,29 @@ import org.apache.qpid.server.model.ManagedObjectFactoryConstructor;
 import org.apache.qpid.server.store.StorableMessageMetaData;
 import org.apache.qpid.server.virtualhost.QueueManagingVirtualHost;
 
-class FanoutExchangeImpl extends AbstractExchange<FanoutExchangeImpl> implements FanoutExchange<FanoutExchangeImpl>
-{
+class FanoutExchangeImpl extends AbstractExchange<FanoutExchangeImpl> implements FanoutExchange<FanoutExchangeImpl> {
     private static final Logger LOGGER = LoggerFactory.getLogger(FanoutExchangeImpl.class);
 
-    private final class BindingSet
-    {
+    private final class BindingSet {
         private final Map<MessageDestination, Map<BindingIdentifier, String>> _unfilteredDestinations;
         private final Map<MessageDestination, Map<BindingIdentifier, FilterManagerReplacementRoutingKeyTuple>>
                 _filteredDestinations;
 
         BindingSet(final Map<MessageDestination, Map<BindingIdentifier, String>> unfilteredDestinations,
-                   final Map<MessageDestination, Map<BindingIdentifier, FilterManagerReplacementRoutingKeyTuple>> filteredDestinations)
-        {
+                   final Map<MessageDestination, Map<BindingIdentifier, FilterManagerReplacementRoutingKeyTuple>> filteredDestinations) {
             _unfilteredDestinations = unfilteredDestinations;
             _filteredDestinations = filteredDestinations;
         }
 
-        BindingSet()
-        {
+        BindingSet() {
             _unfilteredDestinations = Collections.emptyMap();
             _filteredDestinations = Collections.emptyMap();
         }
 
         BindingSet addBinding(final BindingIdentifier binding, final Map<String, Object> arguments)
-                throws AMQInvalidArgumentException
-        {
+                throws AMQInvalidArgumentException {
             MessageDestination destination = binding.getDestination();
-            if (FilterSupport.argumentsContainFilter(arguments))
-            {
+            if (FilterSupport.argumentsContainFilter(arguments)) {
                 Map<MessageDestination, Map<BindingIdentifier, FilterManagerReplacementRoutingKeyTuple>>
                         filteredDestinations = new HashMap<>(_filteredDestinations);
 
@@ -86,20 +80,17 @@ class FanoutExchangeImpl extends AbstractExchange<FanoutExchangeImpl> implements
                         : null;
 
                 bindingsForDestination.put(binding,
-                                           new FilterManagerReplacementRoutingKeyTuple(filterManager,
-                                                                                       replacementRoutingKey));
+                        new FilterManagerReplacementRoutingKeyTuple(filterManager,
+                                replacementRoutingKey));
                 filteredDestinations.put(destination, Collections.unmodifiableMap(bindingsForDestination));
                 return new BindingSet(_unfilteredDestinations, Collections.unmodifiableMap(filteredDestinations));
-            }
-            else
-            {
+            } else {
                 Map<MessageDestination, Map<BindingIdentifier, String>> unfilteredDestinations =
                         new HashMap<>(_unfilteredDestinations);
                 unfilteredDestinations.computeIfAbsent(destination, messageDestination -> new HashMap<>());
 
                 String replacementRoutingKey = null;
-                if (arguments != null && arguments.get(BINDING_ARGUMENT_REPLACEMENT_ROUTING_KEY) != null)
-                {
+                if (arguments != null && arguments.get(BINDING_ARGUMENT_REPLACEMENT_ROUTING_KEY) != null) {
                     replacementRoutingKey = String.valueOf(arguments.get(BINDING_ARGUMENT_REPLACEMENT_ROUTING_KEY));
                 }
 
@@ -108,53 +99,40 @@ class FanoutExchangeImpl extends AbstractExchange<FanoutExchangeImpl> implements
                 replacementRoutingKeysForDestination.put(binding, replacementRoutingKey);
 
                 unfilteredDestinations.put(destination,
-                                           Collections.unmodifiableMap(replacementRoutingKeysForDestination));
+                        Collections.unmodifiableMap(replacementRoutingKeysForDestination));
                 return new BindingSet(Collections.unmodifiableMap(unfilteredDestinations), _filteredDestinations);
             }
         }
 
         BindingSet updateBinding(final BindingIdentifier binding, final Map<String, Object> newArguments)
-                throws AMQInvalidArgumentException
-        {
+                throws AMQInvalidArgumentException {
             return removeBinding(binding).addBinding(binding, newArguments);
         }
 
-        BindingSet removeBinding(final BindingIdentifier binding)
-        {
+        BindingSet removeBinding(final BindingIdentifier binding) {
             MessageDestination destination = binding.getDestination();
-            if(_filteredDestinations.containsKey(destination) && _filteredDestinations.get(destination).containsKey(binding))
-            {
+            if (_filteredDestinations.containsKey(destination) && _filteredDestinations.get(destination).containsKey(binding)) {
                 final Map<MessageDestination, Map<BindingIdentifier, FilterManagerReplacementRoutingKeyTuple>> filteredDestinations = new HashMap<>(_filteredDestinations);
                 final Map<BindingIdentifier, FilterManagerReplacementRoutingKeyTuple> bindingsForDestination = new HashMap<>(filteredDestinations.get(destination));
                 bindingsForDestination.remove(binding);
-                if (bindingsForDestination.isEmpty())
-                {
+                if (bindingsForDestination.isEmpty()) {
                     filteredDestinations.remove(destination);
-                }
-                else
-                {
+                } else {
                     filteredDestinations.put(destination, Collections.unmodifiableMap(bindingsForDestination));
                 }
                 return new BindingSet(_unfilteredDestinations, Collections.unmodifiableMap(filteredDestinations));
-            }
-            else if(_unfilteredDestinations.containsKey(destination) && _unfilteredDestinations.get(destination).containsKey(binding))
-            {
+            } else if (_unfilteredDestinations.containsKey(destination) && _unfilteredDestinations.get(destination).containsKey(binding)) {
                 Map<MessageDestination, Map<BindingIdentifier, String>> unfilteredDestinations = new HashMap<>(_unfilteredDestinations);
                 final Map<BindingIdentifier, String> bindingsForDestination = new HashMap<>(unfilteredDestinations.get(destination));
                 bindingsForDestination.remove(binding);
-                if (bindingsForDestination.isEmpty())
-                {
+                if (bindingsForDestination.isEmpty()) {
                     unfilteredDestinations.remove(destination);
-                }
-                else
-                {
+                } else {
                     unfilteredDestinations.put(destination, Collections.unmodifiableMap(bindingsForDestination));
                 }
 
                 return new BindingSet(Collections.unmodifiableMap(unfilteredDestinations), _filteredDestinations);
-            }
-            else
-            {
+            } else {
                 return this;
             }
         }
@@ -164,8 +142,7 @@ class FanoutExchangeImpl extends AbstractExchange<FanoutExchangeImpl> implements
 
 
     @ManagedObjectFactoryConstructor
-    public FanoutExchangeImpl(final Map<String, Object> attributes, final QueueManagingVirtualHost<?> vhost)
-    {
+    public FanoutExchangeImpl(final Map<String, Object> attributes, final QueueManagingVirtualHost<?> vhost) {
         super(attributes, vhost);
     }
 
@@ -173,42 +150,35 @@ class FanoutExchangeImpl extends AbstractExchange<FanoutExchangeImpl> implements
     protected <M extends ServerMessage<? extends StorableMessageMetaData>> void doRoute(final M message,
                                                                                         final String routingAddress,
                                                                                         final InstanceProperties instanceProperties,
-                                                                                        final RoutingResult<M> result)
-    {
+                                                                                        final RoutingResult<M> result) {
         BindingSet bindingSet = _bindingSet;
 
-        if (!bindingSet._unfilteredDestinations.isEmpty())
-        {
-            for (MessageDestination destination : bindingSet._unfilteredDestinations.keySet())
-            {
+        if (!bindingSet._unfilteredDestinations.isEmpty()) {
+            for (MessageDestination destination : bindingSet._unfilteredDestinations.keySet()) {
                 Set<String> replacementRoutingKeys =
                         new HashSet<>(bindingSet._unfilteredDestinations.get(destination).values());
 
                 replacementRoutingKeys.forEach(
                         replacementRoutingKey -> result.add(destination.route(message,
-                                                                              replacementRoutingKey == null
-                                                                                      ? routingAddress
-                                                                                      : replacementRoutingKey,
-                                                                              instanceProperties)));
+                                replacementRoutingKey == null
+                                        ? routingAddress
+                                        : replacementRoutingKey,
+                                instanceProperties)));
             }
         }
 
         final Map<MessageDestination, Map<BindingIdentifier, FilterManagerReplacementRoutingKeyTuple>>
                 filteredDestinations = bindingSet._filteredDestinations;
-        if (!filteredDestinations.isEmpty())
-        {
+        if (!filteredDestinations.isEmpty()) {
             for (Map.Entry<MessageDestination, Map<BindingIdentifier, FilterManagerReplacementRoutingKeyTuple>> entry :
-                    filteredDestinations.entrySet())
-            {
+                    filteredDestinations.entrySet()) {
                 MessageDestination destination = entry.getKey();
                 final Map<BindingIdentifier, FilterManagerReplacementRoutingKeyTuple> bindingMessageFilterMap =
                         entry.getValue();
-                for (FilterManagerReplacementRoutingKeyTuple tuple : bindingMessageFilterMap.values())
-                {
+                for (FilterManagerReplacementRoutingKeyTuple tuple : bindingMessageFilterMap.values()) {
 
                     FilterManager filter = tuple.getFilterManager();
-                    if (filter.allAllow(Filterable.Factory.newInstance(message, instanceProperties)))
-                    {
+                    if (filter.allAllow(Filterable.Factory.newInstance(message, instanceProperties))) {
                         String routingKey = tuple.getReplacementRoutingKey() == null
                                 ? routingAddress
                                 : tuple.getReplacementRoutingKey();
@@ -221,21 +191,18 @@ class FanoutExchangeImpl extends AbstractExchange<FanoutExchangeImpl> implements
 
     @Override
     protected void onBindingUpdated(final BindingIdentifier binding,
-                                    final Map<String, Object> newArguments) throws AMQInvalidArgumentException
-    {
+                                    final Map<String, Object> newArguments) throws AMQInvalidArgumentException {
         _bindingSet = _bindingSet.updateBinding(binding, newArguments);
     }
 
     @Override
     protected void onBind(final BindingIdentifier binding, final Map<String, Object> arguments)
-            throws AMQInvalidArgumentException
-    {
+            throws AMQInvalidArgumentException {
         _bindingSet = _bindingSet.addBinding(binding, arguments);
     }
 
     @Override
-    protected void onUnbind(final BindingIdentifier binding)
-    {
+    protected void onUnbind(final BindingIdentifier binding) {
         _bindingSet = _bindingSet.removeBinding(binding);
     }
 }

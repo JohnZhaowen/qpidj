@@ -65,16 +65,14 @@ import org.apache.qpid.server.virtualhost.QueueManagingVirtualHost;
  *  amq.match - pub/sub on field content/value
  *  </pre>
  */
-public class HeadersExchangeImpl extends AbstractExchange<HeadersExchangeImpl> implements HeadersExchange<HeadersExchangeImpl>
-{
+public class HeadersExchangeImpl extends AbstractExchange<HeadersExchangeImpl> implements HeadersExchange<HeadersExchangeImpl> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HeadersExchangeImpl.class);
 
     private final Set<HeadersBinding> _bindingHeaderMatchers = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
     @ManagedObjectFactoryConstructor
-    public HeadersExchangeImpl(final Map<String, Object> attributes, final QueueManagingVirtualHost<?> vhost)
-    {
+    public HeadersExchangeImpl(final Map<String, Object> attributes, final QueueManagingVirtualHost<?> vhost) {
         super(attributes, vhost);
     }
 
@@ -82,20 +80,16 @@ public class HeadersExchangeImpl extends AbstractExchange<HeadersExchangeImpl> i
     public <M extends ServerMessage<? extends StorableMessageMetaData>> void doRoute(M payload,
                                                                                      String routingKey,
                                                                                      final InstanceProperties instanceProperties,
-                                                                                     RoutingResult<M> routingResult)
-    {
+                                                                                     RoutingResult<M> routingResult) {
         LOGGER.debug("Exchange {}: routing message with headers {}", getName(), payload.getMessageHeader());
 
-        for (HeadersBinding hb : _bindingHeaderMatchers)
-        {
-            if (hb.matches(Filterable.Factory.newInstance(payload,instanceProperties)))
-            {
+        for (HeadersBinding hb : _bindingHeaderMatchers) {
+            if (hb.matches(Filterable.Factory.newInstance(payload, instanceProperties))) {
                 MessageDestination destination = hb.getBinding().getDestination();
 
-                if (LOGGER.isDebugEnabled())
-                {
+                if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Exchange '{}' delivering message with headers '{}' to '{}'",
-                                  getName(), payload.getMessageHeader(), destination.getName());
+                            getName(), payload.getMessageHeader(), destination.getName());
                 }
                 String actualRoutingKey = hb.getReplacementRoutingKey() == null
                         ? routingKey
@@ -107,26 +101,20 @@ public class HeadersExchangeImpl extends AbstractExchange<HeadersExchangeImpl> i
 
 
     @Override
-    protected void onBind(final BindingIdentifier binding, Map<String,Object> arguments) throws AMQInvalidArgumentException
-    {
+    protected void onBind(final BindingIdentifier binding, Map<String, Object> arguments) throws AMQInvalidArgumentException {
         _bindingHeaderMatchers.add(new HeadersBinding(binding, arguments));
     }
 
     @Override
-    protected void onBindingUpdated(final BindingIdentifier binding, final Map<String, Object> arguments)  throws AMQInvalidArgumentException
-    {
+    protected void onBindingUpdated(final BindingIdentifier binding, final Map<String, Object> arguments) throws AMQInvalidArgumentException {
         _bindingHeaderMatchers.add(new HeadersBinding(binding, arguments));
     }
 
     @Override
-    protected void onUnbind(final BindingIdentifier binding)
-    {
-        try
-        {
+    protected void onUnbind(final BindingIdentifier binding) {
+        try {
             _bindingHeaderMatchers.remove(new HeadersBinding(binding, Collections.emptyMap()));
-        }
-        catch (AMQInvalidArgumentException e)
-        {
+        } catch (AMQInvalidArgumentException e) {
             // ignore
         }
     }

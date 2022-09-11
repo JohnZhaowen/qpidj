@@ -24,8 +24,7 @@ import org.apache.qpid.server.exchange.ExchangeDefaults;
 import org.apache.qpid.server.model.Exchange;
 import org.apache.qpid.server.model.ManagedObject;
 
-@ManagedObject( category = false, type = ExchangeDefaults.DIRECT_EXCHANGE_CLASS,
-        amqpName = "org.apache.qpid.DirectExchange" )
-public interface DirectExchange<X extends DirectExchange<X>> extends Exchange<X>
-{
+@ManagedObject(category = false, type = ExchangeDefaults.DIRECT_EXCHANGE_CLASS,
+        amqpName = "org.apache.qpid.DirectExchange")
+public interface DirectExchange<X extends DirectExchange<X>> extends Exchange<X> {
 }

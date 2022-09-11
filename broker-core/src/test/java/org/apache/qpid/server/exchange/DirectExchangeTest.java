@@ -266,9 +266,11 @@ public class DirectExchangeTest extends UnitTestBase
         assertFalse("Message unexpectedly routed to queue before bind", result.hasRoutes());
 
         boolean bind = _exchange.bind(queue.getName(), boundKey, Collections.emptyMap(), false);
+        bind = _exchange.bind(queue.getName(), boundKey + "1", Collections.emptyMap(), false);
+        bind = _exchange.bind(queue.getName(), boundKey + "2", Collections.emptyMap(), false);
         assertTrue("Bind operation should be successful", bind);
 
-        result = _exchange.route(_messageWithNoHeaders, boundKey, _instanceProperties);
+        result = _exchange.route(_messageWithNoHeaders, boundKey + "2", _instanceProperties);
         assertTrue("Message unexpectedly not routed to queue after bind", result.hasRoutes());
 
         boolean unbind = _exchange.unbind(queue.getName(), boundKey);

@@ -22,25 +22,21 @@ package org.apache.qpid.server.exchange;
 
 import org.apache.qpid.server.filter.FilterManager;
 
-final class FilterManagerReplacementRoutingKeyTuple
-{
+final class FilterManagerReplacementRoutingKeyTuple {
     private final FilterManager _filterManager;
     private final String _replacementRoutingKey; // Nullable
 
     FilterManagerReplacementRoutingKeyTuple(final FilterManager filterManager,
-                                            final String replacementRoutingKey)
-    {
+                                            final String replacementRoutingKey) {
         _filterManager = filterManager;
         _replacementRoutingKey = replacementRoutingKey;
     }
 
-    FilterManager getFilterManager()
-    {
+    FilterManager getFilterManager() {
         return _filterManager;
     }
 
-    String getReplacementRoutingKey()
-    {
+    String getReplacementRoutingKey() {
         return _replacementRoutingKey;
     }
 }
