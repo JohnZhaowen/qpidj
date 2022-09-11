@@ -776,6 +776,10 @@ public abstract class AbstractExchange<T extends AbstractExchange<T>>
         return super.onDelete();
     }
 
+    /**
+     * 该类封装bindingKey和对应的destination（exchange or queue）
+     * 表示将当前的exchange与某个destination（exchange or queue）通过bindingKey进行绑定
+     */
     public static final class BindingIdentifier {
         private final String _bindingKey;
         private final MessageDestination _destination;

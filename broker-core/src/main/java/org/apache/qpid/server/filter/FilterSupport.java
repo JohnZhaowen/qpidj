@@ -34,31 +34,24 @@ import org.apache.qpid.server.model.Queue;
 import org.apache.qpid.server.plugin.PluggableService;
 import org.apache.qpid.server.queue.QueueConsumer;
 
-public class FilterSupport
-{
+public class FilterSupport {
     private static final Map<String, WeakReference<JMSSelectorFilter>> _selectorCache =
             Collections.synchronizedMap(new WeakHashMap<String, WeakReference<JMSSelectorFilter>>());
 
-    static MessageFilter createJMSSelectorFilter(Map<String, Object> args) throws AMQInvalidArgumentException
-    {
+    static MessageFilter createJMSSelectorFilter(Map<String, Object> args) throws AMQInvalidArgumentException {
         final String selectorString = (String) args.get(AMQPFilterTypes.JMS_SELECTOR.toString());
         return getMessageFilter(selectorString);
     }
 
 
-    private static MessageFilter getMessageFilter(String selectorString) throws AMQInvalidArgumentException
-    {
+    private static MessageFilter getMessageFilter(String selectorString) throws AMQInvalidArgumentException {
         WeakReference<JMSSelectorFilter> selectorRef = _selectorCache.get(selectorString);
         JMSSelectorFilter selector = null;
 
-        if(selectorRef == null || (selector = selectorRef.get())==null)
-        {
-            try
-            {
+        if (selectorRef == null || (selector = selectorRef.get()) == null) {
+            try {
                 selector = new JMSSelectorFilter(selectorString);
-            }
-            catch (ParseException | SelectorParsingException | TokenMgrError e)
-            {
+            } catch (ParseException | SelectorParsingException | TokenMgrError e) {
                 throw new AMQInvalidArgumentException("Cannot parse JMS selector \"" + selectorString + "\"", e);
             }
             _selectorCache.put(selectorString, new WeakReference<JMSSelectorFilter>(selector));
@@ -66,79 +59,64 @@ public class FilterSupport
         return selector;
     }
 
-    public static boolean argumentsContainFilter(final Map<String, Object> args)
-    {
+    public static boolean argumentsContainFilter(final Map<String, Object> args) {
         return argumentsContainNoLocal(args) || argumentsContainJMSSelector(args);
     }
 
 
-    public static void removeFilters(final Map<String, Object> args)
-    {
+    public static void removeFilters(final Map<String, Object> args) {
         args.remove(AMQPFilterTypes.JMS_SELECTOR.toString());
         args.remove(AMQPFilterTypes.NO_LOCAL.toString());
     }
 
 
-
-    static boolean argumentsContainNoLocal(final Map<String, Object> args)
-    {
+    static boolean argumentsContainNoLocal(final Map<String, Object> args) {
         return args != null
                 && args.containsKey(AMQPFilterTypes.NO_LOCAL.toString())
                 && Boolean.TRUE.equals(args.get(AMQPFilterTypes.NO_LOCAL.toString()));
     }
 
-    static boolean argumentsContainJMSSelector(final Map<String,Object> args)
-    {
+    static boolean argumentsContainJMSSelector(final Map<String, Object> args) {
         return args != null && (args.get(AMQPFilterTypes.JMS_SELECTOR.toString()) instanceof String)
-                       && ((String)args.get(AMQPFilterTypes.JMS_SELECTOR.toString())).trim().length() != 0;
+                && ((String) args.get(AMQPFilterTypes.JMS_SELECTOR.toString())).trim().length() != 0;
     }
 
-    public static FilterManager createMessageFilter(final Map<String,Object> args, MessageDestination queue) throws AMQInvalidArgumentException
-    {
+    public static FilterManager createMessageFilter(final Map<String, Object> args, MessageDestination queue) throws AMQInvalidArgumentException {
         FilterManager filterManager = null;
-        if(argumentsContainNoLocal(args) && queue instanceof Queue)
-        {
+        if (argumentsContainNoLocal(args) && queue instanceof Queue) {
             filterManager = new FilterManager();
             filterManager.add(AMQPFilterTypes.NO_LOCAL.toString(), new NoLocalFilter((Queue<?>) queue));
         }
 
-        if(argumentsContainJMSSelector(args))
-        {
-            if(filterManager == null)
-            {
+        if (argumentsContainJMSSelector(args)) {
+            if (filterManager == null) {
                 filterManager = new FilterManager();
             }
-            filterManager.add(AMQPFilterTypes.JMS_SELECTOR.toString(),createJMSSelectorFilter(args));
+            filterManager.add(AMQPFilterTypes.JMS_SELECTOR.toString(), createJMSSelectorFilter(args));
         }
         return filterManager;
 
     }
 
     @PluggableService
-    public static final class NoLocalFilter implements MessageFilter
-    {
+    public static final class NoLocalFilter implements MessageFilter {
         private final Queue<?> _queue;
 
-        private NoLocalFilter(Queue<?> queue)
-        {
+        private NoLocalFilter(Queue<?> queue) {
             _queue = queue;
         }
 
         @Override
-        public String getName()
-        {
+        public String getName() {
             return AMQPFilterTypes.NO_LOCAL.toString();
         }
 
         @Override
-        public boolean matches(Filterable message)
-        {
+        public boolean matches(Filterable message) {
 
-            final Collection<QueueConsumer<?,?>> consumers = _queue.getConsumers();
-            for(QueueConsumer<?,?> c : consumers)
-            {
-                if(c.getSession().getConnectionReference() == message.getConnectionReference())
-                {
+            final Collection<QueueConsumer<?, ?>> consumers = _queue.getConsumers();
+            for (QueueConsumer<?, ?> c : consumers) {
+                if (c.getSession().getConnectionReference() == message.getConnectionReference()) {
                     return false;
                 }
             }
@@ -146,21 +124,17 @@ public class FilterSupport
         }
 
         @Override
-        public boolean startAtTail()
-        {
+        public boolean startAtTail() {
             return false;
         }
 
         @Override
-        public boolean equals(Object o)
-        {
-            if (this == o)
-            {
+        public boolean equals(Object o) {
+            if (this == o) {
                 return true;
             }
 
-            if (o == null || getClass() != o.getClass())
-            {
+            if (o == null || getClass() != o.getClass()) {
                 return false;
             }
 
@@ -170,14 +144,12 @@ public class FilterSupport
         }
 
         @Override
-        public int hashCode()
-        {
+        public int hashCode() {
             return _queue != null ? _queue.hashCode() : 0;
         }
 
         @Override
-        public String toString()
-        {
+        public String toString() {
             return "NoLocalFilter[]";
         }
     }

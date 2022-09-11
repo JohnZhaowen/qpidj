@@ -26,33 +26,26 @@ import org.apache.qpid.server.plugin.MessageFilterFactory;
 import org.apache.qpid.server.plugin.PluggableService;
 
 @PluggableService
-public final class ArrivalTimeFilterFactory implements MessageFilterFactory
-{
+public final class ArrivalTimeFilterFactory implements MessageFilterFactory {
 
     @Override
-    public MessageFilter newInstance(final List<String> arguments)
-    {
-        if(arguments == null || arguments.size() != 1)
-        {
+    public MessageFilter newInstance(final List<String> arguments) {
+        if (arguments == null || arguments.size() != 1) {
             throw new IllegalArgumentException(String.format("Cannot create a %s filter from these arguments: %s",
-                                                             getType(), arguments));
+                    getType(), arguments));
         }
         final String periodArgument = arguments.get(0);
-        try
-        {
+        try {
             long periodInSeconds = Long.parseLong(periodArgument);
             return new ArrivalTimeFilter(System.currentTimeMillis() - (periodInSeconds * 1000L), periodInSeconds == 0L);
-        }
-        catch (NumberFormatException e)
-        {
+        } catch (NumberFormatException e) {
             throw new IllegalArgumentException(String.format("Cannot create a %s filter.  Period value '%s' does not contain a parsable long value",
-                                                             getType(), periodArgument), e);
+                    getType(), periodArgument), e);
         }
     }
 
     @Override
-    public String getType()
-    {
+    public String getType() {
         return AMQPFilterTypes.REPLAY_PERIOD.toString();
     }
 

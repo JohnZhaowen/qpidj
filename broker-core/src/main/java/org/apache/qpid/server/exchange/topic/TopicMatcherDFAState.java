@@ -99,7 +99,7 @@ public class TopicMatcherDFAState {
         } else if (otherStateMachine._results.isEmpty()) {
             results = _results;
         } else {
-            results = new HashSet<TopicMatcherResult>(_results);
+            results = new HashSet<>(_results);
             results.addAll(otherStateMachine._results);
         }
 
@@ -109,7 +109,7 @@ public class TopicMatcherDFAState {
         TopicMatcherDFAState newState = new TopicMatcherDFAState(newNextStateMap, results);
 
 
-        Set<TopicMatcherDFAState> oldStates = new HashSet<TopicMatcherDFAState>();
+        Set<TopicMatcherDFAState> oldStates = new HashSet<>();
         oldStates.add(this);
         oldStates.add(otherStateMachine);
 
@@ -132,7 +132,7 @@ public class TopicMatcherDFAState {
             for (Map.Entry<TopicWord, TopicMatcherDFAState> entry : map.entrySet()) {
                 Set<TopicMatcherDFAState> states = nfaMap.get(entry.getKey());
                 if (states == null) {
-                    states = new HashSet<TopicMatcherDFAState>();
+                    states = new HashSet<>();
                     nfaMap.put(entry.getKey(), states);
                 }
                 states.add(entry.getValue());
@@ -182,11 +182,7 @@ public class TopicMatcherDFAState {
                             destinations,
                             nextStateMap,
                             newStateMap);
-
-
                 }
-
-
             }
             newNextStateMap.put(transition.getKey(), nextState);
         }
@@ -204,8 +200,6 @@ public class TopicMatcherDFAState {
                 newNextStateMap.remove(removeKey);
             }
         }
-
-
     }
 
 
@@ -255,7 +249,6 @@ public class TopicMatcherDFAState {
 
         return result.toString();
     }
-
 
     int getId() {
         return _id;

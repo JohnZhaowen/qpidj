@@ -28,24 +28,19 @@ import org.apache.qpid.server.model.Model;
 import org.apache.qpid.server.model.State;
 import org.apache.qpid.server.store.DurableConfigurationStore;
 
-public class StoreConfigurationChangeListener implements ConfigurationChangeListener
-{
+public class StoreConfigurationChangeListener implements ConfigurationChangeListener {
     private final DurableConfigurationStore _store;
     private boolean _bulkChanges = false;
 
-    public StoreConfigurationChangeListener(DurableConfigurationStore store)
-    {
+    public StoreConfigurationChangeListener(DurableConfigurationStore store) {
         super();
         _store = store;
     }
 
     @Override
-    public void stateChanged(ConfiguredObject object, State oldState, State newState)
-    {
-        if (newState == State.DELETED)
-        {
-            if(object.isDurable())
-            {
+    public void stateChanged(ConfiguredObject object, State oldState, State newState) {
+        if (newState == State.DELETED) {
+            if (object.isDurable()) {
                 _store.remove(object.asObjectRecord());
             }
             object.removeChangeListener(this);
@@ -53,17 +48,13 @@ public class StoreConfigurationChangeListener implements ConfigurationChangeList
     }
 
     @Override
-    public void childAdded(ConfiguredObject<?> object, ConfiguredObject<?> child)
-    {
-        if (!object.managesChildStorage())
-        {
-            if(object.isDurable() && child.isDurable())
-            {
+    public void childAdded(ConfiguredObject<?> object, ConfiguredObject<?> child) {
+        if (!object.managesChildStorage()) {
+            if (object.isDurable() && child.isDurable()) {
                 Model model = child.getModel();
                 Class<? extends ConfiguredObject> parentType =
                         model.getParentType(child.getCategoryClass());
-                if(parentType.equals(object.getCategoryClass()))
-                {
+                if (parentType.equals(object.getCategoryClass())) {
                     child.addChangeListener(this);
                     _store.update(true, child.asObjectRecord());
 
@@ -71,10 +62,8 @@ public class StoreConfigurationChangeListener implements ConfigurationChangeList
                     Collection<Class<? extends ConfiguredObject>> childTypes =
                             model.getChildTypes(categoryClass);
 
-                    for (Class<? extends ConfiguredObject> childClass : childTypes)
-                    {
-                        for (ConfiguredObject<?> grandchild : child.getChildren(childClass))
-                        {
+                    for (Class<? extends ConfiguredObject> childClass : childTypes) {
+                        for (ConfiguredObject<?> grandchild : child.getChildren(childClass)) {
                             childAdded(child, grandchild);
                         }
                     }
@@ -85,28 +74,22 @@ public class StoreConfigurationChangeListener implements ConfigurationChangeList
     }
 
     @Override
-    public void bulkChangeStart(final ConfiguredObject<?> object)
-    {
+    public void bulkChangeStart(final ConfiguredObject<?> object) {
         _bulkChanges = true;
     }
 
     @Override
-    public void bulkChangeEnd(final ConfiguredObject<?> object)
-    {
-        if (object.isDurable() && _bulkChanges)
-        {
+    public void bulkChangeEnd(final ConfiguredObject<?> object) {
+        if (object.isDurable() && _bulkChanges) {
             _store.update(false, object.asObjectRecord());
         }
         _bulkChanges = false;
     }
 
     @Override
-    public void childRemoved(ConfiguredObject object, ConfiguredObject child)
-    {
-        if (!object.managesChildStorage())
-        {
-            if (child.isDurable())
-            {
+    public void childRemoved(ConfiguredObject object, ConfiguredObject child) {
+        if (!object.managesChildStorage()) {
+            if (child.isDurable()) {
                 _store.remove(child.asObjectRecord());
             }
             child.removeChangeListener(this);
@@ -114,17 +97,14 @@ public class StoreConfigurationChangeListener implements ConfigurationChangeList
     }
 
     @Override
-    public void attributeSet(ConfiguredObject object, String attributeName, Object oldAttributeValue, Object newAttributeValue)
-    {
-        if (object.isDurable() && !_bulkChanges)
-        {
+    public void attributeSet(ConfiguredObject object, String attributeName, Object oldAttributeValue, Object newAttributeValue) {
+        if (object.isDurable() && !_bulkChanges) {
             _store.update(false, object.asObjectRecord());
         }
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "StoreConfigurationChangeListener [store=" + _store + "]";
     }
 }

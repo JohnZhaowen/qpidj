@@ -22,8 +22,7 @@ package org.apache.qpid.server.bytebuffer;
 
 import java.nio.ByteBuffer;
 
-public interface ByteBufferRef
-{
+public interface ByteBufferRef {
     void incrementRef(final int capacity);
 
     void decrementRef(final int capacity);

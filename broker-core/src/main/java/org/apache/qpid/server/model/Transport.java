@@ -22,8 +22,7 @@ package org.apache.qpid.server.model;
 
 import java.util.EnumSet;
 
-public enum Transport
-{
+public enum Transport {
 
     TCP,
     SSL(true),
@@ -31,38 +30,28 @@ public enum Transport
     WSS(true),
     SCTP;
 
-    Transport()
-    {
+    Transport() {
         this(false);
     }
 
-    Transport(boolean secure)
-    {
+    Transport(boolean secure) {
         _secure = secure;
     }
 
     private boolean _secure;
 
-    public final boolean isSecure()
-    {
+    public final boolean isSecure() {
         return _secure;
     }
 
-    public static Transport valueOfObject(Object transportObject)
-    {
+    public static Transport valueOfObject(Object transportObject) {
         Transport transport;
-        if (transportObject instanceof Transport)
-        {
+        if (transportObject instanceof Transport) {
             transport = (Transport) transportObject;
-        }
-        else
-        {
-            try
-            {
+        } else {
+            try {
                 transport = Transport.valueOf(String.valueOf(transportObject));
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 throw new IllegalArgumentException("Can't convert '" + transportObject
                         + "' to one of the supported transports: " + EnumSet.allOf(Transport.class), e);
             }

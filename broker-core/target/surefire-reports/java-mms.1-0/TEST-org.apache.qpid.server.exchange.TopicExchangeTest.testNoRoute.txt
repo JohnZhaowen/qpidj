@@ -1,0 +1,126 @@
+2022-09-09 23:09:32,607 INFO  [main] o.a.q.t.u.QpidUnitTestRunner ========================= start executing test : TopicExchangeTest#testNoRoute
+2022-09-09 23:09:35,830 DEBUG [main] o.a.q.s.p.QpidServiceLoader Found 58 implementations of interface org.apache.qpid.server.plugin.ConfiguredObjectTypeFactory
+2022-09-09 23:09:35,877 DEBUG [main] o.a.q.s.p.QpidServiceLoader Found 15 implementations of interface org.apache.qpid.server.plugin.ConfiguredObjectRegistration
+2022-09-09 23:09:36,077 DEBUG [main] o.a.q.s.p.QpidServiceLoader Found 1 implementations of interface org.apache.qpid.server.plugin.ConfiguredObjectAttributeInjector
+2022-09-09 23:09:36,766 DEBUG [main] o.a.q.s.p.QpidServiceLoader Found 0 implementations of interface org.apache.qpid.server.plugin.ProtocolEngineCreator
+2022-09-09 23:09:37,328 DEBUG [main] o.a.q.s.p.QpidServiceLoader Found 15 implementations of interface org.apache.qpid.server.plugin.ConfiguredObjectRegistration
+2022-09-09 23:09:37,344 DEBUG [main] o.a.q.s.p.QpidServiceLoader Found 58 implementations of interface org.apache.qpid.server.plugin.ConfiguredObjectTypeFactory
+2022-09-09 23:09:39,210 DEBUG [main] o.a.q.s.p.QpidServiceLoader Found 2 implementations of interface org.apache.qpid.server.plugin.SystemNodeCreator
+2022-09-09 23:09:39,226 DEBUG [main] o.a.q.s.p.QpidServiceLoader Found 1 implementations of interface org.apache.qpid.server.plugin.ConnectionValidator
+2022-09-09 23:09:39,226 DEBUG [main] o.a.q.s.p.QpidServiceLoader Found 0 implementations of interface org.apache.qpid.server.virtualhost.LinkRegistryFactory
+2022-09-09 23:09:39,362 DEBUG [main] o.a.q.s.v.AbstractVirtualHost Updating access control list with 0 provider children
+2022-09-09 23:09:39,408 DEBUG [main] o.a.q.s.c.u.TaskExecutorImpl Starting task executor virtualhost-testNoRoute-preferences
+2022-09-09 23:09:39,408 DEBUG [main] o.a.q.s.c.u.TaskExecutorImpl Task executor is started
+2022-09-09 23:09:39,654 DEBUG [main] o.a.q.s.m.AbstractConfiguredObject authorise returned DEFER
+2022-09-09 23:09:39,654 DEBUG [main] o.a.q.s.m.AbstractConfiguredObject authorise returned DEFER, returing default: ALLOWED
+2022-09-09 23:09:39,669 DEBUG [main] o.a.q.s.m.AbstractConfiguredObject authorise returned DEFER
+2022-09-09 23:09:39,669 DEBUG [main] o.a.q.s.m.AbstractConfiguredObject authorise returned DEFER, returing default: ALLOWED
+2022-09-09 23:12:38,423 DEBUG [main] o.a.q.s.m.AbstractConfiguredObject authorise returned DEFER
+2022-09-09 23:12:38,423 DEBUG [main] o.a.q.s.m.AbstractConfiguredObject authorise returned DEFER, returing default: ALLOWED
+2022-09-09 23:14:18,235 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:14:18,238 DEBUG [main] o.a.q.s.m.AbstractConfiguredObject authorise returned DEFER
+2022-09-09 23:14:18,238 DEBUG [main] o.a.q.s.m.AbstractConfiguredObject authorise returned DEFER, returing default: ALLOWED
+2022-09-09 23:14:18,238 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:14:18,239 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:17:57,260 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:17:57,262 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:17:57,263 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:19:18,672 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:19:18,683 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:19:18,684 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:19:18,685 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:19:18,685 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:19:18,685 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:19:18,685 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:19:26,497 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:21:03,078 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:21:03,078 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:21:08,846 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:21:27,372 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:51:28,237 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:51:28,241 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:51:28,241 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:51:28,242 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:51:28,242 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:51:28,242 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:51:28,242 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:51:28,242 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:51:28,243 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:51:28,243 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:51:28,243 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:51:28,243 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:51:28,244 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:51:28,245 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:51:28,245 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:51:28,246 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:51:28,246 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:51:28,246 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:51:28,247 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:51:28,247 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:51:28,247 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:51:28,247 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:51:28,247 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:51:28,247 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:51:28,248 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:51:28,248 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:51:28,248 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:51:28,248 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:51:28,248 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:51:28,248 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:51:28,248 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:51:28,248 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:51:28,249 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:51:28,249 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:51:28,249 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:51:28,249 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:51:28,249 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:51:28,249 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:51:28,249 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:51:28,249 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:51:28,250 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:51:28,250 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:51:28,250 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:51:28,250 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:51:28,250 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:51:28,250 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:51:28,251 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:51:28,251 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:51:28,251 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:51:28,251 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:51:28,251 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:51:28,251 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:51:28,252 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:51:28,252 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:51:28,252 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:51:28,252 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:51:28,252 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:51:28,252 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:51:28,252 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:51:28,253 DEBUG [Housekeeping[testNoRoute]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testNoRoute_queue
+2022-09-09 23:51:28,369 DEBUG [main] o.a.q.s.e.TopicExchangeImpl Registering messageDestination testNoRoute_queue with routing key *.stock.#
+2022-09-09 23:51:28,637 DEBUG [main] o.a.q.s.m.AbstractConfiguredObject Closing TestMemoryVirtualHostWithAccessChecking : testNoRoute
+2022-09-09 23:51:28,638 DEBUG [main] o.a.q.s.v.AbstractVirtualHost Closing connection registry : 0 connection(s).
+2022-09-09 23:51:28,787 DEBUG [main] o.a.q.s.m.AbstractConfiguredObject Closing DirectExchangeImplWithAccessChecking : amq.direct
+2022-09-09 23:51:28,822 DEBUG [main] o.a.q.s.m.AbstractConfiguredObject All children closed DirectExchangeImplWithAccessChecking : amq.direct
+2022-09-09 23:51:28,832 DEBUG [main] o.a.q.s.m.AbstractConfiguredObject Closed DirectExchangeImplWithAccessChecking : amq.direct
+2022-09-09 23:51:28,837 DEBUG [main] o.a.q.s.m.AbstractConfiguredObject Closing TopicExchangeImplWithAccessChecking : amq.topic
+2022-09-09 23:51:28,838 DEBUG [main] o.a.q.s.m.AbstractConfiguredObject All children closed TopicExchangeImplWithAccessChecking : amq.topic
+2022-09-09 23:51:28,838 DEBUG [main] o.a.q.s.m.AbstractConfiguredObject Closed TopicExchangeImplWithAccessChecking : amq.topic
+2022-09-09 23:51:28,839 DEBUG [main] o.a.q.s.m.AbstractConfiguredObject Closing HeadersExchangeImplWithAccessChecking : amq.match
+2022-09-09 23:51:28,840 DEBUG [main] o.a.q.s.m.AbstractConfiguredObject All children closed HeadersExchangeImplWithAccessChecking : amq.match
+2022-09-09 23:51:28,840 DEBUG [main] o.a.q.s.m.AbstractConfiguredObject Closed HeadersExchangeImplWithAccessChecking : amq.match
+2022-09-09 23:51:28,841 DEBUG [main] o.a.q.s.m.AbstractConfiguredObject Closing FanoutExchangeImplWithAccessChecking : amq.fanout
+2022-09-09 23:51:28,842 DEBUG [main] o.a.q.s.m.AbstractConfiguredObject All children closed FanoutExchangeImplWithAccessChecking : amq.fanout
+2022-09-09 23:51:28,842 DEBUG [main] o.a.q.s.m.AbstractConfiguredObject Closed FanoutExchangeImplWithAccessChecking : amq.fanout
+2022-09-09 23:51:28,843 DEBUG [main] o.a.q.s.m.AbstractConfiguredObject Closing TopicExchangeImplWithAccessChecking : test
+2022-09-09 23:51:28,843 DEBUG [main] o.a.q.s.m.AbstractConfiguredObject All children closed TopicExchangeImplWithAccessChecking : test
+2022-09-09 23:51:28,844 DEBUG [main] o.a.q.s.m.AbstractConfiguredObject Closed TopicExchangeImplWithAccessChecking : test
+2022-09-09 23:51:28,844 DEBUG [main] o.a.q.s.m.AbstractConfiguredObject Closing StandardQueueImplWithAccessChecking : testNoRoute_queue
+2022-09-09 23:51:28,857 DEBUG [main] o.a.q.s.m.AbstractConfiguredObject All children closed StandardQueueImplWithAccessChecking : testNoRoute_queue
+2022-09-09 23:51:28,858 DEBUG [main] o.a.q.s.m.AbstractConfiguredObject Closed StandardQueueImplWithAccessChecking : testNoRoute_queue
+2022-09-09 23:51:28,858 DEBUG [main] o.a.q.s.m.AbstractConfiguredObject All children closed TestMemoryVirtualHostWithAccessChecking : testNoRoute
+2022-09-09 23:51:28,885 DEBUG [main] o.a.q.s.c.u.TaskExecutorImpl Stopping task executor virtualhost-testNoRoute-preferences
+2022-09-09 23:51:28,885 DEBUG [main] o.a.q.s.c.u.TaskExecutorImpl Task executor is stopped
+2022-09-09 23:51:28,911 DEBUG [main] o.a.q.s.m.AbstractConfiguredObject Closed TestMemoryVirtualHostWithAccessChecking : testNoRoute
+2022-09-09 23:51:28,913 DEBUG [main] o.a.q.s.m.AbstractConfiguredObject Closing TestMemoryVirtualHostWithAccessChecking : testNoRoute
+2022-09-09 23:51:28,919 INFO  [main] o.a.q.t.u.QpidUnitTestRunner ========================= stop executing test : TopicExchangeTest#testNoRoute 

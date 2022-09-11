@@ -1,14 +1,13 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,25 +21,22 @@ package org.apache.qpid.server.filter;
 
 /**
  * An expression which performs an operation on two expression values.
+ * 二元表达式: 1 + 2
  */
-public abstract class BinaryExpression<T> implements Expression<T>
-{
+public abstract class BinaryExpression<T> implements Expression<T> {
     private final Expression<T> left;
     private final Expression<T> right;
 
-    public BinaryExpression(Expression<T> left, Expression<T> right)
-    {
+    public BinaryExpression(Expression<T> left, Expression<T> right) {
         this.left = left;
         this.right = right;
     }
 
-    public Expression<T> getLeft()
-    {
+    public Expression<T> getLeft() {
         return left;
     }
 
-    public Expression<T> getRight()
-    {
+    public Expression<T> getRight() {
         return right;
     }
 
@@ -48,8 +44,7 @@ public abstract class BinaryExpression<T> implements Expression<T>
      * @see java.lang.Object#toString()
      */
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "(" + left.toString() + " " + getExpressionSymbol() + " " + right.toString() + ")";
     }
 
@@ -59,8 +54,7 @@ public abstract class BinaryExpression<T> implements Expression<T>
      * @see java.lang.Object#hashCode()
      */
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return toString().hashCode();
     }
 
@@ -70,11 +64,9 @@ public abstract class BinaryExpression<T> implements Expression<T>
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
-    public boolean equals(Object o)
-    {
+    public boolean equals(Object o) {
 
-        if ((o == null) || !this.getClass().equals(o.getClass()))
-        {
+        if ((o == null) || !this.getClass().equals(o.getClass())) {
             return false;
         }
 

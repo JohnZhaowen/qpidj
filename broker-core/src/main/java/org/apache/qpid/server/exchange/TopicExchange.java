@@ -20,12 +20,10 @@
  */
 package org.apache.qpid.server.exchange;
 
-import org.apache.qpid.server.exchange.ExchangeDefaults;
 import org.apache.qpid.server.model.Exchange;
 import org.apache.qpid.server.model.ManagedObject;
 
-@ManagedObject( category = false, type = ExchangeDefaults.TOPIC_EXCHANGE_CLASS,
-        amqpName = "org.apache.qpid.TopicExchange" )
-public interface TopicExchange<X extends TopicExchange<X>> extends Exchange<X>
-{
+@ManagedObject(category = false, type = ExchangeDefaults.TOPIC_EXCHANGE_CLASS,
+        amqpName = "org.apache.qpid.TopicExchange")
+public interface TopicExchange<X extends TopicExchange<X>> extends Exchange<X> {
 }

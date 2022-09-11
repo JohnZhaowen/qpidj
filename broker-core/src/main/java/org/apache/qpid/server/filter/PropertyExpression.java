@@ -24,6 +24,5 @@ package org.apache.qpid.server.filter;
 /**
  * Represents a property  expression
  */
-public interface PropertyExpression<E> extends Expression<E>
-{
+public interface PropertyExpression<E> extends Expression<E> {
 }

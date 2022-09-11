@@ -23,15 +23,17 @@ package org.apache.qpid.server.filter;
 /**
  * Specifies the different filter types for consumers that filter their messages.
  */
-public enum AMQPFilterTypes
-{
+public enum AMQPFilterTypes {
+
     JMS_SELECTOR("x-filter-jms-selector"),
     NO_CONSUME("x-filter-no-consume"),
     AUTO_CLOSE("x-filter-auto-close"),
     NO_LOCAL("x-qpid-no-local"),
     REPLAY_PERIOD("x-qpid-replay-period");
 
-    /** The identifying string for the filter type. */
+    /**
+     * The identifying string for the filter type.
+     */
     private final String _value;
 
     /**
@@ -39,8 +41,7 @@ public enum AMQPFilterTypes
      *
      * @param value The identifying string.
      */
-    AMQPFilterTypes(String value)
-    {
+    AMQPFilterTypes(String value) {
         _value = value;
     }
 
@@ -49,14 +50,12 @@ public enum AMQPFilterTypes
      *
      * @return The identifying string of the filter type.
      */
-    public String getValue()
-    {
+    public String getValue() {
         return _value;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return _value;
     }
 }

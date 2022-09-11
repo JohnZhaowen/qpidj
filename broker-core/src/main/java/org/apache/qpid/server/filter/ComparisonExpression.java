@@ -30,23 +30,19 @@ import java.util.regex.Pattern;
 /**
  * A filter performing a comparison of two objects
  */
-public abstract class ComparisonExpression<T> extends BinaryExpression<T> implements BooleanExpression<T>
-{
+public abstract class ComparisonExpression<T> extends BinaryExpression<T> implements BooleanExpression<T> {
 
-    public static <E> BooleanExpression<E> createBetween(Expression<E> value, Expression<E> left, Expression<E> right)
-    {
+    public static <E> BooleanExpression<E> createBetween(Expression<E> value, Expression<E> left, Expression<E> right) {
         return LogicExpression.createAND(createGreaterThanEqual(value, left), createLessThanEqual(value, right));
     }
 
-    public static <E> BooleanExpression<E> createNotBetween(Expression<E> value, Expression<E> left, Expression<E> right)
-    {
+    public static <E> BooleanExpression<E> createNotBetween(Expression<E> value, Expression<E> left, Expression<E> right) {
         return LogicExpression.createOR(createLessThan(value, left), createGreaterThan(value, right));
     }
 
     private static final HashSet<Character> REGEXP_CONTROL_CHARS = new HashSet<Character>();
 
-    static
-    {
+    static {
         REGEXP_CONTROL_CHARS.add('.');
         REGEXP_CONTROL_CHARS.add('\\');
         REGEXP_CONTROL_CHARS.add('[');
@@ -69,25 +65,20 @@ public abstract class ComparisonExpression<T> extends BinaryExpression<T> implem
         REGEXP_CONTROL_CHARS.add('!');
     }
 
-    static class LikeExpression<E> extends UnaryExpression<E> implements BooleanExpression<E>
-    {
+    static class LikeExpression<E> extends UnaryExpression<E> implements BooleanExpression<E> {
 
         private Pattern likePattern;
 
-        public LikeExpression(Expression<E> right, String like, int escape)
-        {
+        public LikeExpression(Expression<E> right, String like, int escape) {
             super(right);
 
             StringBuilder regexp = new StringBuilder(like.length() * 2);
             regexp.append("\\A"); // The beginning of the input
-            for (int i = 0; i < like.length(); i++)
-            {
+            for (int i = 0; i < like.length(); i++) {
                 char c = like.charAt(i);
-                if (escape == (0xFFFF & c))
-                {
+                if (escape == (0xFFFF & c)) {
                     i++;
-                    if (i >= like.length())
-                    {
+                    if (i >= like.length()) {
                         // nothing left to escape...
                         break;
                     }
@@ -95,22 +86,14 @@ public abstract class ComparisonExpression<T> extends BinaryExpression<T> implem
                     char t = like.charAt(i);
                     regexp.append("\\x");
                     regexp.append(Integer.toHexString(0xFFFF & t));
-                }
-                else if (c == '%')
-                {
+                } else if (c == '%') {
                     regexp.append(".*?"); // Do a non-greedy match
-                }
-                else if (c == '_')
-                {
+                } else if (c == '_') {
                     regexp.append("."); // match one
-                }
-                else if (REGEXP_CONTROL_CHARS.contains(c))
-                {
+                } else if (REGEXP_CONTROL_CHARS.contains(c)) {
                     regexp.append("\\x");
                     regexp.append(Integer.toHexString(0xFFFF & c));
-                }
-                else
-                {
+                } else {
                     regexp.append(c);
                 }
             }
@@ -121,73 +104,62 @@ public abstract class ComparisonExpression<T> extends BinaryExpression<T> implem
         }
 
         /**
-         *  org.apache.activemq.filter.UnaryExpression#getExpressionSymbol()
+         * org.apache.activemq.filter.UnaryExpression#getExpressionSymbol()
          */
         @Override
-        public String getExpressionSymbol()
-        {
+        public String getExpressionSymbol() {
             return "LIKE";
         }
 
         /**
-         *  org.apache.activemq.filter.Expression#evaluate(MessageEvaluationContext)
+         * org.apache.activemq.filter.Expression#evaluate(MessageEvaluationContext)
          */
         @Override
-        public Object evaluate(E message)
-        {
+        public Object evaluate(E message) {
 
             Object rv = this.getRight().evaluate(message);
 
-            if (rv == null)
-            {
+            if (rv == null) {
                 return null;
             }
 
-            if (!(rv instanceof String))
-            {
+            if (!(rv instanceof String)) {
                 return
-                    Boolean.FALSE;
+                        Boolean.FALSE;
             }
 
             return likePattern.matcher((String) rv).matches() ? Boolean.TRUE : Boolean.FALSE;
         }
 
         @Override
-        public boolean matches(E message)
-        {
+        public boolean matches(E message) {
             Object object = evaluate(message);
 
             return (object != null) && (object == Boolean.TRUE);
         }
     }
 
-    public static <E> BooleanExpression<E> createLike(Expression<E> left, String right, String escape)
-    {
-        if ((escape != null) && (escape.length() != 1))
-        {
+    public static <E> BooleanExpression<E> createLike(Expression<E> left, String right, String escape) {
+        if ((escape != null) && (escape.length() != 1)) {
             throw new SelectorParsingException(
-                "The ESCAPE string literal is invalid.  It can only be one character.  Litteral used: " + escape);
+                    "The ESCAPE string literal is invalid.  It can only be one character.  Litteral used: " + escape);
         }
 
         int c = -1;
-        if (escape != null)
-        {
+        if (escape != null) {
             c = 0xFFFF & escape.charAt(0);
         }
 
         return new LikeExpression<>(left, right, c);
     }
 
-    public static <E> BooleanExpression<E> createNotLike(Expression<E> left, String right, String escape)
-    {
+    public static <E> BooleanExpression<E> createNotLike(Expression<E> left, String right, String escape) {
         return UnaryExpression.createNOT(createLike(left, right, escape));
     }
 
-    public static <E> BooleanExpression<E> createInFilter(Expression<E> left, List<?> elements, boolean allowNonJms)
-    {
+    public static <E> BooleanExpression<E> createInFilter(Expression<E> left, List<?> elements, boolean allowNonJms) {
 
-        if (!(allowNonJms || left instanceof PropertyExpression))
-        {
+        if (!(allowNonJms || left instanceof PropertyExpression)) {
             throw new SelectorParsingException("Expected a property for In expression, got: " + left);
         }
 
@@ -195,11 +167,9 @@ public abstract class ComparisonExpression<T> extends BinaryExpression<T> implem
 
     }
 
-    public static <E> BooleanExpression<E> createNotInFilter(Expression<E> left, List<?> elements, boolean allowNonJms)
-    {
+    public static <E> BooleanExpression<E> createNotInFilter(Expression<E> left, List<?> elements, boolean allowNonJms) {
 
-        if (!(allowNonJms || left instanceof PropertyExpression))
-        {
+        if (!(allowNonJms || left instanceof PropertyExpression)) {
             throw new SelectorParsingException("Expected a property for In expression, got: " + left);
         }
 
@@ -207,23 +177,19 @@ public abstract class ComparisonExpression<T> extends BinaryExpression<T> implem
 
     }
 
-    public static <E> BooleanExpression<E> createIsNull(Expression<E> left)
-    {
+    public static <E> BooleanExpression<E> createIsNull(Expression<E> left) {
         return doCreateEqual(left, ConstantExpression.<E>NULL());
     }
 
-    public static <E> BooleanExpression<E> createIsNotNull(Expression<E> left)
-    {
+    public static <E> BooleanExpression<E> createIsNotNull(Expression<E> left) {
         return UnaryExpression.createNOT(doCreateEqual(left, ConstantExpression.<E>NULL()));
     }
 
-    public static <E> BooleanExpression<E> createNotEqual(Expression<E> left, Expression<E> right)
-    {
+    public static <E> BooleanExpression<E> createNotEqual(Expression<E> left, Expression<E> right) {
         return UnaryExpression.createNOT(createEqual(left, right));
     }
 
-    public static <E> BooleanExpression<E> createEqual(Expression<E> left, Expression<E> right)
-    {
+    public static <E> BooleanExpression<E> createEqual(Expression<E> left, Expression<E> right) {
         checkEqualOperand(left);
         checkEqualOperand(right);
         checkEqualOperandCompatability(left, right);
@@ -231,96 +197,79 @@ public abstract class ComparisonExpression<T> extends BinaryExpression<T> implem
         return doCreateEqual(left, right);
     }
 
-    private static <E> BooleanExpression<E> doCreateEqual(Expression<E> left, Expression<E> right)
-    {
+    private static <E> BooleanExpression<E> doCreateEqual(Expression<E> left, Expression<E> right) {
         return new EqualExpression<>(left, right);
     }
 
-    public static <E> BooleanExpression<E> createGreaterThan(final Expression<E> left, final Expression<E> right)
-    {
+    public static <E> BooleanExpression<E> createGreaterThan(final Expression<E> left, final Expression<E> right) {
         checkLessThanOperand(left);
         checkLessThanOperand(right);
 
-        return new ComparisonExpression<E>(left, right)
-            {
-                @Override
-                protected boolean asBoolean(int answer)
-                {
-                    return answer > 0;
-                }
+        return new ComparisonExpression<E>(left, right) {
+            @Override
+            protected boolean asBoolean(int answer) {
+                return answer > 0;
+            }
 
-                @Override
-                public String getExpressionSymbol()
-                {
-                    return ">";
-                }
-            };
+            @Override
+            public String getExpressionSymbol() {
+                return ">";
+            }
+        };
     }
 
-    public static <E> BooleanExpression<E> createGreaterThanEqual(final Expression<E> left, final Expression<E> right)
-    {
+    public static <E> BooleanExpression<E> createGreaterThanEqual(final Expression<E> left, final Expression<E> right) {
         checkLessThanOperand(left);
         checkLessThanOperand(right);
 
-        return new ComparisonExpression<E>(left, right)
-            {
-                @Override
-                protected boolean asBoolean(int answer)
-                {
-                    return answer >= 0;
-                }
+        return new ComparisonExpression<E>(left, right) {
+            @Override
+            protected boolean asBoolean(int answer) {
+                return answer >= 0;
+            }
 
-                @Override
-                public String getExpressionSymbol()
-                {
-                    return ">=";
-                }
-            };
+            @Override
+            public String getExpressionSymbol() {
+                return ">=";
+            }
+        };
     }
 
-    public static <E> BooleanExpression<E> createLessThan(final Expression<E> left, final Expression<E> right)
-    {
+    public static <E> BooleanExpression<E> createLessThan(final Expression<E> left, final Expression<E> right) {
         checkLessThanOperand(left);
         checkLessThanOperand(right);
 
-        return new ComparisonExpression<E>(left, right)
-            {
+        return new ComparisonExpression<E>(left, right) {
 
-                @Override
-                protected boolean asBoolean(int answer)
-                {
-                    return answer < 0;
-                }
+            @Override
+            protected boolean asBoolean(int answer) {
+                return answer < 0;
+            }
 
-                @Override
-                public String getExpressionSymbol()
-                {
-                    return "<";
-                }
+            @Override
+            public String getExpressionSymbol() {
+                return "<";
+            }
 
-            };
+        };
     }
 
-    public static <E> BooleanExpression<E> createLessThanEqual(final Expression<E> left, final Expression<E> right)
-    {
+    public static <E> BooleanExpression<E> createLessThanEqual(final Expression<E> left, final Expression<E> right) {
         checkLessThanOperand(left);
         checkLessThanOperand(right);
 
-        return new ComparisonExpression<E>(left, right)
-            {
+        return new ComparisonExpression<E>(left, right) {
 
-                @Override
-                protected boolean asBoolean(int answer)
-                {
-                    return answer <= 0;
-                }
+            @Override
+            protected boolean asBoolean(int answer) {
+                return answer <= 0;
+            }
 
-                @Override
-                public String getExpressionSymbol()
-                {
-                    return "<=";
-                }
-            };
+            @Override
+            public String getExpressionSymbol() {
+                return "<=";
+            }
+        };
     }
 
     /**
@@ -328,13 +277,10 @@ public abstract class ComparisonExpression<T> extends BinaryExpression<T> implem
      *
      * @param expr expression to check
      */
-    public static <E> void checkLessThanOperand(Expression<E> expr)
-    {
-        if (expr instanceof ConstantExpression)
-        {
+    public static <E> void checkLessThanOperand(Expression<E> expr) {
+        if (expr instanceof ConstantExpression) {
             Object value = ((ConstantExpression) expr).getValue();
-            if (value instanceof Number)
-            {
+            if (value instanceof Number) {
                 return;
             }
 
@@ -342,8 +288,7 @@ public abstract class ComparisonExpression<T> extends BinaryExpression<T> implem
             throw new SelectorParsingException("Value '" + expr + "' cannot be compared.");
         }
 
-        if (expr instanceof BooleanExpression)
-        {
+        if (expr instanceof BooleanExpression) {
             throw new SelectorParsingException("Value '" + expr + "' cannot be compared.");
         }
     }
@@ -354,217 +299,131 @@ public abstract class ComparisonExpression<T> extends BinaryExpression<T> implem
      *
      * @param expr expression to check
      */
-    public static <E> void checkEqualOperand(Expression<E> expr)
-    {
-        if (expr instanceof ConstantExpression)
-        {
+    public static <E> void checkEqualOperand(Expression<E> expr) {
+        if (expr instanceof ConstantExpression) {
             Object value = ((ConstantExpression) expr).getValue();
-            if (value == null)
-            {
+            if (value == null) {
                 throw new SelectorParsingException("'" + expr + "' cannot be compared.");
             }
         }
     }
 
-    private static <E> void checkEqualOperandCompatability(Expression<E> left, Expression<E> right)
-    {
-        if ((left instanceof ConstantExpression) && (right instanceof ConstantExpression))
-        {
-            if ((left instanceof BooleanExpression) && !(right instanceof BooleanExpression))
-            {
+    private static <E> void checkEqualOperandCompatability(Expression<E> left, Expression<E> right) {
+        if ((left instanceof ConstantExpression) && (right instanceof ConstantExpression)) {
+            if ((left instanceof BooleanExpression) && !(right instanceof BooleanExpression)) {
                 throw new SelectorParsingException("'" + left + "' cannot be compared with '" + right + "'");
             }
         }
     }
 
-    public ComparisonExpression(Expression<T> left, Expression<T> right)
-    {
+    public ComparisonExpression(Expression<T> left, Expression<T> right) {
         super(left, right);
     }
 
     @Override
-    public Object evaluate(T message)
-    {
+    public Object evaluate(T message) {
         Comparable lv = (Comparable) getLeft().evaluate(message);
-        if (lv == null)
-        {
+        if (lv == null) {
             return null;
         }
 
         Comparable rv = (Comparable) getRight().evaluate(message);
-        if (rv == null)
-        {
+        if (rv == null) {
             return null;
         }
 
         return compare(lv, rv);
     }
 
-    protected Boolean compare(Comparable lv, Comparable rv)
-    {
+    protected Boolean compare(Comparable lv, Comparable rv) {
         Class lc = lv.getClass();
         Class rc = rv.getClass();
         // If the the objects are not of the same type,
         // try to convert up to allow the comparison.
-        if (lc != rc)
-        {
-            if (lc == Byte.class)
-            {
-                if (rc == Short.class)
-                {
+        if (lc != rc) {
+            if (lc == Byte.class) {
+                if (rc == Short.class) {
                     lv = ((Number) lv).shortValue();
-                }
-                else if (rc == Integer.class)
-                {
+                } else if (rc == Integer.class) {
                     lv = ((Number) lv).intValue();
-                }
-                else if (rc == Long.class)
-                {
+                } else if (rc == Long.class) {
                     lv = ((Number) lv).longValue();
-                }
-                else if (rc == Float.class)
-                {
+                } else if (rc == Float.class) {
                     lv = ((Number) lv).floatValue();
-                }
-                else if (rc == Double.class)
-                {
+                } else if (rc == Double.class) {
                     lv = ((Number) lv).doubleValue();
-                }
-                else
-                {
+                } else {
                     return Boolean.FALSE;
                 }
-            }
-            else if (lc == Short.class)
-            {
-                if (rc == Integer.class)
-                {
+            } else if (lc == Short.class) {
+                if (rc == Integer.class) {
                     lv = ((Number) lv).intValue();
-                }
-                else if (rc == Long.class)
-                {
+                } else if (rc == Long.class) {
                     lv = ((Number) lv).longValue();
-                }
-                else if (rc == Float.class)
-                {
+                } else if (rc == Float.class) {
                     lv = ((Number) lv).floatValue();
-                }
-                else if (rc == Double.class)
-                {
+                } else if (rc == Double.class) {
                     lv = ((Number) lv).doubleValue();
-                }
-                else
-                {
+                } else {
                     return Boolean.FALSE;
                 }
-            }
-            else if (lc == Integer.class)
-            {
-                if (rc == Long.class)
-                {
+            } else if (lc == Integer.class) {
+                if (rc == Long.class) {
                     lv = ((Number) lv).longValue();
-                }
-                else if (rc == Float.class)
-                {
+                } else if (rc == Float.class) {
                     lv = ((Number) lv).floatValue();
-                }
-                else if (rc == Double.class)
-                {
+                } else if (rc == Double.class) {
                     lv = ((Number) lv).doubleValue();
-                }
-                else
-                {
+                } else {
                     return Boolean.FALSE;
                 }
-            }
-            else if (lc == Long.class)
-            {
-                if (rc == Integer.class)
-                {
+            } else if (lc == Long.class) {
+                if (rc == Integer.class) {
                     rv = ((Number) rv).longValue();
-                }
-                else if (rc == Float.class)
-                {
+                } else if (rc == Float.class) {
                     lv = ((Number) lv).floatValue();
-                }
-                else if (rc == Double.class)
-                {
+                } else if (rc == Double.class) {
                     lv = ((Number) lv).doubleValue();
-                }
-                else
-                {
+                } else {
                     return Boolean.FALSE;
                 }
-            }
-            else if (lc == Float.class)
-            {
-                if (rc == Integer.class)
-                {
+            } else if (lc == Float.class) {
+                if (rc == Integer.class) {
                     rv = ((Number) rv).floatValue();
-                }
-                else if (rc == Long.class)
-                {
+                } else if (rc == Long.class) {
                     rv = ((Number) rv).floatValue();
-                }
-                else if (rc == Double.class)
-                {
+                } else if (rc == Double.class) {
                     lv = ((Number) lv).doubleValue();
-                }
-                else
-                {
+                } else {
                     return Boolean.FALSE;
                 }
-            }
-            else if (lc == Double.class)
-            {
-                if (rc == Integer.class)
-                {
+            } else if (lc == Double.class) {
+                if (rc == Integer.class) {
                     rv = ((Number) rv).doubleValue();
-                }
-                else if (rc == Long.class)
-                {
+                } else if (rc == Long.class) {
                     rv = ((Number) rv).doubleValue();
-                }
-                else if (rc == Float.class)
-                {
+                } else if (rc == Float.class) {
                     rv = ((Number) rv).doubleValue();
-                }
-                else
-                {
+                } else {
                     return Boolean.FALSE;
                 }
-            }
-            else if (lv instanceof Enum)
-            {
-                if (rv instanceof String)
-                {
-                    try
-                    {
+            } else if (lv instanceof Enum) {
+                if (rv instanceof String) {
+                    try {
                         rv = Enum.valueOf(lc, (String) rv);
-                    }
-                    catch (IllegalArgumentException e)
-                    {
+                    } catch (IllegalArgumentException e) {
                         return Boolean.FALSE;
                     }
-                }
-                else
-                {
+                } else {
                     return Boolean.FALSE;
                 }
-            }
-            else if (lv instanceof String)
-            {
-                if (rv instanceof Enum)
-                {
+            } else if (lv instanceof String) {
+                if (rv instanceof Enum) {
                     lv = Enum.valueOf(rc, (String) lv);
-                }
-                else
-                {
+                } else {
                     return Boolean.FALSE;
                 }
-            }
-            else
-            {
+            } else {
                 return Boolean.FALSE;
             }
         }
@@ -575,39 +434,32 @@ public abstract class ComparisonExpression<T> extends BinaryExpression<T> implem
     protected abstract boolean asBoolean(int answer);
 
     @Override
-    public boolean matches(T message)
-    {
+    public boolean matches(T message) {
         Object object = evaluate(message);
 
         return (object != null) && (object == Boolean.TRUE);
     }
 
-    private static class EqualExpression<E> extends ComparisonExpression<E>
-    {
-        public EqualExpression(final Expression<E> left, final Expression<E> right)
-        {
+    private static class EqualExpression<E> extends ComparisonExpression<E> {
+        public EqualExpression(final Expression<E> left, final Expression<E> right) {
             super(left, right);
         }
 
         @Override
-        public Object evaluate(E message)
-        {
+        public Object evaluate(E message) {
             Object lv = getLeft().evaluate(message);
             Object rv = getRight().evaluate(message);
 
-            // Iff one of the values is null
-            if ((lv == null) ^ (rv == null))
-            {
+            // If one of the values is null
+            if ((lv == null) ^ (rv == null)) {
                 return Boolean.FALSE;
             }
 
-            if ((lv == rv) || lv.equals(rv))
-            {
+            if ((lv == rv) || lv.equals(rv)) {
                 return Boolean.TRUE;
             }
 
-            if ((lv instanceof Comparable) && (rv instanceof Comparable))
-            {
+            if ((lv instanceof Comparable) && (rv instanceof Comparable)) {
                 return compare((Comparable) lv, (Comparable) rv);
             }
 
@@ -615,14 +467,12 @@ public abstract class ComparisonExpression<T> extends BinaryExpression<T> implem
         }
 
         @Override
-        protected boolean asBoolean(int answer)
-        {
+        protected boolean asBoolean(int answer) {
             return answer == 0;
         }
 
         @Override
-        public String getExpressionSymbol()
-        {
+        public String getExpressionSymbol() {
             return "=";
         }
     }

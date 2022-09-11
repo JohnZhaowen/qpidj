@@ -1,14 +1,13 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,21 +22,17 @@ package org.apache.qpid.server.filter;
 /**
  * A filter performing a comparison of two objects
  */
-public abstract class LogicExpression<T> extends BinaryExpression<T> implements BooleanExpression<T>
-{
+public abstract class LogicExpression<T> extends BinaryExpression<T> implements BooleanExpression<T> {
 
-    public static <E> BooleanExpression<E> createOR(BooleanExpression<E> lvalue, BooleanExpression<E> rvalue)
-    {
+    public static <E> BooleanExpression<E> createOR(BooleanExpression<E> lvalue, BooleanExpression<E> rvalue) {
         return new OrExpression<>(lvalue, rvalue);
     }
 
-    public static <E> BooleanExpression<E> createAND(BooleanExpression<E> lvalue, BooleanExpression<E> rvalue)
-    {
+    public static <E> BooleanExpression<E> createAND(BooleanExpression<E> lvalue, BooleanExpression<E> rvalue) {
         return new AndExpression<>(lvalue, rvalue);
     }
 
-    public LogicExpression(BooleanExpression<T> left, BooleanExpression<T> right)
-    {
+    public LogicExpression(BooleanExpression<T> left, BooleanExpression<T> right) {
         super(left, right);
     }
 
@@ -45,28 +40,23 @@ public abstract class LogicExpression<T> extends BinaryExpression<T> implements 
     public abstract Object evaluate(T message);
 
     @Override
-    public boolean matches(T message)
-    {
+    public boolean matches(T message) {
         Object object = evaluate(message);
 
         return (object != null) && (object == Boolean.TRUE);
     }
 
-    private static class OrExpression<E> extends LogicExpression<E>
-    {
-        public OrExpression(final BooleanExpression<E> lvalue, final BooleanExpression<E> rvalue)
-        {
+    private static class OrExpression<E> extends LogicExpression<E> {
+        public OrExpression(final BooleanExpression<E> lvalue, final BooleanExpression<E> rvalue) {
             super(lvalue, rvalue);
         }
 
         @Override
-        public Object evaluate(E message)
-        {
+        public Object evaluate(E message) {
 
             Boolean lv = (Boolean) getLeft().evaluate(message);
             // Can we do an OR shortcut??
-            if ((lv != null) && lv.booleanValue())
-            {
+            if ((lv != null) && lv.booleanValue()) {
                 return Boolean.TRUE;
             }
 
@@ -76,33 +66,27 @@ public abstract class LogicExpression<T> extends BinaryExpression<T> implements 
         }
 
         @Override
-        public String getExpressionSymbol()
-        {
+        public String getExpressionSymbol() {
             return "OR";
         }
     }
 
-    private static class AndExpression<E> extends LogicExpression<E>
-    {
-        public AndExpression(final BooleanExpression<E> lvalue, final BooleanExpression<E> rvalue)
-        {
+    private static class AndExpression<E> extends LogicExpression<E> {
+        public AndExpression(final BooleanExpression<E> lvalue, final BooleanExpression<E> rvalue) {
             super(lvalue, rvalue);
         }
 
         @Override
-        public Object evaluate(E message)
-        {
+        public Object evaluate(E message) {
 
             Boolean lv = (Boolean) getLeft().evaluate(message);
 
             // Can we do an AND shortcut??
-            if (lv == null)
-            {
+            if (lv == null) {
                 return null;
             }
 
-            if (!lv.booleanValue())
-            {
+            if (!lv.booleanValue()) {
                 return Boolean.FALSE;
             }
 
@@ -112,8 +96,7 @@ public abstract class LogicExpression<T> extends BinaryExpression<T> implements 
         }
 
         @Override
-        public String getExpressionSymbol()
-        {
+        public String getExpressionSymbol() {
             return "AND";
         }
     }

@@ -24,10 +24,8 @@ package org.apache.qpid.server.common;
  * Keys names used within the serverProperties argument of the ConnectionStart
  * method. Property names which start with "qpid." are Qpid specific.
  */
-public final class ServerPropertyNames
-{
-    private ServerPropertyNames()
-    {
+public final class ServerPropertyNames {
+    private ServerPropertyNames() {
     }
 
     /**

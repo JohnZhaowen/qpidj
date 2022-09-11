@@ -20,44 +20,36 @@
  */
 package org.apache.qpid.server.filter;
 
-public final class ArrivalTimeFilter implements MessageFilter
-{
+public final class ArrivalTimeFilter implements MessageFilter {
     private final long _startingFrom;
     private final boolean _startAtTail;
 
-    public ArrivalTimeFilter(final long startingFrom, final boolean startAtTail)
-    {
+    public ArrivalTimeFilter(final long startingFrom, final boolean startAtTail) {
         _startingFrom = startingFrom;
         _startAtTail = startAtTail;
     }
 
     @Override
-    public String getName()
-    {
+    public String getName() {
         return AMQPFilterTypes.REPLAY_PERIOD.toString();
     }
 
     @Override
-    public boolean startAtTail()
-    {
+    public boolean startAtTail() {
         return _startAtTail;
     }
 
     @Override
-    public boolean matches(final Filterable message)
-    {
-        return message.getArrivalTime() >=  _startingFrom;
+    public boolean matches(final Filterable message) {
+        return message.getArrivalTime() >= _startingFrom;
     }
 
     @Override
-    public boolean equals(final Object o)
-    {
-        if (this == o)
-        {
+    public boolean equals(final Object o) {
+        if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass())
-        {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
 
@@ -68,17 +60,15 @@ public final class ArrivalTimeFilter implements MessageFilter
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return (int) (_startingFrom ^ (_startingFrom >>> 32));
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "ArrivalTimeFilter[" +
-               "startingFrom=" + _startingFrom +
-               ", startAtTail=" + _startAtTail +
-               ']';
+                "startingFrom=" + _startingFrom +
+                ", startAtTail=" + _startAtTail +
+                ']';
     }
 }

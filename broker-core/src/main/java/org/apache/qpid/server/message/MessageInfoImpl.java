@@ -27,8 +27,7 @@ import java.util.Map;
 
 import org.apache.qpid.server.model.Consumer;
 
-public class MessageInfoImpl implements MessageInfo
-{
+public class MessageInfoImpl implements MessageInfo {
     private final String _deliveredTo;
     private final Date _arrivalTime;
     private final boolean _persistent;
@@ -56,14 +55,13 @@ public class MessageInfoImpl implements MessageInfo
     private final String _groupId;
     private final String _deliveredToConsumerId;
 
-    public MessageInfoImpl(final MessageInstance instance, final boolean includeHeaders)
-    {
+    public MessageInfoImpl(final MessageInstance instance, final boolean includeHeaders) {
         final ServerMessage message = instance.getMessage();
         final AMQMessageHeader messageHeader = message.getMessageHeader();
 
         MessageInstanceConsumer<?> acquiringConsumer = instance.getAcquiringConsumer();
         _deliveredTo = acquiringConsumer == null ? null : String.valueOf(acquiringConsumer.getIdentifier());
-        _deliveredToConsumerId = (acquiringConsumer instanceof Consumer) ?  String.valueOf(((Consumer<?,?>)acquiringConsumer).getId()) : null;
+        _deliveredToConsumerId = (acquiringConsumer instanceof Consumer) ? String.valueOf(((Consumer<?, ?>) acquiringConsumer).getId()) : null;
         _arrivalTime = message.getArrivalTime() == 0L ? null : new Date(message.getArrivalTime());
         _messageType = message.getMessageType();
         _persistent = message.isPersistent();
@@ -79,12 +77,9 @@ public class MessageInfoImpl implements MessageInfo
         _type = messageHeader.getType();
         _userId = messageHeader.getUserId();
         _groupId = messageHeader.getGroupId();
-        if (instance.isAvailable())
-        {
+        if (instance.isAvailable()) {
             _state = instance.isHeld() ? "Held" : "Available";
-        }
-        else
-        {
+        } else {
             _state = instance.isAcquired() ? "Acquired" : "";
         }
         _deliveryCount = instance.getDeliveryCount();
@@ -95,175 +90,145 @@ public class MessageInfoImpl implements MessageInfo
         _to = message.getTo();
         _notValidBefore = messageHeader.getNotValidBefore() == 0L ? null : new Date(messageHeader.getNotValidBefore());
 
-        if(includeHeaders)
-        {
-            Map<String,Object> headers = new LinkedHashMap<>();
-            for(String headerName : messageHeader.getHeaderNames())
-            {
+        if (includeHeaders) {
+            Map<String, Object> headers = new LinkedHashMap<>();
+            for (String headerName : messageHeader.getHeaderNames()) {
                 headers.put(headerName, messageHeader.getHeader(headerName));
             }
             _headers = Collections.unmodifiableMap(headers);
-        }
-        else
-        {
+        } else {
             _headers = null;
         }
     }
 
 
     @Override
-    public long getId()
-    {
+    public long getId() {
         return _id;
     }
 
     @Override
-    public long getSize()
-    {
+    public long getSize() {
         return _size;
     }
 
     @Override
-    public long getHeaderSize()
-    {
+    public long getHeaderSize() {
         return _headerSize;
     }
 
     @Override
-    public String getMessageType()
-    {
+    public String getMessageType() {
         return _messageType;
     }
 
     @Override
-    public int getDeliveryCount()
-    {
+    public int getDeliveryCount() {
         return _deliveryCount;
     }
 
     @Override
-    public String getState()
-    {
+    public String getState() {
         return _state;
     }
 
     @Override
-    public String getDeliveredTo()
-    {
+    public String getDeliveredTo() {
         return _deliveredTo;
     }
 
     @Override
-    public String getDeliveredToConsumerId()
-    {
+    public String getDeliveredToConsumerId() {
         return _deliveredToConsumerId;
     }
 
     @Override
-    public Date getArrivalTime()
-    {
+    public Date getArrivalTime() {
         return _arrivalTime == null ? null : new Date(_arrivalTime.getTime());
     }
 
     @Override
-    public boolean isPersistent()
-    {
+    public boolean isPersistent() {
         return _persistent;
     }
 
     @Override
-    public String getMessageId()
-    {
+    public String getMessageId() {
         return _messageId;
     }
 
     @Override
-    public Date getExpirationTime()
-    {
+    public Date getExpirationTime() {
         return _expirationTime == null ? null : new Date(_expirationTime.getTime());
     }
 
     @Override
-    public String getApplicationId()
-    {
+    public String getApplicationId() {
         return _applicationId;
     }
 
     @Override
-    public String getCorrelationId()
-    {
+    public String getCorrelationId() {
         return _correlationId;
     }
 
     @Override
-    public String getEncoding()
-    {
+    public String getEncoding() {
         return _encoding;
     }
 
     @Override
-    public String getMimeType()
-    {
+    public String getMimeType() {
         return _mimeType;
     }
 
     @Override
-    public int getPriority()
-    {
+    public int getPriority() {
         return _priority;
     }
 
     @Override
-    public String getReplyTo()
-    {
+    public String getReplyTo() {
         return _replyTo;
     }
 
     @Override
-    public Date getTimestamp()
-    {
+    public Date getTimestamp() {
         return _timestamp == null ? null : new Date(_timestamp.getTime());
     }
 
     @Override
-    public String getType()
-    {
+    public String getType() {
         return _type;
     }
 
     @Override
-    public String getUserId()
-    {
+    public String getUserId() {
         return _userId;
     }
 
     @Override
-    public String getGroupId()
-    {
+    public String getGroupId() {
         return _groupId;
     }
 
     @Override
-    public Map<String, Object> getHeaders()
-    {
+    public Map<String, Object> getHeaders() {
         return _headers;
     }
 
     @Override
-    public Date getNotValidBefore()
-    {
+    public Date getNotValidBefore() {
         return _notValidBefore == null ? null : new Date(_notValidBefore.getTime());
     }
 
     @Override
-    public String getInitialRoutingAddress()
-    {
+    public String getInitialRoutingAddress() {
         return _initialRoutingAddress;
     }
 
     @Override
-    public String getTo()
-    {
+    public String getTo() {
         return _to;
     }
 }

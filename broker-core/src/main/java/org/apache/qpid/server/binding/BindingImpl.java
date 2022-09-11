@@ -24,6 +24,9 @@ import org.apache.qpid.server.model.Binding;
 
 import java.util.Map;
 
+/**
+ * 该类旨在AbstractExchange中使用到，表示当前exchange与哪个destination进行了绑定，绑定对应的bindingKey和arguments
+ */
 public class BindingImpl implements Binding {
     private String _bindingKey;
     private String _destination;

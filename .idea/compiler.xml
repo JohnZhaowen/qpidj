@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="qpid-test-utils" />
+        <module name="qpid-broker-plugins-amqp-msg-conv-0-8-to-1-0" />
+        <module name="qpid-bdbstore-systests" />
+        <module name="qpid-systests-jms-core" />
+        <module name="qpid-perftests-visualisation-jfc" />
+        <module name="qpid-broker" />
+        <module name="protocol-tests-amqp-0-10" />
+        <module name="qpid-broker-plugins-amqp-0-10-protocol" />
+        <module name="qpid-perftests" />
+        <module name="qpid-broker-plugins-amqp-msg-conv-0-10-to-1-0" />
+        <module name="qpid-broker-plugins-memory-store" />
+        <module name="qpid-systests-spawn-admin" />
+        <module name="qpid-broker-plugins-amqp-1-0-protocol" />
+        <module name="qpid-tools" />
+        <module name="qpid-perftests-systests" />
+        <module name="qpid-bdbstore" />
+        <module name="qpid-systests-utils" />
+        <module name="qpid-broker-core" />
+        <module name="qpid-systests-jms_2.0" />
+        <module name="qpid-systests-jms_1.1" />
+        <module name="protocol-tests-amqp-1-0" />
+        <module name="qpid-systests-http" />
+        <module name="qpid-broker-plugins-amqp-1-0-protocol-bdb-link-store" />
+        <module name="qpid-broker-plugins-derby-store" />
+        <module name="qpid-broker-j-developer-guide" />
+        <module name="qpid-broker-plugins-access-control" />
+        <module name="qpid-broker-plugins-jdbc-provider-bone" />
+        <module name="qpid-broker-plugins-jdbc-store" />
+        <module name="protocol-tests-amqp-0-8" />
+        <module name="joramtests" />
+        <module name="qpid-broker-plugins-management-http" />
+        <module name="protocol-tests-core" />
+        <module name="qpid-broker-plugins-management-amqp" />
+        <module name="qpid-java-doc-perftests" />
+        <module name="qpid-tck" />
+        <module name="qpid-systests-end-to-end-conversion-tests" />
+        <module name="qpid-broker-plugins-websocket" />
+        <module name="qpid-broker-plugins-logging-logback" />
+        <module name="qpid-broker-plugins-amqp-1-0-protocol-jdbc-link-store" />
+        <module name="qpid-broker-plugins-amqp-0-8-protocol" />
+        <module name="qpid-broker-plugins-prometheus-exporter" />
+        <module name="qpid-java-doc-broker" />
+        <module name="qpid-broker-plugins-amqp-msg-conv-0-8-to-0-10" />
+        <module name="qpid-broker-plugins-jdbc-logging-logback" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel target="8">
+      <module name="apache-qpid-broker-j" target="1.7" />
+      <module name="joramtests" target="1.8" />
+      <module name="protocol-tests-amqp-0-10" target="1.8" />
+      <module name="protocol-tests-amqp-0-8" target="1.8" />
+      <module name="protocol-tests-amqp-1-0" target="1.8" />
+      <module name="protocol-tests-core" target="1.8" />
+      <module name="qpid-bdbstore" target="1.8" />
+      <module name="qpid-bdbstore-systests" target="1.8" />
+      <module name="qpid-broker" target="1.8" />
+      <module name="qpid-broker-codegen" target="1.8" />
+      <module name="qpid-broker-core" target="1.8" />
+      <module name="qpid-broker-j-developer-guide" target="1.8" />
+      <module name="qpid-broker-parent" target="1.7" />
+      <module name="qpid-broker-plugins-access-control" target="1.8" />
+      <module name="qpid-broker-plugins-amqp-0-10-protocol" target="1.8" />
+      <module name="qpid-broker-plugins-amqp-0-8-protocol" target="1.8" />
+      <module name="qpid-broker-plugins-amqp-1-0-protocol" target="1.8" />
+      <module name="qpid-broker-plugins-amqp-1-0-protocol-bdb-link-store" target="1.8" />
+      <module name="qpid-broker-plugins-amqp-1-0-protocol-jdbc-link-store" target="1.8" />
+      <module name="qpid-broker-plugins-amqp-msg-conv-0-10-to-1-0" target="1.8" />
+      <module name="qpid-broker-plugins-amqp-msg-conv-0-8-to-0-10" target="1.8" />
+      <module name="qpid-broker-plugins-amqp-msg-conv-0-8-to-1-0" target="1.8" />
+      <module name="qpid-broker-plugins-derby-store" target="1.8" />
+      <module name="qpid-broker-plugins-jdbc-logging-logback" target="1.8" />
+      <module name="qpid-broker-plugins-jdbc-provider-bone" target="1.8" />
+      <module name="qpid-broker-plugins-jdbc-store" target="1.8" />
+      <module name="qpid-broker-plugins-logging-logback" target="1.8" />
+      <module name="qpid-broker-plugins-management-amqp" target="1.8" />
+      <module name="qpid-broker-plugins-management-http" target="1.8" />
+      <module name="qpid-broker-plugins-memory-store" target="1.8" />
+      <module name="qpid-broker-plugins-prometheus-exporter" target="1.8" />
+      <module name="qpid-broker-plugins-websocket" target="1.8" />
+      <module name="qpid-java-doc" target="1.7" />
+      <module name="qpid-java-doc-broker" target="1.8" />
+      <module name="qpid-java-doc-perftests" target="1.8" />
+      <module name="qpid-perftests" target="1.8" />
+      <module name="qpid-perftests-systests" target="1.8" />
+      <module name="qpid-perftests-visualisation-jfc" target="1.8" />
+      <module name="qpid-systests-end-to-end-conversion-tests" target="1.8" />
+      <module name="qpid-systests-http" target="1.8" />
+      <module name="qpid-systests-jms-core" target="1.8" />
+      <module name="qpid-systests-jms_1.1" target="1.8" />
+      <module name="qpid-systests-jms_2.0" target="1.8" />
+      <module name="qpid-systests-parent" target="1.7" />
+      <module name="qpid-systests-spawn-admin" target="1.8" />
+      <module name="qpid-systests-utils" target="1.8" />
+      <module name="qpid-tck" target="1.8" />
+      <module name="qpid-test-utils" target="1.8" />
+      <module name="qpid-tools" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="qpid-broker-codegen" options="-proc:none" />
+    </option>
+  </component>
+</project>

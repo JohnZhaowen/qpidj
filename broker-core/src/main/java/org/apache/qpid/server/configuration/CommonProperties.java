@@ -39,13 +39,11 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Centralised record of Qpid common properties.
- *
+ * <p>
  * Qpid build specific information like project name, version number, and source code repository revision number
  * are captured by this class and exposed via public static methods.
- *
  */
-public class CommonProperties
-{
+public class CommonProperties {
     private static final Logger LOGGER = LoggerFactory.getLogger(CommonProperties.class);
 
     /**
@@ -71,27 +69,36 @@ public class CommonProperties
 
     private static final String MANIFEST_HEADER_IMPLEMENTATION_BUILD = "Implementation-Build";
 
-    /** Defines the name of the version suffix property. */
+    /**
+     * Defines the name of the version suffix property.
+     */
     private static final String RELEASE_VERSION_SUFFIX = "qpid.version.suffix";
 
-    /** Defines the default value for all properties that cannot be loaded. */
+    /**
+     * Defines the default value for all properties that cannot be loaded.
+     */
     private static final String DEFAULT = "unknown";
 
-    /** Holds the product name. */
+    /**
+     * Holds the product name.
+     */
     private static final String productName;
 
-    /** Holds the product version. */
+    /**
+     * Holds the product version.
+     */
     private static final String releaseVersion;
 
-    /** Holds the source code revision. */
+    /**
+     * Holds the source code revision.
+     */
     private static final String buildVersion;
 
     private static final Properties properties = new Properties();
 
     private static final String QPID_VERSION = "qpid.version";
 
-    static
-    {
+    static {
         Manifest jarManifest = getJarManifestFor(CommonProperties.class);
         Attributes mainAttributes = jarManifest.getMainAttributes();
 
@@ -105,8 +112,7 @@ public class CommonProperties
 
         boolean loadFromFile = true;
         String initialProperties = System.getProperty("qpid.common_properties_file");
-        if (initialProperties == null)
-        {
+        if (initialProperties == null) {
             initialProperties = "qpid-common.properties";
             loadFromFile = false;
         }
@@ -118,20 +124,17 @@ public class CommonProperties
 
         Set<String> propertyNames = new HashSet<>(properties.stringPropertyNames());
         propertyNames.removeAll(System.getProperties().stringPropertyNames());
-        for (String propName : propertyNames)
-        {
+        for (String propName : propertyNames) {
             System.setProperty(propName, properties.getProperty(propName));
         }
 
     }
 
-    public static void ensureIsLoaded()
-    {
+    public static void ensureIsLoaded() {
         //noop; to call from static initialization blocks of other classes to provoke CommonProperties class initialization
     }
 
-    public static Properties asProperties()
-    {
+    public static Properties asProperties() {
         return new Properties(properties);
     }
 
@@ -140,8 +143,7 @@ public class CommonProperties
      *
      * @return The product name.
      */
-    public static String getProductName()
-    {
+    public static String getProductName() {
         return productName;
     }
 
@@ -150,8 +152,7 @@ public class CommonProperties
      *
      * @return The product version.
      */
-    public static String getReleaseVersion()
-    {
+    public static String getReleaseVersion() {
         return releaseVersion;
     }
 
@@ -160,8 +161,7 @@ public class CommonProperties
      *
      * @return The source code revision.
      */
-    public static String getBuildVersion()
-    {
+    public static String getBuildVersion() {
         return buildVersion;
     }
 
@@ -170,68 +170,48 @@ public class CommonProperties
      *
      * @return All of the version information as a printable string.
      */
-    public static String getVersionString()
-    {
+    public static String getVersionString() {
         return getProductName() + " - " + getReleaseVersion() + " build: " + getBuildVersion();
     }
 
-    private CommonProperties()
-    {
+    private CommonProperties() {
         //no instances
     }
 
-    private static void loadProperties(Properties properties, String resourceLocation, boolean loadFromFile)
-    {
-        try
-        {
+    private static void loadProperties(Properties properties, String resourceLocation, boolean loadFromFile) {
+        try {
             URL propertiesResource;
-            if (loadFromFile)
-            {
+            if (loadFromFile) {
                 propertiesResource = (new File(resourceLocation)).toURI().toURL();
-            }
-            else
-            {
+            } else {
                 propertiesResource = CommonProperties.class.getClassLoader().getResource(resourceLocation);
             }
 
-            if (propertiesResource != null)
-            {
-                try (InputStream propertyStream = propertiesResource.openStream())
-                {
-                    if (propertyStream != null)
-                    {
+            if (propertiesResource != null) {
+                try (InputStream propertyStream = propertiesResource.openStream()) {
+                    if (propertyStream != null) {
                         properties.load(propertyStream);
                     }
-                }
-                catch (IOException e)
-                {
+                } catch (IOException e) {
                     LOGGER.warn("Could not load properties file '{}'.", resourceLocation, e);
                 }
             }
-        }
-        catch (MalformedURLException e)
-        {
+        } catch (MalformedURLException e) {
             LOGGER.warn("Could not open properties file '{}'.", resourceLocation, e);
         }
     }
 
-    private static String getImplementationVersion(final Package p)
-    {
+    private static String getImplementationVersion(final Package p) {
         String version = p.getImplementationVersion();
-        if (version == null)
-        {
+        if (version == null) {
             version = DEFAULT;
             final String path = CommonProperties.class.getPackage().getName().replace(".", "/");
             final String fallbackPath = "/" + path + "/fallback-version.txt";
             final InputStream in = CommonProperties.class.getResourceAsStream(fallbackPath);
-            if (in != null)
-            {
-                try(BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.US_ASCII)))
-                {
+            if (in != null) {
+                try (BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.US_ASCII))) {
                     version = reader.readLine();
-                }
-                catch (Exception e)
-                {
+                } catch (Exception e) {
                     LOGGER.trace("Problem reading version from fallback resource : {} ", fallbackPath, e);
                 }
             }
@@ -239,24 +219,19 @@ public class CommonProperties
         return version;
     }
 
-    private static Manifest getJarManifestFor(final Class<?> clazz)
-    {
+    private static Manifest getJarManifestFor(final Class<?> clazz) {
         final Manifest emptyManifest = new Manifest();
         String className = clazz.getSimpleName() + ".class";
         String classPath = clazz.getResource(className).toString();
-        if (!classPath.startsWith("jar"))
-        {
+        if (!classPath.startsWith("jar")) {
             return emptyManifest;
         }
 
         String manifestPath = classPath.substring(0, classPath.lastIndexOf("!") + 1) +
-                              "/META-INF/MANIFEST.MF";
-        try (InputStream is = new URL(manifestPath).openStream())
-        {
+                "/META-INF/MANIFEST.MF";
+        try (InputStream is = new URL(manifestPath).openStream()) {
             return new Manifest(is);
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             // Ignore
         }
         return emptyManifest;

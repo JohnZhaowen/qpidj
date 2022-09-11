@@ -23,8 +23,7 @@ package org.apache.qpid.server.message;
 import java.util.EnumMap;
 import java.util.Map;
 
-public interface InstanceProperties
-{
+public interface InstanceProperties {
 
     enum Property {
         REDELIVERED,
@@ -36,59 +35,48 @@ public interface InstanceProperties
 
     public Object getProperty(Property prop);
 
-    InstanceProperties EMPTY = new InstanceProperties()
-        {
-            @Override
-            public Object getProperty(final Property prop)
-            {
-                return null;
-            }
-        };
+    InstanceProperties EMPTY = new InstanceProperties() {
+        @Override
+        public Object getProperty(final Property prop) {
+            return null;
+        }
+    };
 
-    class Factory
-    {
-        public static InstanceProperties fromMap(Map<Property, Object> map)
-        {
-            final Map<Property,Object> props = new EnumMap<Property,Object>(map);
+    class Factory {
+        public static InstanceProperties fromMap(Map<Property, Object> map) {
+            final Map<Property, Object> props = new EnumMap<Property, Object>(map);
             return new MapInstanceProperties(props);
         }
 
-        public static Map<Property, Object> asMap(InstanceProperties props)
-        {
-            EnumMap<Property, Object> map = new EnumMap<Property,Object>(Property.class);
+        public static Map<Property, Object> asMap(InstanceProperties props) {
+            EnumMap<Property, Object> map = new EnumMap<Property, Object>(Property.class);
 
-            for(Property prop : Property.values())
-            {
+            for (Property prop : Property.values()) {
                 Object value = props.getProperty(prop);
-                if(value != null)
-                {
-                    map.put(prop,value);
+                if (value != null) {
+                    map.put(prop, value);
                 }
             }
 
             return map;
         }
 
-        public static InstanceProperties copy(InstanceProperties from)
-        {
-            final Map<Property,Object> props = asMap(from);
+        public static InstanceProperties copy(InstanceProperties from) {
+            final Map<Property, Object> props = asMap(from);
 
             return new MapInstanceProperties(props);
 
         }
 
-        private static class MapInstanceProperties implements InstanceProperties
-        {
+        private static class MapInstanceProperties implements InstanceProperties {
             private final Map<Property, Object> _props;
 
-            private MapInstanceProperties(final Map<Property, Object> props)
-            {
+            private MapInstanceProperties(final Map<Property, Object> props) {
                 _props = props;
             }
 
             @Override
-            public Object getProperty(final Property prop)
-            {
+            public Object getProperty(final Property prop) {
                 return _props.get(prop);
             }
         }

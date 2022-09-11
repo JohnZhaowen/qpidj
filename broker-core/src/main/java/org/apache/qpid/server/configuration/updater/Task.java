@@ -20,8 +20,7 @@
  */
 package org.apache.qpid.server.configuration.updater;
 
-public interface Task<V, E extends Exception>
-{
+public interface Task<V, E extends Exception> {
     V execute() throws E;
 
     String getObject();

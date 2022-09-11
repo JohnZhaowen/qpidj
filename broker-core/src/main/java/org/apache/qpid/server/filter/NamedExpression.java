@@ -20,7 +20,6 @@
  */
 package org.apache.qpid.server.filter;
 
-public interface NamedExpression<E> extends Expression<E>
-{
+public interface NamedExpression<E> extends Expression<E> {
     String getName();
 }

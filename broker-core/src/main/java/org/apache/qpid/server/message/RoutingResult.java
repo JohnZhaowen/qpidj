@@ -39,8 +39,7 @@ import org.apache.qpid.server.store.StorableMessageMetaData;
 import org.apache.qpid.server.txn.ServerTransaction;
 import org.apache.qpid.server.util.Action;
 
-public class RoutingResult<M extends ServerMessage<? extends StorableMessageMetaData>>
-{
+public class RoutingResult<M extends ServerMessage<? extends StorableMessageMetaData>> {
     private static final Logger LOGGER = LoggerFactory.getLogger(RoutingResult.class);
 
     private final M _message;
@@ -48,36 +47,27 @@ public class RoutingResult<M extends ServerMessage<? extends StorableMessageMeta
     private final Set<BaseQueue> _queues = new HashSet<>();
     private final Map<BaseQueue, RejectReason> _rejectingRoutableQueues = new HashMap<>();
 
-    public RoutingResult(final M message)
-    {
+    public RoutingResult(final M message) {
         _message = message;
     }
 
-    public void addQueue(BaseQueue q)
-    {
-        if(q.isDeleted())
-        {
-            LOGGER.debug("Attempt to enqueue message onto deleted queue {}",  q.getName());
-        }
-        else
-        {
+    public void addQueue(BaseQueue q) {
+        if (q.isDeleted()) {
+            LOGGER.debug("Attempt to enqueue message onto deleted queue {}", q.getName());
+        } else {
             _queues.add(q);
         }
     }
 
-    private void addQueues(Collection<? extends BaseQueue> queues)
-    {
+    private void addQueues(Collection<? extends BaseQueue> queues) {
         boolean deletedQueues = false;
-        for(BaseQueue q : queues)
-        {
-            if(q.isDeleted())
-            {
-                if(!deletedQueues)
-                {
+        for (BaseQueue q : queues) {
+            if (q.isDeleted()) {
+                if (!deletedQueues) {
                     deletedQueues = true;
                     queues = new ArrayList<>(queues);
                 }
-                LOGGER.debug("Attempt to enqueue message onto deleted queue {}",  q.getName());
+                LOGGER.debug("Attempt to enqueue message onto deleted queue {}", q.getName());
 
                 queues.remove(q);
             }
@@ -86,26 +76,20 @@ public class RoutingResult<M extends ServerMessage<? extends StorableMessageMeta
         _queues.addAll(queues);
     }
 
-    public void add(RoutingResult<M> result)
-    {
+    public void add(RoutingResult<M> result) {
         addQueues(result._queues);
-        for (Map.Entry<BaseQueue, RejectReason> e : result._rejectingRoutableQueues.entrySet())
-        {
-            if (!e.getKey().isDeleted())
-            {
+        for (Map.Entry<BaseQueue, RejectReason> e : result._rejectingRoutableQueues.entrySet()) {
+            if (!e.getKey().isDeleted()) {
                 _rejectingRoutableQueues.put(e.getKey(), e.getValue());
             }
         }
     }
 
-    public void filter(Predicate<BaseQueue> predicate)
-    {
+    public void filter(Predicate<BaseQueue> predicate) {
         Iterator<BaseQueue> iter = _queues.iterator();
-        while(iter.hasNext())
-        {
+        while (iter.hasNext()) {
             BaseQueue queue = iter.next();
-            if(!predicate.test(queue))
-            {
+            if (!predicate.test(queue)) {
                 iter.remove();
                 _rejectingRoutableQueues.remove(queue);
             }
@@ -113,66 +97,50 @@ public class RoutingResult<M extends ServerMessage<? extends StorableMessageMeta
     }
 
     public int send(ServerTransaction txn,
-                    final Action<? super MessageInstance> postEnqueueAction)
-    {
-        if (containsReject(RejectType.LIMIT_EXCEEDED, RejectType.PRECONDITION_FAILED))
-        {
+                    final Action<? super MessageInstance> postEnqueueAction) {
+        if (containsReject(RejectType.LIMIT_EXCEEDED, RejectType.PRECONDITION_FAILED)) {
             return 0;
         }
 
         final BaseQueue[] queues = _queues.toArray(new BaseQueue[_queues.size()]);
-        txn.enqueue(_queues, _message, new ServerTransaction.EnqueueAction()
-        {
+        txn.enqueue(_queues, _message, new ServerTransaction.EnqueueAction() {
             MessageReference _reference = _message.newReference();
 
             @Override
-            public void postCommit(MessageEnqueueRecord... records)
-            {
-                try
-                {
-                    for(int i = 0; i < queues.length; i++)
-                    {
+            public void postCommit(MessageEnqueueRecord... records) {
+                try {
+                    for (int i = 0; i < queues.length; i++) {
                         queues[i].enqueue(_message, postEnqueueAction, records[i]);
                     }
-                }
-                finally
-                {
+                } finally {
                     _reference.release();
                 }
             }
 
             @Override
-            public void onRollback()
-            {
+            public void onRollback() {
                 _reference.release();
             }
         });
         return _queues.size();
     }
 
-    public boolean hasRoutes()
-    {
+    public boolean hasRoutes() {
         return !_queues.isEmpty();
     }
 
-    public void addRejectReason(BaseQueue q, final RejectType rejectType, String reason)
-    {
+    public void addRejectReason(BaseQueue q, final RejectType rejectType, String reason) {
         _rejectingRoutableQueues.put(q, new RejectReason(rejectType, reason));
     }
 
-    public boolean isRejected()
-    {
+    public boolean isRejected() {
         return !_rejectingRoutableQueues.isEmpty();
     }
 
-    public boolean containsReject(RejectType... type)
-    {
-        for(RejectReason reason: _rejectingRoutableQueues.values())
-        {
-            for(RejectType t: type)
-            {
-                if (reason.getRejectType() == t)
-                {
+    public boolean containsReject(RejectType... type) {
+        for (RejectReason reason : _rejectingRoutableQueues.values()) {
+            for (RejectType t : type) {
+                if (reason.getRejectType() == t) {
                     return true;
                 }
             }
@@ -180,13 +148,10 @@ public class RoutingResult<M extends ServerMessage<? extends StorableMessageMeta
         return false;
     }
 
-    public String getRejectReason()
-    {
+    public String getRejectReason() {
         StringBuilder refusalMessages = new StringBuilder();
-        for (RejectReason reason : _rejectingRoutableQueues.values())
-        {
-            if (refusalMessages.length() > 0)
-            {
+        for (RejectReason reason : _rejectingRoutableQueues.values()) {
+            if (refusalMessages.length() > 0) {
                 refusalMessages.append(";");
             }
             refusalMessages.append(reason.getReason());
@@ -194,34 +159,28 @@ public class RoutingResult<M extends ServerMessage<? extends StorableMessageMeta
         return refusalMessages.toString();
     }
 
-    public int getNumberOfRoutes()
-    {
+    public int getNumberOfRoutes() {
         return _queues.size();
     }
 
-    public Collection<BaseQueue> getRoutes()
-    {
+    public Collection<BaseQueue> getRoutes() {
         return Collections.unmodifiableCollection(_queues);
     }
 
-    private static class RejectReason
-    {
+    private static class RejectReason {
         private final RejectType _rejectType;
         private final String _reason;
 
-        private RejectReason(final RejectType rejectType, final String reason)
-        {
+        private RejectReason(final RejectType rejectType, final String reason) {
             _rejectType = rejectType;
             _reason = reason;
         }
 
-        private RejectType getRejectType()
-        {
+        private RejectType getRejectType() {
             return _rejectType;
         }
 
-        public String getReason()
-        {
+        public String getReason() {
             return _reason;
         }
     }

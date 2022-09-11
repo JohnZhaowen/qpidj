@@ -33,137 +33,111 @@ import javax.net.ssl.SSLEngine;
 import javax.net.ssl.SSLEngineResult;
 import javax.net.ssl.SSLException;
 
-public interface QpidByteBuffer extends AutoCloseable
-{
-    static QpidByteBuffer allocate(boolean direct, int size)
-    {
+public interface QpidByteBuffer extends AutoCloseable {
+    static QpidByteBuffer allocate(boolean direct, int size) {
         return QpidByteBufferFactory.allocate(direct, size);
     }
 
-    static QpidByteBuffer allocate(int size)
-    {
+    static QpidByteBuffer allocate(int size) {
         return QpidByteBufferFactory.allocate(size);
     }
 
-    static QpidByteBuffer allocateDirect(int size)
-    {
+    static QpidByteBuffer allocateDirect(int size) {
         return QpidByteBufferFactory.allocateDirect(size);
     }
 
-    static QpidByteBuffer asQpidByteBuffer(InputStream stream) throws IOException
-    {
+    static QpidByteBuffer asQpidByteBuffer(InputStream stream) throws IOException {
         return QpidByteBufferFactory.asQpidByteBuffer(stream);
     }
 
     static SSLEngineResult encryptSSL(SSLEngine engine,
                                       Collection<QpidByteBuffer> buffers,
-                                      QpidByteBuffer dest) throws SSLException
-    {
+                                      QpidByteBuffer dest) throws SSLException {
         return QpidByteBufferFactory.encryptSSL(engine, buffers, dest);
     }
 
 
-    static SSLEngineResult decryptSSL(SSLEngine engine, QpidByteBuffer src, QpidByteBuffer dst) throws SSLException
-    {
+    static SSLEngineResult decryptSSL(SSLEngine engine, QpidByteBuffer src, QpidByteBuffer dst) throws SSLException {
         return QpidByteBufferFactory.decryptSSL(engine, src, dst);
     }
 
-    static QpidByteBuffer inflate(QpidByteBuffer compressedBuffer) throws IOException
-    {
+    static QpidByteBuffer inflate(QpidByteBuffer compressedBuffer) throws IOException {
         return QpidByteBufferFactory.inflate(compressedBuffer);
     }
 
-    static QpidByteBuffer deflate(QpidByteBuffer uncompressedBuffer) throws IOException
-    {
+    static QpidByteBuffer deflate(QpidByteBuffer uncompressedBuffer) throws IOException {
         return QpidByteBufferFactory.deflate(uncompressedBuffer);
     }
 
     static long write(GatheringByteChannel channel, Collection<QpidByteBuffer> qpidByteBuffers)
-            throws IOException
-    {
+            throws IOException {
         return QpidByteBufferFactory.write(channel, qpidByteBuffers);
     }
 
-    static QpidByteBuffer wrap(ByteBuffer wrap)
-    {
+    static QpidByteBuffer wrap(ByteBuffer wrap) {
         return QpidByteBufferFactory.wrap(wrap);
     }
 
-    static QpidByteBuffer wrap(byte[] data)
-    {
+    static QpidByteBuffer wrap(byte[] data) {
         return QpidByteBufferFactory.wrap(data);
     }
 
-    static QpidByteBuffer wrap(byte[] data, int offset, int length)
-    {
+    static QpidByteBuffer wrap(byte[] data, int offset, int length) {
         return QpidByteBufferFactory.wrap(data, offset, length);
     }
 
-    static void initialisePool(int bufferSize, int maxPoolSize, double sparsityFraction)
-    {
+    static void initialisePool(int bufferSize, int maxPoolSize, double sparsityFraction) {
         QpidByteBufferFactory.initialisePool(bufferSize, maxPoolSize, sparsityFraction);
     }
 
     /**
      * Test use only
      */
-    static void deinitialisePool()
-    {
+    static void deinitialisePool() {
         QpidByteBufferFactory.deinitialisePool();
     }
 
-    static void returnToPool(ByteBuffer buffer)
-    {
+    static void returnToPool(ByteBuffer buffer) {
         QpidByteBufferFactory.returnToPool(buffer);
     }
 
-    static int getPooledBufferSize()
-    {
+    static int getPooledBufferSize() {
         return QpidByteBufferFactory.getPooledBufferSize();
     }
 
-    static long getAllocatedDirectMemorySize()
-    {
+    static long getAllocatedDirectMemorySize() {
         return QpidByteBufferFactory.getAllocatedDirectMemorySize();
     }
 
-    static int getNumberOfBuffersInUse()
-    {
+    static int getNumberOfBuffersInUse() {
         return QpidByteBufferFactory.getNumberOfBuffersInUse();
     }
 
-    static int getNumberOfBuffersInPool()
-    {
+    static int getNumberOfBuffersInPool() {
         return QpidByteBufferFactory.getNumberOfBuffersInPool();
     }
 
-    static long getPooledBufferDisposalCounter()
-    {
+    static long getPooledBufferDisposalCounter() {
         return QpidByteBufferFactory.getPooledBufferDisposalCounter();
     }
 
-    static QpidByteBuffer reallocateIfNecessary(QpidByteBuffer data)
-    {
+    static QpidByteBuffer reallocateIfNecessary(QpidByteBuffer data) {
         return QpidByteBufferFactory.reallocateIfNecessary(data);
     }
 
-    static QpidByteBuffer concatenate(List<QpidByteBuffer> buffers)
-    {
+    static QpidByteBuffer concatenate(List<QpidByteBuffer> buffers) {
         return QpidByteBufferFactory.concatenate(buffers);
     }
 
-    static QpidByteBuffer concatenate(QpidByteBuffer... buffers)
-    {
+    static QpidByteBuffer concatenate(QpidByteBuffer... buffers) {
         return QpidByteBufferFactory.concatenate(buffers);
     }
 
-    static QpidByteBuffer emptyQpidByteBuffer()
-    {
+    static QpidByteBuffer emptyQpidByteBuffer() {
         return QpidByteBufferFactory.emptyQpidByteBuffer();
     }
 
-    static ThreadFactory createQpidByteBufferTrackingThreadFactory(ThreadFactory factory)
-    {
+    static ThreadFactory createQpidByteBufferTrackingThreadFactory(ThreadFactory factory) {
         return QpidByteBufferFactory.createQpidByteBufferTrackingThreadFactory(factory);
     }
 

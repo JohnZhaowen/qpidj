@@ -16,8 +16,7 @@
  */
 package org.apache.qpid.server.filter;
 
-public interface FilterableMessage
-{
+public interface FilterableMessage {
 
     boolean isPersistent();
 

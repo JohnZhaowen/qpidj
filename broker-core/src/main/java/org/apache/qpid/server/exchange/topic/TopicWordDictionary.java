@@ -24,9 +24,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 public class TopicWordDictionary {
-    private final ConcurrentMap<String, TopicWord> _dictionary =
-            new ConcurrentHashMap<String, TopicWord>();
+    //name --> new TopicWord(name)
+    private final ConcurrentMap<String, TopicWord> _dictionary = new ConcurrentHashMap<>();
 
+    //默认存储了 * 和 #
     public TopicWordDictionary() {
         _dictionary.put("*", TopicWord.ANY_WORD);
         _dictionary.put("#", TopicWord.WILDCARD_WORD);
@@ -40,12 +41,19 @@ public class TopicWordDictionary {
         return word;
     }
 
-
+    //没有时，返回*
     public TopicWord getWord(String name) {
         TopicWord word = _dictionary.get(name);
         if (word == null) {
             word = TopicWord.ANY_WORD;
         }
         return word;
+    }
+
+    public static void main(String[] args) {
+        TopicWordDictionary twd = new TopicWordDictionary();
+        TopicWord tw = twd.getOrCreateWord("a.b.c");
+        System.out.println(twd.getWord("a.b.d"));
+//        System.out.println(tw);
     }
 }

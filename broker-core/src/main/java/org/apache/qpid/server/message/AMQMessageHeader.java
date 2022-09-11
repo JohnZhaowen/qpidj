@@ -23,8 +23,7 @@ package org.apache.qpid.server.message;
 import java.util.Collection;
 import java.util.Set;
 
-public interface AMQMessageHeader
-{
+public interface AMQMessageHeader {
     String getCorrelationId();
 
     long getExpiration();

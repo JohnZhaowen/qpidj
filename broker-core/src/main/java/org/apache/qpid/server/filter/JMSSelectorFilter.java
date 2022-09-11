@@ -30,15 +30,13 @@ import org.apache.qpid.server.plugin.PluggableService;
 
 
 @PluggableService
-public class JMSSelectorFilter implements MessageFilter
-{
+public class JMSSelectorFilter implements MessageFilter {
     private static final Logger LOGGER = LoggerFactory.getLogger(JMSSelectorFilter.class);
 
     private String _selector;
     private BooleanExpression _matcher;
 
-    public JMSSelectorFilter(String selector) throws ParseException, TokenMgrError, SelectorParsingException
-    {
+    public JMSSelectorFilter(String selector) throws ParseException, TokenMgrError, SelectorParsingException {
         _selector = selector;
         SelectorParser<FilterableMessage> selectorParser = new SelectorParser<>();
         selectorParser.setPropertyExpressionFactory(JMSMessagePropertyExpression.FACTORY);
@@ -46,43 +44,35 @@ public class JMSSelectorFilter implements MessageFilter
     }
 
     @Override
-    public String getName()
-    {
+    public String getName() {
         return AMQPFilterTypes.JMS_SELECTOR.toString();
     }
 
     @Override
-    public boolean matches(Filterable message)
-    {
+    public boolean matches(Filterable message) {
 
         boolean match = _matcher.matches(message);
-        if(LOGGER.isDebugEnabled())
-        {
+        if (LOGGER.isDebugEnabled()) {
             LOGGER.debug(message + " match(" + match + ") selector(" + System.identityHashCode(_selector) + "):" + _selector);
         }
         return match;
     }
 
     @Override
-    public boolean startAtTail()
-    {
+    public boolean startAtTail() {
         return false;
     }
 
-    public String getSelector()
-    {
+    public String getSelector() {
         return _selector;
     }
 
     @Override
-    public boolean equals(final Object o)
-    {
-        if (this == o)
-        {
+    public boolean equals(final Object o) {
+        if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass())
-        {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
 
@@ -93,16 +83,14 @@ public class JMSSelectorFilter implements MessageFilter
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return getSelector().hashCode();
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "JMSSelectorFilter[" +
-               "selector='" + _selector + '\'' +
-               ']';
+                "selector='" + _selector + '\'' +
+                ']';
     }
 }

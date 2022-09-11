@@ -14,9 +14,9 @@
  *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
  *  KIND, either express or implied.  See the License for the
  *  specific language governing permissions and limitations
- *  under the License.    
+ *  under the License.
  *
- * 
+ *
  */
 package org.apache.qpid.server.filter;
 
@@ -24,86 +24,68 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class FilterManager
-{
+public class FilterManager {
 
     private final Map<String, MessageFilter> _filters = new ConcurrentHashMap<>();
 
-    public FilterManager()
-    {
+    public FilterManager() {
     }
 
-    public void add(String name, MessageFilter filter)
-    {
+    public void add(String name, MessageFilter filter) {
         _filters.put(name, filter);
     }
 
-    public boolean allAllow(Filterable msg)
-    {
-        for (MessageFilter filter : _filters.values())
-        {
-            if (!filter.matches(msg))
-            {
+    public boolean allAllow(Filterable msg) {
+        for (MessageFilter filter : _filters.values()) {
+            if (!filter.matches(msg)) {
                 return false;
             }
         }
         return true;
     }
 
-    public boolean startAtTail()
-    {
-        for(MessageFilter filter : _filters.values())
-        {
-            if(filter.startAtTail())
-            {
+    public boolean startAtTail() {
+        for (MessageFilter filter : _filters.values()) {
+            if (filter.startAtTail()) {
                 return true;
             }
         }
         return false;
     }
 
-    public Iterator<MessageFilter> filters()
-    {
+    public Iterator<MessageFilter> filters() {
         return _filters.values().iterator();
     }
 
-    public boolean hasFilters()
-    {
+    public boolean hasFilters() {
         return !_filters.isEmpty();
     }
 
-    public boolean hasFilter(final String name)
-    {
+    public boolean hasFilter(final String name) {
         return _filters.containsKey(name);
     }
 
-    public boolean hasFilter(final MessageFilter filter)
-    {
+    public boolean hasFilter(final MessageFilter filter) {
         return _filters.containsValue(filter);
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return _filters.toString();
     }
 
     @Override
-    public boolean equals(final Object o)
-    {
-        if (this == o)
-        {
+    public boolean equals(final Object o) {
+        if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass())
-        {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
 
         final FilterManager that = (FilterManager) o;
 
-        if (_filters != null ? !_filters.equals(that._filters) : that._filters != null)
-        {
+        if (_filters != null ? !_filters.equals(that._filters) : that._filters != null) {
             return false;
         }
 
@@ -111,8 +93,7 @@ public class FilterManager
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return _filters != null ? _filters.hashCode() : 0;
     }
 }

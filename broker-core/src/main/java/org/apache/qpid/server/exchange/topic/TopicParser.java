@@ -98,8 +98,7 @@ public class TopicParser {
                 newStateMachine = startingStateMachine.mergeStateMachines(createStateMachine(bindingKey, result));
             }
 
-        }
-        while (!_stateMachine.compareAndSet(startingStateMachine, newStateMachine));
+        } while (!_stateMachine.compareAndSet(startingStateMachine, newStateMachine));
 
     }
 
@@ -355,7 +354,7 @@ public class TopicParser {
         for (String token : tokens) {
             TopicWord nextWord = _dictionary.getOrCreateWord(token);
             if (previousWord == TopicWord.WILDCARD_WORD) {
-
+                //#.# == #
                 if (nextWord == TopicWord.WILDCARD_WORD) {
                     // consecutive wildcards can be merged
                     // i.e. subsequent wildcards can be discarded

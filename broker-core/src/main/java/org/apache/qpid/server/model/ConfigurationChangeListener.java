@@ -20,12 +20,11 @@
  */
 package org.apache.qpid.server.model;
 
-public interface ConfigurationChangeListener
-{
+public interface ConfigurationChangeListener {
     /**
      * Inform the listener that the passed object has changed state
      *
-     * @param object the object whose state has changed
+     * @param object   the object whose state has changed
      * @param oldState the state prior to the change
      * @param newState the state after the change
      */
@@ -39,11 +38,12 @@ public interface ConfigurationChangeListener
 
     /**
      * Inform the listener that several attributes of an object are about to change.
-     *
+     * <p>
      * The listener may choose to defer any action in attributeSet until bulkChangeEnd is called.
      * There should not be multiple calls to bulkChangeStart without matching bulkChangeEnd calls in between.
      * There should be no calls to attributeSet for objects other than the one passed as an argument until bulkChangeEnd is called.
      * There should be no call to childRemove between bulkChangeStart/-End calls.
+     *
      * @param object the object whose state is about to change
      * @see #bulkChangeEnd
      */
@@ -51,9 +51,10 @@ public interface ConfigurationChangeListener
 
     /**
      * Inform the listener that the changes announced by bulkChangeStart are complete.
-     *
+     * <p>
      * The listener who has chosen to defer any action in attributeSet after bulkChangeStart was called should now act on those changes.
      * A call to bulkChangeEnd without a prior matching call to bulkChangeStart should have no effect.
+     *
      * @param object the object whose state has changed
      * @see #bulkChangeStart
      */

@@ -20,7 +20,6 @@
  */
 package org.apache.qpid.server.filter;
 
-public interface PropertyExpressionFactory<E>
-{
+public interface PropertyExpressionFactory<E> {
     PropertyExpression<E> createPropertyExpression(String value);
 }

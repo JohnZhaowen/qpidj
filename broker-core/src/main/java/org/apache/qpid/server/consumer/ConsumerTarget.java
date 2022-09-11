@@ -28,8 +28,7 @@ import org.apache.qpid.server.message.ServerMessage;
 import org.apache.qpid.server.model.Queue;
 import org.apache.qpid.server.session.AMQPSession;
 
-public interface ConsumerTarget<T extends ConsumerTarget<T>>
-{
+public interface ConsumerTarget<T extends ConsumerTarget<T>> {
     void acquisitionRemoved(MessageInstance node);
 
     boolean processPending();
@@ -44,8 +43,7 @@ public interface ConsumerTarget<T extends ConsumerTarget<T>>
 
     boolean isNotifyWorkDesired();
 
-    enum State
-    {
+    enum State {
         OPEN, CLOSED
     }
 
@@ -59,7 +57,7 @@ public interface ConsumerTarget<T extends ConsumerTarget<T>>
 
     long getUnacknowledgedMessages();
 
-    AMQPSession<?,T> getSession();
+    AMQPSession<?, T> getSession();
 
     void send(final MessageInstanceConsumer<T> consumer, MessageInstance entry, boolean batch);
 

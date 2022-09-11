@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/apache-qpid-broker-j/apache-qpid-broker-j.iml" filepath="$PROJECT_DIR$/apache-qpid-broker-j/apache-qpid-broker-j.iml" />
+      <module fileurl="file://$PROJECT_DIR$/joramtests/joramtests.iml" filepath="$PROJECT_DIR$/joramtests/joramtests.iml" />
+      <module fileurl="file://$PROJECT_DIR$/systests/protocol-tests-amqp-0-10/protocol-tests-amqp-0-10.iml" filepath="$PROJECT_DIR$/systests/protocol-tests-amqp-0-10/protocol-tests-amqp-0-10.iml" />
+      <module fileurl="file://$PROJECT_DIR$/systests/protocol-tests-amqp-0-8/protocol-tests-amqp-0-8.iml" filepath="$PROJECT_DIR$/systests/protocol-tests-amqp-0-8/protocol-tests-amqp-0-8.iml" />
+      <module fileurl="file://$PROJECT_DIR$/systests/protocol-tests-amqp-1-0/protocol-tests-amqp-1-0.iml" filepath="$PROJECT_DIR$/systests/protocol-tests-amqp-1-0/protocol-tests-amqp-1-0.iml" />
+      <module fileurl="file://$PROJECT_DIR$/systests/protocol-tests-core/protocol-tests-core.iml" filepath="$PROJECT_DIR$/systests/protocol-tests-core/protocol-tests-core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/bdbstore/qpid-bdbstore.iml" filepath="$PROJECT_DIR$/bdbstore/qpid-bdbstore.iml" />
+      <module fileurl="file://$PROJECT_DIR$/bdbstore/systests/qpid-bdbstore-systests.iml" filepath="$PROJECT_DIR$/bdbstore/systests/qpid-bdbstore-systests.iml" />
+      <module fileurl="file://$PROJECT_DIR$/broker/qpid-broker.iml" filepath="$PROJECT_DIR$/broker/qpid-broker.iml" />
+      <module fileurl="file://$PROJECT_DIR$/broker-codegen/qpid-broker-codegen.iml" filepath="$PROJECT_DIR$/broker-codegen/qpid-broker-codegen.iml" />
+      <module fileurl="file://$PROJECT_DIR$/broker-core/qpid-broker-core.iml" filepath="$PROJECT_DIR$/broker-core/qpid-broker-core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/doc/developer-guide/qpid-broker-j-developer-guide.iml" filepath="$PROJECT_DIR$/doc/developer-guide/qpid-broker-j-developer-guide.iml" />
+      <module fileurl="file://$PROJECT_DIR$/qpid-broker-parent.iml" filepath="$PROJECT_DIR$/qpid-broker-parent.iml" />
+      <module fileurl="file://$PROJECT_DIR$/broker-plugins/access-control/qpid-broker-plugins-access-control.iml" filepath="$PROJECT_DIR$/broker-plugins/access-control/qpid-broker-plugins-access-control.iml" />
+      <module fileurl="file://$PROJECT_DIR$/broker-plugins/amqp-0-10-protocol/qpid-broker-plugins-amqp-0-10-protocol.iml" filepath="$PROJECT_DIR$/broker-plugins/amqp-0-10-protocol/qpid-broker-plugins-amqp-0-10-protocol.iml" />
+      <module fileurl="file://$PROJECT_DIR$/broker-plugins/amqp-0-8-protocol/qpid-broker-plugins-amqp-0-8-protocol.iml" filepath="$PROJECT_DIR$/broker-plugins/amqp-0-8-protocol/qpid-broker-plugins-amqp-0-8-protocol.iml" />
+      <module fileurl="file://$PROJECT_DIR$/broker-plugins/amqp-1-0-protocol/qpid-broker-plugins-amqp-1-0-protocol.iml" filepath="$PROJECT_DIR$/broker-plugins/amqp-1-0-protocol/qpid-broker-plugins-amqp-1-0-protocol.iml" />
+      <module fileurl="file://$PROJECT_DIR$/broker-plugins/amqp-1-0-bdb-store/qpid-broker-plugins-amqp-1-0-protocol-bdb-link-store.iml" filepath="$PROJECT_DIR$/broker-plugins/amqp-1-0-bdb-store/qpid-broker-plugins-amqp-1-0-protocol-bdb-link-store.iml" />
+      <module fileurl="file://$PROJECT_DIR$/broker-plugins/amqp-1-0-jdbc-store/qpid-broker-plugins-amqp-1-0-protocol-jdbc-link-store.iml" filepath="$PROJECT_DIR$/broker-plugins/amqp-1-0-jdbc-store/qpid-broker-plugins-amqp-1-0-protocol-jdbc-link-store.iml" />
+      <module fileurl="file://$PROJECT_DIR$/broker-plugins/amqp-msg-conv-0-10-to-1-0/qpid-broker-plugins-amqp-msg-conv-0-10-to-1-0.iml" filepath="$PROJECT_DIR$/broker-plugins/amqp-msg-conv-0-10-to-1-0/qpid-broker-plugins-amqp-msg-conv-0-10-to-1-0.iml" />
+      <module fileurl="file://$PROJECT_DIR$/broker-plugins/amqp-msg-conv-0-8-to-0-10/qpid-broker-plugins-amqp-msg-conv-0-8-to-0-10.iml" filepath="$PROJECT_DIR$/broker-plugins/amqp-msg-conv-0-8-to-0-10/qpid-broker-plugins-amqp-msg-conv-0-8-to-0-10.iml" />
+      <module fileurl="file://$PROJECT_DIR$/broker-plugins/amqp-msg-conv-0-8-to-1-0/qpid-broker-plugins-amqp-msg-conv-0-8-to-1-0.iml" filepath="$PROJECT_DIR$/broker-plugins/amqp-msg-conv-0-8-to-1-0/qpid-broker-plugins-amqp-msg-conv-0-8-to-1-0.iml" />
+      <module fileurl="file://$PROJECT_DIR$/broker-plugins/derby-store/qpid-broker-plugins-derby-store.iml" filepath="$PROJECT_DIR$/broker-plugins/derby-store/qpid-broker-plugins-derby-store.iml" />
+      <module fileurl="file://$PROJECT_DIR$/broker-plugins/jdbc-logging-logback/qpid-broker-plugins-jdbc-logging-logback.iml" filepath="$PROJECT_DIR$/broker-plugins/jdbc-logging-logback/qpid-broker-plugins-jdbc-logging-logback.iml" />
+      <module fileurl="file://$PROJECT_DIR$/broker-plugins/jdbc-provider-bone/qpid-broker-plugins-jdbc-provider-bone.iml" filepath="$PROJECT_DIR$/broker-plugins/jdbc-provider-bone/qpid-broker-plugins-jdbc-provider-bone.iml" />
+      <module fileurl="file://$PROJECT_DIR$/broker-plugins/jdbc-store/qpid-broker-plugins-jdbc-store.iml" filepath="$PROJECT_DIR$/broker-plugins/jdbc-store/qpid-broker-plugins-jdbc-store.iml" />
+      <module fileurl="file://$PROJECT_DIR$/broker-plugins/logging-logback/qpid-broker-plugins-logging-logback.iml" filepath="$PROJECT_DIR$/broker-plugins/logging-logback/qpid-broker-plugins-logging-logback.iml" />
+      <module fileurl="file://$PROJECT_DIR$/broker-plugins/management-amqp/qpid-broker-plugins-management-amqp.iml" filepath="$PROJECT_DIR$/broker-plugins/management-amqp/qpid-broker-plugins-management-amqp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/broker-plugins/management-http/qpid-broker-plugins-management-http.iml" filepath="$PROJECT_DIR$/broker-plugins/management-http/qpid-broker-plugins-management-http.iml" />
+      <module fileurl="file://$PROJECT_DIR$/broker-plugins/memory-store/qpid-broker-plugins-memory-store.iml" filepath="$PROJECT_DIR$/broker-plugins/memory-store/qpid-broker-plugins-memory-store.iml" />
+      <module fileurl="file://$PROJECT_DIR$/broker-plugins/prometheus-exporter/qpid-broker-plugins-prometheus-exporter.iml" filepath="$PROJECT_DIR$/broker-plugins/prometheus-exporter/qpid-broker-plugins-prometheus-exporter.iml" />
+      <module fileurl="file://$PROJECT_DIR$/broker-plugins/websocket/qpid-broker-plugins-websocket.iml" filepath="$PROJECT_DIR$/broker-plugins/websocket/qpid-broker-plugins-websocket.iml" />
+      <module fileurl="file://$PROJECT_DIR$/doc/qpid-java-doc.iml" filepath="$PROJECT_DIR$/doc/qpid-java-doc.iml" />
+      <module fileurl="file://$PROJECT_DIR$/doc/java-broker/qpid-java-doc-broker.iml" filepath="$PROJECT_DIR$/doc/java-broker/qpid-java-doc-broker.iml" />
+      <module fileurl="file://$PROJECT_DIR$/doc/java-perftests/qpid-java-doc-perftests.iml" filepath="$PROJECT_DIR$/doc/java-perftests/qpid-java-doc-perftests.iml" />
+      <module fileurl="file://$PROJECT_DIR$/perftests/qpid-perftests.iml" filepath="$PROJECT_DIR$/perftests/qpid-perftests.iml" />
+      <module fileurl="file://$PROJECT_DIR$/qpid-perftests-systests/qpid-perftests-systests.iml" filepath="$PROJECT_DIR$/qpid-perftests-systests/qpid-perftests-systests.iml" />
+      <module fileurl="file://$PROJECT_DIR$/perftests/visualisation-jfc/qpid-perftests-visualisation-jfc.iml" filepath="$PROJECT_DIR$/perftests/visualisation-jfc/qpid-perftests-visualisation-jfc.iml" />
+      <module fileurl="file://$PROJECT_DIR$/systests/end-to-end-conversion-tests/qpid-systests-end-to-end-conversion-tests.iml" filepath="$PROJECT_DIR$/systests/end-to-end-conversion-tests/qpid-systests-end-to-end-conversion-tests.iml" />
+      <module fileurl="file://$PROJECT_DIR$/systests/qpid-systests-http-management/qpid-systests-http.iml" filepath="$PROJECT_DIR$/systests/qpid-systests-http-management/qpid-systests-http.iml" />
+      <module fileurl="file://$PROJECT_DIR$/systests/qpid-systests-jms-core/qpid-systests-jms-core.iml" filepath="$PROJECT_DIR$/systests/qpid-systests-jms-core/qpid-systests-jms-core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/systests/qpid-systests-jms_1.1/qpid-systests-jms_1.1.iml" filepath="$PROJECT_DIR$/systests/qpid-systests-jms_1.1/qpid-systests-jms_1.1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/systests/qpid-systests-jms_2.0/qpid-systests-jms_2.0.iml" filepath="$PROJECT_DIR$/systests/qpid-systests-jms_2.0/qpid-systests-jms_2.0.iml" />
+      <module fileurl="file://$PROJECT_DIR$/qpid-systests-parent/qpid-systests-parent.iml" filepath="$PROJECT_DIR$/qpid-systests-parent/qpid-systests-parent.iml" />
+      <module fileurl="file://$PROJECT_DIR$/systests/qpid-systests-spawn-admin/qpid-systests-spawn-admin.iml" filepath="$PROJECT_DIR$/systests/qpid-systests-spawn-admin/qpid-systests-spawn-admin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/systests/systests-utils/qpid-systests-utils.iml" filepath="$PROJECT_DIR$/systests/systests-utils/qpid-systests-utils.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tck/qpid-tck.iml" filepath="$PROJECT_DIR$/tck/qpid-tck.iml" />
+      <module fileurl="file://$PROJECT_DIR$/qpid-test-utils/qpid-test-utils.iml" filepath="$PROJECT_DIR$/qpid-test-utils/qpid-test-utils.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tools/qpid-tools.iml" filepath="$PROJECT_DIR$/tools/qpid-tools.iml" />
+    </modules>
+  </component>
+</project>

@@ -48,9 +48,9 @@ class TopicExchangeImpl extends AbstractExchange<TopicExchangeImpl> implements T
     private static final Logger LOGGER = LoggerFactory.getLogger(TopicExchangeImpl.class);
 
     private final TopicParser _parser = new TopicParser();
-
+    //routingKey --> TopicExchangeResult
     private final Map<String, TopicExchangeResult> _topicExchangeResults = new ConcurrentHashMap<>();
-
+    //binding和attributes的对应关系
     private final Map<BindingIdentifier, Map<String, Object>> _bindings = new HashMap<>();
 
     @ManagedObjectFactoryConstructor

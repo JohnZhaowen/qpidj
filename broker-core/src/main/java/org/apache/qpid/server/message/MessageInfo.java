@@ -27,32 +27,56 @@ import org.apache.qpid.server.model.ManagedAttributeValue;
 import org.apache.qpid.server.model.ManagedAttributeValueType;
 
 @ManagedAttributeValueType
-public interface MessageInfo extends ManagedAttributeValue
-{
+public interface MessageInfo extends ManagedAttributeValue {
     long getId();
+
     long getSize();
+
     long getHeaderSize();
+
     String getMessageType();
+
     int getDeliveryCount();
+
     String getState();
+
     String getDeliveredTo();
+
     String getDeliveredToConsumerId();
+
     Date getArrivalTime();
+
     boolean isPersistent();
+
     String getMessageId();
+
     Date getExpirationTime();
+
     String getApplicationId();
+
     String getCorrelationId();
+
     String getEncoding();
+
     String getMimeType();
+
     int getPriority();
+
     String getReplyTo();
+
     Date getTimestamp();
+
     String getType();
+
     String getUserId();
+
     String getGroupId();
-    Map<String,Object> getHeaders();
+
+    Map<String, Object> getHeaders();
+
     Date getNotValidBefore();
+
     String getInitialRoutingAddress();
+
     String getTo();
 }

@@ -26,16 +26,14 @@ import java.util.concurrent.Executor;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
-public interface TaskExecutor extends Executor
-{
-    interface Factory
-    {
+public interface TaskExecutor extends Executor {
+    interface Factory {
         TaskExecutor newInstance();
+
         TaskExecutor newInstance(String name, PrincipalAccessor principalAccessor);
     }
 
-    interface PrincipalAccessor
-    {
+    interface PrincipalAccessor {
         Principal getPrincipal();
     }
 

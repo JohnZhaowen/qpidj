@@ -32,36 +32,31 @@ import org.slf4j.LoggerFactory;
 /**
  * Represents a property  expression
  */
-public class JMSMessagePropertyExpression implements PropertyExpression<FilterableMessage>
-{
-    public static final PropertyExpressionFactory<FilterableMessage> FACTORY = new PropertyExpressionFactory<FilterableMessage>()
-    {
+public class JMSMessagePropertyExpression implements PropertyExpression<FilterableMessage> {
+    public static final PropertyExpressionFactory<FilterableMessage> FACTORY = new PropertyExpressionFactory<FilterableMessage>() {
         @Override
-        public PropertyExpression<FilterableMessage> createPropertyExpression(final String value)
-        {
+        public PropertyExpression<FilterableMessage> createPropertyExpression(final String value) {
             return new JMSMessagePropertyExpression(value);
         }
     };
 
     // Constants - defined the same as JMS
-    private static enum JMSDeliveryMode { NON_PERSISTENT, PERSISTENT }
+    private static enum JMSDeliveryMode {NON_PERSISTENT, PERSISTENT}
 
     private static final int DEFAULT_PRIORITY = 4;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JMSMessagePropertyExpression.class);
 
     private static final HashMap<String, Expression> JMS_PROPERTY_EXPRESSIONS = new HashMap<String, Expression>();
-    static
-    {
-        JMS_PROPERTY_EXPRESSIONS.put("JMSDestination", new Expression<FilterableMessage>()
-                                     {
-                                         @Override
-                                         public Object evaluate(FilterableMessage message)
-                                         {
-                                             //TODO
-                                             return null;
-                                         }
-                                     });
+
+    static {
+        JMS_PROPERTY_EXPRESSIONS.put("JMSDestination", new Expression<FilterableMessage>() {
+            @Override
+            public Object evaluate(FilterableMessage message) {
+                //TODO
+                return null;
+            }
+        });
         JMS_PROPERTY_EXPRESSIONS.put("JMSReplyTo", new ReplyToExpression());
 
         JMS_PROPERTY_EXPRESSIONS.put("JMSType", new TypeExpression());
@@ -80,47 +75,38 @@ public class JMSMessagePropertyExpression implements PropertyExpression<Filterab
 
         JMS_PROPERTY_EXPRESSIONS.put("JMSExpiration", new ExpirationExpression());
 
-        JMS_PROPERTY_EXPRESSIONS.put("JMSRedelivered", new Expression<FilterableMessage>()
-                                     {
-                                         @Override
-                                         public Object evaluate(FilterableMessage message)
-                                         {
-                                             return message.isRedelivered();
-                                         }
-                                     });
+        JMS_PROPERTY_EXPRESSIONS.put("JMSRedelivered", new Expression<FilterableMessage>() {
+            @Override
+            public Object evaluate(FilterableMessage message) {
+                return message.isRedelivered();
+            }
+        });
     }
 
     private final String name;
     private final Expression jmsPropertyExpression;
 
-    public boolean outerTest()
-    {
+    public boolean outerTest() {
         return false;
     }
 
-    private JMSMessagePropertyExpression(String name)
-    {
+    private JMSMessagePropertyExpression(String name) {
         this.name = name;
 
         jmsPropertyExpression = JMS_PROPERTY_EXPRESSIONS.get(name);
     }
 
     @Override
-    public Object evaluate(FilterableMessage message)
-    {
+    public Object evaluate(FilterableMessage message) {
 
-        if (jmsPropertyExpression != null)
-        {
+        if (jmsPropertyExpression != null) {
             return jmsPropertyExpression.evaluate(message);
-        }
-        else
-        {
+        } else {
             return message.getHeader(name);
         }
     }
 
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
@@ -128,8 +114,7 @@ public class JMSMessagePropertyExpression implements PropertyExpression<Filterab
      * @see Object#toString()
      */
     @Override
-    public String toString()
-    {
+    public String toString() {
         return name;
     }
 
@@ -137,8 +122,7 @@ public class JMSMessagePropertyExpression implements PropertyExpression<Filterab
      * @see Object#hashCode()
      */
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return name.hashCode();
     }
 
@@ -146,11 +130,9 @@ public class JMSMessagePropertyExpression implements PropertyExpression<Filterab
      * @see Object#equals(Object)
      */
     @Override
-    public boolean equals(Object o)
-    {
+    public boolean equals(Object o) {
 
-        if ((o == null) || !this.getClass().equals(o.getClass()))
-        {
+        if ((o == null) || !this.getClass().equals(o.getClass())) {
             return false;
         }
 
@@ -158,60 +140,49 @@ public class JMSMessagePropertyExpression implements PropertyExpression<Filterab
 
     }
 
-    private static class ReplyToExpression implements Expression<FilterableMessage>
-    {
+    private static class ReplyToExpression implements Expression<FilterableMessage> {
         @Override
-        public Object evaluate(FilterableMessage message)
-        {
+        public Object evaluate(FilterableMessage message) {
             String replyTo = message.getReplyTo();
             return replyTo;
         }
 
     }
 
-    private static class TypeExpression implements Expression<FilterableMessage>
-    {
+    private static class TypeExpression implements Expression<FilterableMessage> {
         @Override
-        public Object evaluate(FilterableMessage message)
-        {
+        public Object evaluate(FilterableMessage message) {
 
-                String type = message.getType();
-                return type;
+            String type = message.getType();
+            return type;
 
         }
     }
 
-    private static class DeliveryModeExpression implements Expression<FilterableMessage>
-    {
+    private static class DeliveryModeExpression implements Expression<FilterableMessage> {
         @Override
-        public Object evaluate(FilterableMessage message)
-        {
-                JMSDeliveryMode mode = message.isPersistent() ? JMSDeliveryMode.PERSISTENT :
-                                                                JMSDeliveryMode.NON_PERSISTENT;
-                if (LOGGER.isDebugEnabled())
-                {
-                    LOGGER.debug("JMSDeliveryMode is :" + mode);
-                }
+        public Object evaluate(FilterableMessage message) {
+            JMSDeliveryMode mode = message.isPersistent() ? JMSDeliveryMode.PERSISTENT :
+                    JMSDeliveryMode.NON_PERSISTENT;
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("JMSDeliveryMode is :" + mode);
+            }
 
-                return mode.toString();
+            return mode.toString();
         }
     }
 
-    private static class PriorityExpression implements Expression<FilterableMessage>
-    {
+    private static class PriorityExpression implements Expression<FilterableMessage> {
         @Override
-        public Object evaluate(FilterableMessage message)
-        {
+        public Object evaluate(FilterableMessage message) {
             byte priority = message.getPriority();
             return (int) priority;
         }
     }
 
-    private static class MessageIDExpression implements Expression<FilterableMessage>
-    {
+    private static class MessageIDExpression implements Expression<FilterableMessage> {
         @Override
-        public Object evaluate(FilterableMessage message)
-        {
+        public Object evaluate(FilterableMessage message) {
 
             String messageId = message.getMessageId();
 
@@ -220,21 +191,17 @@ public class JMSMessagePropertyExpression implements PropertyExpression<Filterab
         }
     }
 
-    private static class TimestampExpression implements Expression<FilterableMessage>
-    {
+    private static class TimestampExpression implements Expression<FilterableMessage> {
         @Override
-        public Object evaluate(FilterableMessage message)
-        {
+        public Object evaluate(FilterableMessage message) {
             long timestamp = message.getTimestamp();
             return timestamp;
         }
     }
 
-    private static class CorrelationIdExpression implements Expression<FilterableMessage>
-    {
+    private static class CorrelationIdExpression implements Expression<FilterableMessage> {
         @Override
-        public Object evaluate(FilterableMessage message)
-        {
+        public Object evaluate(FilterableMessage message) {
 
             String correlationId = message.getCorrelationId();
 
@@ -242,11 +209,9 @@ public class JMSMessagePropertyExpression implements PropertyExpression<Filterab
         }
     }
 
-    private static class ExpirationExpression implements Expression<FilterableMessage>
-    {
+    private static class ExpirationExpression implements Expression<FilterableMessage> {
         @Override
-        public Object evaluate(FilterableMessage message)
-        {
+        public Object evaluate(FilterableMessage message) {
             long expiration = message.getExpiration();
             return expiration;
 

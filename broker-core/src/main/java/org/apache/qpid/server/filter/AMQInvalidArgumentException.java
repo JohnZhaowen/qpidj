@@ -20,24 +20,22 @@
  */
 package org.apache.qpid.server.filter;
 
-public class AMQInvalidArgumentException extends Exception
-{
-    public AMQInvalidArgumentException(final Throwable cause)
-    {
+public class AMQInvalidArgumentException extends Exception {
+
+    private static final long serialVersionUID = -1416347995726721005L;
+
+    public AMQInvalidArgumentException(final Throwable cause) {
         super(cause);
     }
 
-    public AMQInvalidArgumentException(final String message, final Throwable cause)
-    {
+    public AMQInvalidArgumentException(final String message, final Throwable cause) {
         super(message, cause);
     }
 
-    public AMQInvalidArgumentException(final String message)
-    {
+    public AMQInvalidArgumentException(final String message) {
         super(message);
     }
 
-    public AMQInvalidArgumentException()
-    {
+    public AMQInvalidArgumentException() {
     }
 }

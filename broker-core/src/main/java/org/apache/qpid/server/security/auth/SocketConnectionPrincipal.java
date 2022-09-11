@@ -24,8 +24,7 @@ import java.io.Serializable;
 import java.net.SocketAddress;
 import java.security.Principal;
 
-public interface SocketConnectionPrincipal extends Principal, Serializable
-{
+public interface SocketConnectionPrincipal extends Principal, Serializable {
     SocketAddress getRemoteAddress();
 
     SocketConnectionMetaData getConnectionMetaData();

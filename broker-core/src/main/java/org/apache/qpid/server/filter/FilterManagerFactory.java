@@ -29,52 +29,37 @@ import org.apache.qpid.server.filter.selector.ParseException;
 import org.apache.qpid.server.filter.selector.TokenMgrError;
 
 
-public class FilterManagerFactory
-{
+public class FilterManagerFactory {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FilterManagerFactory.class);
 
-    private FilterManagerFactory()
-    {
+    private FilterManagerFactory() {
     }
 
-    public static FilterManager createManager(Map<String,Object> filters) throws AMQInvalidArgumentException
-    {
+    public static FilterManager createManager(Map<String, Object> filters) throws AMQInvalidArgumentException {
         FilterManager manager = null;
 
-        if (filters != null)
-        {
+        if (filters != null) {
 
-            if(filters.containsKey(AMQPFilterTypes.JMS_SELECTOR.toString()))
-            {
+            if (filters.containsKey(AMQPFilterTypes.JMS_SELECTOR.toString())) {
                 Object selector = filters.get(AMQPFilterTypes.JMS_SELECTOR.toString());
 
-                if (selector instanceof String && !selector.equals(""))
-                {
+                if (selector instanceof String && !selector.equals("")) {
                     manager = new FilterManager();
-                    try
-                    {
-                        MessageFilter filter = new JMSSelectorFilter((String)selector);
+                    try {
+                        MessageFilter filter = new JMSSelectorFilter((String) selector);
                         manager.add(filter.getName(), filter);
-                    }
-                    catch (ParseException | SelectorParsingException | TokenMgrError e)
-                    {
+                    } catch (ParseException | SelectorParsingException | TokenMgrError e) {
                         throw new AMQInvalidArgumentException("Cannot parse JMS selector \"" + selector + "\"", e);
                     }
                 }
 
             }
 
-
-        }
-        else
-        {
+        } else {
             LOGGER.debug("No Filters found.");
         }
-
-
         return manager;
-
     }
 
 }

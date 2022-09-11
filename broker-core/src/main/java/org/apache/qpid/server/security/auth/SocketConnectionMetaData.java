@@ -27,11 +27,14 @@ import org.apache.qpid.server.model.Protocol;
 import org.apache.qpid.server.model.Transport;
 
 @ManagedAttributeValueType(isAbstract = true)
-public interface SocketConnectionMetaData extends ManagedAttributeValue
-{
+public interface SocketConnectionMetaData extends ManagedAttributeValue {
     Port getPort();
+
     String getLocalAddress();
+
     String getRemoteAddress();
+
     Protocol getProtocol();
+
     Transport getTransport();
 }

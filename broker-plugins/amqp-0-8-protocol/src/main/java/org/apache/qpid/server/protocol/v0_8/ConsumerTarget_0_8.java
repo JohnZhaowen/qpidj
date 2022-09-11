@@ -42,8 +42,7 @@ import org.apache.qpid.server.util.StateChangeListener;
  * Ties together the protocol session of a subscriber, the consumer tag
  * that was given out by the broker and the channel id.
  */
-public abstract class ConsumerTarget_0_8 extends AbstractConsumerTarget<ConsumerTarget_0_8>
-{
+public abstract class ConsumerTarget_0_8 extends AbstractConsumerTarget<ConsumerTarget_0_8> {
 
     private final ClientDeliveryMethod _deliveryMethod;
 
@@ -52,40 +51,35 @@ public abstract class ConsumerTarget_0_8 extends AbstractConsumerTarget<Consumer
 
     public static ConsumerTarget_0_8 createBrowserTarget(AMQChannel channel,
                                                          AMQShortString consumerTag, FieldTable filters,
-                                                         FlowCreditManager_0_8 creditManager, final boolean multiQueue)
-    {
+                                                         FlowCreditManager_0_8 creditManager, final boolean multiQueue) {
         return new BrowserConsumer(channel, consumerTag, filters, creditManager, channel.getClientDeliveryMethod(),
-                                   multiQueue);
+                multiQueue);
     }
 
     public static ConsumerTarget_0_8 createGetNoAckTarget(final AMQChannel channel,
                                                           final AMQShortString consumerTag,
                                                           final FieldTable filters,
                                                           final FlowCreditManager_0_8 creditManager,
-                                                          final ClientDeliveryMethod deliveryMethod)
-    {
+                                                          final ClientDeliveryMethod deliveryMethod) {
         return new GetNoAckConsumer(channel, consumerTag, filters, creditManager, deliveryMethod);
     }
 
-    static final class BrowserConsumer extends ConsumerTarget_0_8
-    {
+    static final class BrowserConsumer extends ConsumerTarget_0_8 {
         public BrowserConsumer(AMQChannel channel,
                                AMQShortString consumerTag,
                                FieldTable filters,
                                FlowCreditManager_0_8 creditManager,
                                ClientDeliveryMethod deliveryMethod,
-                               boolean multiQueue)
-        {
+                               boolean multiQueue) {
             super(channel, consumerTag,
-                  filters, creditManager, deliveryMethod, multiQueue);
+                    filters, creditManager, deliveryMethod, multiQueue);
         }
 
         @Override
         protected void doSendInternal(final MessageInstanceConsumer consumer,
                                       final MessageInstance entry,
                                       final AMQMessage message,
-                                      final boolean batch)
-        {
+                                      final boolean batch) {
             // We don't decrement the reference here as we don't want to consume the message
             // but we do want to send it to the client.
 
@@ -97,14 +91,12 @@ public abstract class ConsumerTarget_0_8 extends AbstractConsumerTarget<Consumer
     public static ConsumerTarget_0_8 createNoAckTarget(AMQChannel channel,
                                                        AMQShortString consumerTag, FieldTable filters,
                                                        FlowCreditManager_0_8 creditManager,
-                                                       boolean multiQueue)
-    {
+                                                       boolean multiQueue) {
         return new NoAckConsumer(channel, consumerTag, filters, creditManager, channel.getClientDeliveryMethod(),
-                                 multiQueue);
+                multiQueue);
     }
 
-    public static class NoAckConsumer extends ConsumerTarget_0_8
-    {
+    public static class NoAckConsumer extends ConsumerTarget_0_8 {
         private final AutoCommitTransaction _txn;
 
         public NoAckConsumer(AMQChannel channel,
@@ -112,8 +104,7 @@ public abstract class ConsumerTarget_0_8 extends AbstractConsumerTarget<Consumer
                              FieldTable filters,
                              FlowCreditManager_0_8 creditManager,
                              ClientDeliveryMethod deliveryMethod,
-                             boolean multiQueue)
-        {
+                             boolean multiQueue) {
             super(channel, consumerTag, filters, creditManager, deliveryMethod, multiQueue);
 
             _txn = new AutoCommitTransaction(channel.getAddressSpace().getMessageStore());
@@ -123,8 +114,7 @@ public abstract class ConsumerTarget_0_8 extends AbstractConsumerTarget<Consumer
         protected void doSendInternal(final MessageInstanceConsumer consumer,
                                       final MessageInstance entry,
                                       final AMQMessage message,
-                                      final boolean batch)
-        {
+                                      final boolean batch) {
             // if we do not need to wait for client acknowledgements
             // we can decrement the reference count immediately.
 
@@ -136,8 +126,7 @@ public abstract class ConsumerTarget_0_8 extends AbstractConsumerTarget<Consumer
             // the message is unacked, it will be lost.
             _txn.dequeue(entry.getEnqueueRecord(), NOOP);
 
-            try( MessageReference ref = entry.getMessage().newReference())
-            {
+            try (MessageReference ref = entry.getMessage().newReference()) {
                 InstanceProperties props = entry.getInstanceProperties();
                 entry.delete();
                 getChannel().getConnection().setDeferFlush(batch);
@@ -148,16 +137,13 @@ public abstract class ConsumerTarget_0_8 extends AbstractConsumerTarget<Consumer
         }
 
         private static final ServerTransaction.Action NOOP =
-                new ServerTransaction.Action()
-                {
+                new ServerTransaction.Action() {
                     @Override
-                    public void postCommit()
-                    {
+                    public void postCommit() {
                     }
 
                     @Override
-                    public void onRollback()
-                    {
+                    public void onRollback() {
                     }
                 };
     }
@@ -165,13 +151,11 @@ public abstract class ConsumerTarget_0_8 extends AbstractConsumerTarget<Consumer
     /**
      * NoAck Subscription for use with BasicGet method.
      */
-    public static final class GetNoAckConsumer extends NoAckConsumer
-    {
+    public static final class GetNoAckConsumer extends NoAckConsumer {
         public GetNoAckConsumer(AMQChannel channel,
                                 AMQShortString consumerTag, FieldTable filters,
                                 FlowCreditManager_0_8 creditManager,
-                                ClientDeliveryMethod deliveryMethod)
-        {
+                                ClientDeliveryMethod deliveryMethod) {
             super(channel, consumerTag, filters, creditManager, deliveryMethod, false);
         }
 
@@ -182,26 +166,23 @@ public abstract class ConsumerTarget_0_8 extends AbstractConsumerTarget<Consumer
                                                      AMQShortString consumerTag,
                                                      FieldTable filters,
                                                      FlowCreditManager_0_8 creditManager,
-                                                     boolean multiQueue)
-    {
+                                                     boolean multiQueue) {
         return new AckConsumer(channel,
-                               consumerTag,
-                               filters, creditManager,
-                               channel.getClientDeliveryMethod(),
-                               multiQueue, true);
+                consumerTag,
+                filters, creditManager,
+                channel.getClientDeliveryMethod(),
+                multiQueue, true);
     }
 
 
     public static ConsumerTarget_0_8 createGetAckTarget(AMQChannel channel,
                                                         AMQShortString consumerTag, FieldTable filters,
                                                         FlowCreditManager_0_8 creditManager,
-                                                        ClientDeliveryMethod deliveryMethod)
-    {
+                                                        ClientDeliveryMethod deliveryMethod) {
         return new AckConsumer(channel, consumerTag, filters, creditManager, deliveryMethod, false, false);
     }
 
-    static final class AckConsumer extends ConsumerTarget_0_8
-    {
+    static final class AckConsumer extends ConsumerTarget_0_8 {
         private final boolean _usesCredit;
 
         public AckConsumer(AMQChannel channel,
@@ -209,8 +190,7 @@ public abstract class ConsumerTarget_0_8 extends AbstractConsumerTarget<Consumer
                            FlowCreditManager_0_8 creditManager,
                            ClientDeliveryMethod deliveryMethod,
                            boolean multiQueue,
-                           final boolean usesCredit)
-        {
+                           final boolean usesCredit) {
             super(channel, consumerTag, filters, creditManager, deliveryMethod, multiQueue);
             _usesCredit = usesCredit;
         }
@@ -219,11 +199,9 @@ public abstract class ConsumerTarget_0_8 extends AbstractConsumerTarget<Consumer
         protected void doSendInternal(final MessageInstanceConsumer consumer,
                                       final MessageInstance entry,
                                       final AMQMessage message,
-                                      final boolean batch)
-        {
+                                      final boolean batch) {
             // put queue entry on a list and then notify the connection to read list.
-            synchronized (getChannel())
-            {
+            synchronized (getChannel()) {
                 getChannel().getConnection().setDeferFlush(batch);
                 long deliveryTag = getChannel().getNextDeliveryTag();
 
@@ -248,8 +226,7 @@ public abstract class ConsumerTarget_0_8 extends AbstractConsumerTarget<Consumer
                               FieldTable arguments,
                               FlowCreditManager_0_8 creditManager,
                               ClientDeliveryMethod deliveryMethod,
-                              boolean multiQueue)
-    {
+                              boolean multiQueue) {
         super(multiQueue, channel.getAMQPConnection());
 
         _channel = channel;
@@ -259,28 +236,19 @@ public abstract class ConsumerTarget_0_8 extends AbstractConsumerTarget<Consumer
 
         _deliveryMethod = deliveryMethod;
 
-        if (arguments != null)
-        {
+        if (arguments != null) {
             Object autoClose = arguments.get(AMQPFilterTypes.AUTO_CLOSE.getValue());
-            if (autoClose != null)
-            {
+            if (autoClose != null) {
                 _autoClose = (Boolean) autoClose;
-            }
-            else
-            {
+            } else {
                 _autoClose = false;
             }
-            if(arguments.containsKey("local-address"))
-            {
+            if (arguments.containsKey("local-address")) {
                 _targetAddress = String.valueOf(arguments.get("local-address"));
-            }
-            else
-            {
+            } else {
                 _targetAddress = consumerTag.toString();
             }
-        }
-        else
-        {
+        } else {
             _autoClose = false;
             _targetAddress = consumerTag.toString();
 
@@ -288,79 +256,67 @@ public abstract class ConsumerTarget_0_8 extends AbstractConsumerTarget<Consumer
     }
 
     @Override
-    public String getTargetAddress()
-    {
+    public String getTargetAddress() {
         return _targetAddress;
     }
 
     @Override
-    public AMQChannel getSession()
-    {
+    public AMQChannel getSession() {
         return _channel;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
 
         return "ConsumerTarget_0_8[channel=" + _channel +
-                            ", consumerTag=" + _consumerTag +
-                            ", session=" + getConnection().getRemoteAddressString() + "]";
+                ", consumerTag=" + _consumerTag +
+                ", session=" + getConnection().getRemoteAddressString() + "]";
     }
 
     @Override
-    public void updateNotifyWorkDesired()
-    {
+    public void updateNotifyWorkDesired() {
         final AMQPConnection_0_8 amqpConnection = (AMQPConnection_0_8) _channel.getAMQPConnection();
 
         boolean state = _channel.isChannelFlow()
-                        && !amqpConnection.isTransportBlockedForWriting()
-                        // this last condition does not need to exist for browsers and no ack
-                        && getCreditManager().hasCredit();
+                && !amqpConnection.isTransportBlockedForWriting()
+                // this last condition does not need to exist for browsers and no ack
+                && getCreditManager().hasCredit();
 
         setNotifyWorkDesired(state);
     }
 
-    public boolean isAutoClose()
-    {
+    public boolean isAutoClose() {
         return _autoClose;
     }
 
-    public FlowCreditManager getCreditManager()
-    {
+    public FlowCreditManager getCreditManager() {
         return _creditManager;
     }
 
     @Override
-    public boolean allocateCredit(ServerMessage msg)
-    {
+    public boolean allocateCredit(ServerMessage msg) {
         boolean hasCredit = _creditManager.hasCredit();
         boolean allocated = _creditManager.useCreditForMessage(msg.getSize());
-        if(hasCredit != _creditManager.hasCredit())
-        {
+        if (hasCredit != _creditManager.hasCredit()) {
             _channel.updateAllConsumerNotifyWorkDesired();
         }
         return allocated;
     }
 
-    public AMQChannel getChannel()
-    {
+    public AMQChannel getChannel() {
         return _channel;
     }
 
-    public AMQShortString getConsumerTag()
-    {
+    public AMQShortString getConsumerTag() {
         return _consumerTag;
     }
 
-    private AMQPConnection_0_8 getConnection()
-    {
+    private AMQPConnection_0_8 getConnection() {
         return _channel.getConnection();
     }
 
     @Override
-    public void restoreCredit(final ServerMessage message)
-    {
+    public void restoreCredit(final ServerMessage message) {
         // This method is only called when the queue is restoring credit it allocated and then could not use
         _creditManager.restoreCredit(1, message.getSize());
         updateNotifyWorkDesired();
@@ -368,57 +324,44 @@ public abstract class ConsumerTarget_0_8 extends AbstractConsumerTarget<Consumer
 
     protected long sendToClient(final MessageInstanceConsumer consumer, final AMQMessage message,
                                 final InstanceProperties props,
-                                final long deliveryTag)
-    {
+                                final long deliveryTag) {
         return _deliveryMethod.deliverToClient(this, message, props, deliveryTag);
 
     }
 
 
-    public void confirmAutoClose()
-    {
+    public void confirmAutoClose() {
         ProtocolOutputConverter converter = getChannel().getConnection().getProtocolOutputConverter();
         converter.confirmConsumerAutoClose(getChannel().getChannelId(), getConsumerTag());
     }
 
     @Override
-    public void noMessagesAvailable()
-    {
-        if(isAutoClose() && getState() != State.CLOSED)
-        {
+    public void noMessagesAvailable() {
+        if (isAutoClose() && getState() != State.CLOSED) {
             close();
             confirmAutoClose();
         }
     }
 
     @Override
-    final protected void doSend(final MessageInstanceConsumer consumer, final MessageInstance entry, final boolean batch)
-    {
+    final protected void doSend(final MessageInstanceConsumer consumer, final MessageInstance entry, final boolean batch) {
         ServerMessage serverMessage = entry.getMessage();
         MessageConverter<ServerMessage<?>, AMQMessage> messageConverter = null;
         final AMQMessage msg;
-        if(serverMessage instanceof AMQMessage)
-        {
+        if (serverMessage instanceof AMQMessage) {
             msg = (AMQMessage) serverMessage;
-        }
-        else
-        {
-            if (!serverMessage.checkValid())
-            {
+        } else {
+            if (!serverMessage.checkValid()) {
                 throw new MessageConversionException(String.format("Cannot convert malformed message '%s'", serverMessage));
             }
             messageConverter = MessageConverterRegistry.getConverter((Class<ServerMessage<?>>) serverMessage.getClass(), AMQMessage.class);
             msg = messageConverter.convert(serverMessage, getConnection().getAddressSpace());
         }
 
-        try
-        {
+        try {
             doSendInternal(consumer, entry, msg, batch);
-        }
-        finally
-        {
-            if(messageConverter != null)
-            {
+        } finally {
+            if (messageConverter != null) {
                 messageConverter.dispose(msg);
             }
         }
@@ -431,40 +374,33 @@ public abstract class ConsumerTarget_0_8 extends AbstractConsumerTarget<Consumer
 
 
     @Override
-    public void flushBatched()
-    {
+    public void flushBatched() {
         _channel.getConnection().setDeferFlush(false);
     }
 
-    protected void addUnacknowledgedMessage(MessageInstance entry)
-    {
+    protected void addUnacknowledgedMessage(MessageInstance entry) {
         _unacknowledgedBytes.addAndGet(entry.getMessage().getSizeIncludingHeader());
         _unacknowledgedCount.incrementAndGet();
         entry.addStateChangeListener(_unacknowledgedMessageListener);
     }
 
-    private void removeUnacknowledgedMessage(MessageInstance entry)
-    {
+    private void removeUnacknowledgedMessage(MessageInstance entry) {
         _unacknowledgedBytes.addAndGet(-entry.getMessage().getSizeIncludingHeader());
         _unacknowledgedCount.decrementAndGet();
     }
 
-    private final StateChangeListener<MessageInstance, EntryState> _unacknowledgedMessageListener = new StateChangeListener<MessageInstance, EntryState>()
-    {
+    private final StateChangeListener<MessageInstance, EntryState> _unacknowledgedMessageListener = new StateChangeListener<MessageInstance, EntryState>() {
         @Override
-        public void stateChanged(MessageInstance entry, EntryState oldState, EntryState newState)
-        {
-            if (isConsumerAcquiredStateForThis(oldState) && !isConsumerAcquiredStateForThis(newState))
-            {
+        public void stateChanged(MessageInstance entry, EntryState oldState, EntryState newState) {
+            if (isConsumerAcquiredStateForThis(oldState) && !isConsumerAcquiredStateForThis(newState)) {
                 removeUnacknowledgedMessage(entry);
                 entry.removeStateChangeListener(this);
             }
         }
 
-        private boolean isConsumerAcquiredStateForThis(EntryState state)
-        {
+        private boolean isConsumerAcquiredStateForThis(EntryState state) {
             return state instanceof MessageInstance.ConsumerAcquiredState
-                   && ((MessageInstance.ConsumerAcquiredState) state).getConsumer().getTarget() == ConsumerTarget_0_8.this;
+                    && ((MessageInstance.ConsumerAcquiredState) state).getConsumer().getTarget() == ConsumerTarget_0_8.this;
         }
     };
 }

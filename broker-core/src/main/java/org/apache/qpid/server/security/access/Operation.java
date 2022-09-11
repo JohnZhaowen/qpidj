@@ -22,8 +22,7 @@ package org.apache.qpid.server.security.access;
 
 import java.util.Objects;
 
-public final class Operation
-{
+public final class Operation {
     public static final Operation CREATE = new Operation(OperationType.CREATE);
     public static final Operation UPDATE = new Operation(OperationType.UPDATE);
     public static final Operation DELETE = new Operation(OperationType.DELETE);
@@ -34,89 +33,73 @@ public final class Operation
     private final String _name;
 
 
-    private Operation(final OperationType type)
-    {
+    private Operation(final OperationType type) {
         this(type, type.name());
     }
 
-    private Operation(final OperationType type, String name)
-    {
+    private Operation(final OperationType type, String name) {
         _type = type;
         _name = name;
     }
 
-    public OperationType getType()
-    {
+    public OperationType getType() {
         return _type;
     }
 
-    public String getName()
-    {
+    public String getName() {
         return _name;
     }
 
 
-    public static Operation CREATE()
-    {
+    public static Operation CREATE() {
         return CREATE;
     }
 
-    public static Operation UPDATE()
-    {
+    public static Operation UPDATE() {
         return UPDATE;
     }
 
-    public static Operation DELETE()
-    {
+    public static Operation DELETE() {
         return DELETE;
     }
 
-    public static Operation DISCOVER()
-    {
+    public static Operation DISCOVER() {
         return DISCOVER;
     }
 
-    public static Operation READ()
-    {
+    public static Operation READ() {
         return READ;
     }
 
-    public static Operation INVOKE_METHOD(String name)
-    {
+    public static Operation INVOKE_METHOD(String name) {
         return new Operation(OperationType.INVOKE_METHOD, name);
     }
 
 
-    public static Operation PERFORM_ACTION(String name)
-    {
+    public static Operation PERFORM_ACTION(String name) {
         return new Operation(OperationType.PERFORM_ACTION, name);
     }
 
     @Override
-    public boolean equals(final Object o)
-    {
-        if (this == o)
-        {
+    public boolean equals(final Object o) {
+        if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass())
-        {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
         final Operation operation = (Operation) o;
         return getType() == operation.getType() &&
-               Objects.equals(getName(), operation.getName());
+                Objects.equals(getName(), operation.getName());
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return Objects.hash(getType(), getName());
     }
 
     @Override
-    public String toString()
-    {
-        return "Operation[" +_type + (_name.equals(_type.name()) ? "" : ("("+_name+")")) + "]";
+    public String toString() {
+        return "Operation[" + _type + (_name.equals(_type.name()) ? "" : ("(" + _name + ")")) + "]";
     }
 }

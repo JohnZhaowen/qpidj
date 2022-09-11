@@ -20,25 +20,8 @@
  */
 package org.apache.qpid.server.session;
 
-import java.security.AccessControlContext;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
-
-import javax.security.auth.Subject;
-
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.qpid.server.connection.SessionPrincipal;
 import org.apache.qpid.server.consumer.AbstractConsumerTarget;
 import org.apache.qpid.server.consumer.ConsumerTarget;
@@ -46,8 +29,8 @@ import org.apache.qpid.server.consumer.ScheduledConsumerTargetSet;
 import org.apache.qpid.server.logging.EventLogger;
 import org.apache.qpid.server.logging.EventLoggerProvider;
 import org.apache.qpid.server.logging.LogMessage;
-import org.apache.qpid.server.logging.Outcome;
 import org.apache.qpid.server.logging.LogSubject;
+import org.apache.qpid.server.logging.Outcome;
 import org.apache.qpid.server.logging.messages.ChannelMessages;
 import org.apache.qpid.server.logging.subjects.ChannelLogSubject;
 import org.apache.qpid.server.model.AbstractConfiguredObject;
@@ -63,12 +46,26 @@ import org.apache.qpid.server.security.SecurityToken;
 import org.apache.qpid.server.transport.AMQPConnection;
 import org.apache.qpid.server.transport.network.Ticker;
 import org.apache.qpid.server.util.Action;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.security.auth.Subject;
+import java.security.AccessControlContext;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 public abstract class AbstractAMQPSession<S extends AbstractAMQPSession<S, X>,
-                                          X extends ConsumerTarget<X>>
+        X extends ConsumerTarget<X>>
         extends AbstractConfiguredObject<S>
-        implements AMQPSession<S, X>, EventLoggerProvider
-{
+        implements AMQPSession<S, X>, EventLoggerProvider {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractAMQPSession.class);
     private final Action _deleteModelTask;
     private final AMQPConnection<?> _connection;
@@ -85,7 +82,7 @@ public abstract class AbstractAMQPSession<S extends AbstractAMQPSession<S, X>,
     protected final Set<AbstractConsumerTarget> _consumersWithPendingWork = new ScheduledConsumerTargetSet<>();
     private final LogSubject _logSubject;
     private Iterator<AbstractConsumerTarget> _processPendingIterator;
-    private final Set<Consumer<?,X>> _consumers = ConcurrentHashMap.newKeySet();
+    private final Set<Consumer<?, X>> _consumers = ConcurrentHashMap.newKeySet();
 
     private final AtomicLong _messagesIn = new AtomicLong();
     private final AtomicLong _messagesOut = new AtomicLong();
@@ -94,37 +91,30 @@ public abstract class AbstractAMQPSession<S extends AbstractAMQPSession<S, X>,
     private final AtomicLong _bytesIn = new AtomicLong();
     private final AtomicLong _bytesOut = new AtomicLong();
 
-    protected AbstractAMQPSession(final Connection<?> parent, final int sessionId)
-    {
+    protected AbstractAMQPSession(final Connection<?> parent, final int sessionId) {
         this(parent, sessionId, new ChannelLogSubject((AMQPConnection) parent, sessionId));
     }
 
-    protected AbstractAMQPSession(final Connection<?> parent, final int sessionId, final LogSubject logSubject)
-    {
+    protected AbstractAMQPSession(final Connection<?> parent, final int sessionId, final LogSubject logSubject) {
         super(parent, createAttributes(sessionId));
         _connection = (AMQPConnection) parent;
         _sessionId = sessionId;
 
-        _deleteModelTask = new Action<S>()
-        {
+        _deleteModelTask = new Action<S>() {
             @Override
-            public void performAction(final S object)
-            {
+            public void performAction(final S object) {
                 removeDeleteTask(this);
                 deleteNoChecks();
             }
         };
         _subject = new Subject(false, _connection.getSubject().getPrincipals(),
-                               _connection.getSubject().getPublicCredentials(),
-                               _connection.getSubject().getPrivateCredentials());
+                _connection.getSubject().getPublicCredentials(),
+                _connection.getSubject().getPrivateCredentials());
         _subject.getPrincipals().add(new SessionPrincipal(this));
 
-        if  (_connection.getAddressSpace() instanceof ConfiguredObject)
-        {
+        if (_connection.getAddressSpace() instanceof ConfiguredObject) {
             _token = ((ConfiguredObject) _connection.getAddressSpace()).newToken(_subject);
-        }
-        else
-        {
+        } else {
             final Broker<?> broker = (Broker<?>) _connection.getBroker();
             _token = broker.newToken(_subject);
         }
@@ -140,14 +130,12 @@ public abstract class AbstractAMQPSession<S extends AbstractAMQPSession<S, X>,
     }
 
     @Override
-    protected void onCreate()
-    {
+    protected void onCreate() {
         super.onCreate();
         addDeleteTask(_deleteModelTask);
     }
 
-    private static Map<String, Object> createAttributes(final long sessionId)
-    {
+    private static Map<String, Object> createAttributes(final long sessionId) {
         Map<String, Object> attributes = new HashMap<>();
         attributes.put(NAME, sessionId);
         attributes.put(DURABLE, false);
@@ -156,103 +144,85 @@ public abstract class AbstractAMQPSession<S extends AbstractAMQPSession<S, X>,
     }
 
     @Override
-    public int getChannelId()
-    {
+    public int getChannelId() {
         return _sessionId;
     }
 
     @Override
-    public AMQPConnection<?> getAMQPConnection()
-    {
+    public AMQPConnection<?> getAMQPConnection() {
         return _connection;
     }
 
     @Override
-    public boolean isProducerFlowBlocked()
-    {
+    public boolean isProducerFlowBlocked() {
         return getBlocking();
     }
 
     @Override
-    public long getUnacknowledgedMessages()
-    {
+    public long getUnacknowledgedMessages() {
         return getUnacknowledgedMessageCount();
     }
 
     @Override
-    public void addDeleteTask(final Action<? super S> task)
-    {
+    public void addDeleteTask(final Action<? super S> task) {
         _taskList.add(task);
     }
 
     @Override
-    public void removeDeleteTask(final Action<? super S> task)
-    {
+    public void removeDeleteTask(final Action<? super S> task) {
         _taskList.remove(task);
     }
 
     @Override
-    protected ListenableFuture<Void> onDelete()
-    {
+    protected ListenableFuture<Void> onDelete() {
         removeDeleteTask(_deleteModelTask);
         return super.onDelete();
     }
 
     @Override
-    public EventLogger getEventLogger()
-    {
+    public EventLogger getEventLogger() {
         return _connection.getEventLogger();
     }
 
     @Override
-    public void addTicker(final Ticker ticker)
-    {
+    public void addTicker(final Ticker ticker) {
         _connection.getAggregateTicker().addTicker(ticker);
         // trigger a wakeup to ensure the ticker will be taken into account
         getAMQPConnection().notifyWork();
     }
 
     @Override
-    public void removeTicker(final Ticker ticker)
-    {
+    public void removeTicker(final Ticker ticker) {
         _connection.getAggregateTicker().removeTicker(ticker);
     }
 
     @Override
-    public LogSubject getLogSubject()
-    {
+    public LogSubject getLogSubject() {
         return _logSubject;
     }
 
     @Override
-    protected void logOperation(final String operation)
-    {
+    protected void logOperation(final String operation) {
         getEventLogger().message(ChannelMessages.OPERATION(operation));
     }
 
     @Override
-    public boolean processPending()
-    {
-        if (!getAMQPConnection().isIOThread() || isClosing())
-        {
+    public boolean processPending() {
+        if (!getAMQPConnection().isIOThread() || isClosing()) {
             return false;
         }
 
         updateBlockedStateIfNecessary();
 
-        if(!_consumersWithPendingWork.isEmpty() && !getAMQPConnection().isTransportBlockedForWriting())
-        {
-            if (_processPendingIterator == null || !_processPendingIterator.hasNext())
-            {
+        if (!_consumersWithPendingWork.isEmpty() && !getAMQPConnection().isTransportBlockedForWriting()) {
+            if (_processPendingIterator == null || !_processPendingIterator.hasNext()) {
                 _processPendingIterator = _consumersWithPendingWork.iterator();
             }
 
-            if(_processPendingIterator.hasNext())
-            {
+            if (_processPendingIterator.hasNext()) {
                 AbstractConsumerTarget target = _processPendingIterator.next();
                 _processPendingIterator.remove();
-                if (target.processPending())
-                {
+                if (target.processPending()) {
                     _consumersWithPendingWork.add(target);
                 }
             }
@@ -262,37 +232,31 @@ public abstract class AbstractAMQPSession<S extends AbstractAMQPSession<S, X>,
     }
 
     @Override
-    public void notifyWork(final X target)
-    {
-        if(_consumersWithPendingWork.add((AbstractConsumerTarget) target))
-        {
+    public void notifyWork(final X target) {
+        if (_consumersWithPendingWork.add((AbstractConsumerTarget) target)) {
             getAMQPConnection().notifyWork(this);
         }
     }
 
     @Override
-    public final long getConsumerCount()
-    {
+    public final long getConsumerCount() {
         return _consumerCount.get();
     }
 
     @Override
-    public final void consumerAdded(Consumer<?, X> consumer)
-    {
+    public final void consumerAdded(Consumer<?, X> consumer) {
         _consumerCount.incrementAndGet();
         _consumers.add(consumer);
     }
 
     @Override
-    public final void consumerRemoved(Consumer<?, X> consumer)
-    {
+    public final void consumerRemoved(Consumer<?, X> consumer) {
         _consumerCount.decrementAndGet();
         _consumers.remove(consumer);
     }
 
     @Override
-    public Set<? extends Consumer<?, ?>> getConsumers()
-    {
+    public Set<? extends Consumer<?, ?>> getConsumers() {
         return Collections.unmodifiableSet(_consumers);
     }
 
@@ -301,103 +265,88 @@ public abstract class AbstractAMQPSession<S extends AbstractAMQPSession<S, X>,
     public abstract boolean isClosing();
 
     @Override
-    public ListenableFuture<Void> doOnIOThreadAsync(final Runnable task)
-    {
+    public ListenableFuture<Void> doOnIOThreadAsync(final Runnable task) {
         final ListenableFuture<Void> future = getAMQPConnection().doOnIOThreadAsync(task);
-        return doAfter(MoreExecutors.directExecutor(), future, new Runnable()
-        {
+        return doAfter(MoreExecutors.directExecutor(), future, new Runnable() {
             @Override
-            public void run()
-            {
+            public void run() {
                 getAMQPConnection().notifyWork(AbstractAMQPSession.this);
             }
         });
     }
 
     @Override
-    public long getBytesIn()
-    {
+    public long getBytesIn() {
         return _bytesIn.get();
     }
 
     @Override
-    public long getBytesOut()
-    {
+    public long getBytesOut() {
         return _bytesOut.get();
     }
 
     @Override
-    public long getMessagesIn()
-    {
+    public long getMessagesIn() {
         return _messagesIn.get();
     }
 
     @Override
-    public long getMessagesOut()
-    {
+    public long getMessagesOut() {
         return _messagesOut.get();
     }
 
     @Override
-    public long getTransactedMessagesIn()
-    {
+    public long getTransactedMessagesIn() {
         return _transactedMessagesIn.get();
     }
 
     @Override
-    public long getTransactedMessagesOut()
-    {
+    public long getTransactedMessagesOut() {
         return _transactedMessagesOut.get();
     }
 
     @Override
-    public void registerMessageDelivered(long messageSize)
-    {
+    public void registerMessageDelivered(long messageSize) {
         _messagesOut.incrementAndGet();
         _bytesOut.addAndGet(messageSize);
         _connection.registerMessageDelivered(messageSize);
     }
 
     @Override
-    public void registerMessageReceived(long messageSize)
-    {
+    public void registerMessageReceived(long messageSize) {
         _messagesIn.incrementAndGet();
         _bytesIn.addAndGet(messageSize);
         _connection.registerMessageReceived(messageSize);
     }
 
     @Override
-    public void registerTransactedMessageDelivered()
-    {
+    public void registerTransactedMessageDelivered() {
         _transactedMessagesOut.incrementAndGet();
         _connection.registerTransactedMessageDelivered();
     }
 
     @Override
-    public void registerTransactedMessageReceived()
-    {
+    public void registerTransactedMessageReceived() {
         _transactedMessagesIn.incrementAndGet();
         _connection.registerTransactedMessageReceived();
     }
 
     @Override
     protected void logCreated(final Map<String, Object> attributes,
-                              final Outcome outcome)
-    {
+                              final Outcome outcome) {
         LOGGER.debug("{} : {} ({}) : Create : {}",
-                    LogMessage.getActor(),
-                    getCategoryClass().getSimpleName(),
-                    getName(),
-                    outcome);
+                LogMessage.getActor(),
+                getCategoryClass().getSimpleName(),
+                getName(),
+                outcome);
     }
 
     @Override
-    protected void logDeleted(final Outcome outcome)
-    {
+    protected void logDeleted(final Outcome outcome) {
         LOGGER.debug("{} : {} ({}) : Delete : {}",
-                     LogMessage.getActor(),
-                     getCategoryClass().getSimpleName(),
-                     getName(),
-                     outcome);
+                LogMessage.getActor(),
+                getCategoryClass().getSimpleName(),
+                getName(),
+                outcome);
     }
 }

@@ -24,8 +24,7 @@ import org.apache.qpid.server.store.StorableMessageMetaData;
 import org.apache.qpid.server.store.StoredMessage;
 import org.apache.qpid.server.store.TransactionLogResource;
 
-public interface ServerMessage<T extends StorableMessageMetaData> extends EnqueueableMessage, MessageContentSource
-{
+public interface ServerMessage<T extends StorableMessageMetaData> extends EnqueueableMessage, MessageContentSource {
     String getMessageType();
 
     String getInitialRoutingAddress();
@@ -65,8 +64,7 @@ public interface ServerMessage<T extends StorableMessageMetaData> extends Enqueu
 
     ValidationStatus getValidationStatus();
 
-    enum ValidationStatus
-    {
+    enum ValidationStatus {
         UNKNOWN,
         VALID,
         MALFORMED

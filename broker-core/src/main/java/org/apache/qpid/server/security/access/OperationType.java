@@ -20,8 +20,7 @@
  */
 package org.apache.qpid.server.security.access;
 
-public enum OperationType
-{
+public enum OperationType {
     CREATE,
     UPDATE,
     DELETE,

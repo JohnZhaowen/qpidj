@@ -28,19 +28,15 @@ import java.math.BigDecimal;
 /**
  * Represents a constant expression
  */
-public class ConstantExpression<T> implements Expression<T>
-{
+public class ConstantExpression<T> implements Expression<T> {
 
-    static class BooleanConstantExpression<E> extends ConstantExpression<E> implements BooleanExpression<E>
-    {
-        public BooleanConstantExpression(Object value)
-        {
+    static class BooleanConstantExpression<E> extends ConstantExpression<E> implements BooleanExpression<E> {
+        public BooleanConstantExpression(Object value) {
             super(value);
         }
 
         @Override
-        public boolean matches(E message)
-        {
+        public boolean matches(E message) {
             Object object = evaluate(message);
 
             return (object != null) && (object == Boolean.TRUE);
@@ -52,97 +48,79 @@ public class ConstantExpression<T> implements Expression<T>
     public static final BooleanConstantExpression FALSE = new BooleanConstantExpression(Boolean.FALSE);
 
 
-
     private Object _value;
 
-    public static <E> ConstantExpression<E> NULL()
-    {
+    public static <E> ConstantExpression<E> NULL() {
         return NULL;
     }
 
-    public static <E> ConstantExpression<E> TRUE()
-    {
+    public static <E> ConstantExpression<E> TRUE() {
         return TRUE;
     }
 
-    public static <E> ConstantExpression<E> FALSE()
-    {
+    public static <E> ConstantExpression<E> FALSE() {
         return FALSE;
     }
 
-    public static <E> ConstantExpression<E> createFromDecimal(String text)
-    {
+    public static <E> ConstantExpression<E> createFromDecimal(String text) {
 
         // Strip off the 'l' or 'L' if needed.
-        if (text.endsWith("l") || text.endsWith("L"))
-        {
+        if (text.endsWith("l") || text.endsWith("L")) {
             text = text.substring(0, text.length() - 1);
         }
 
         Number value;
-        try
-        {
+        try {
             value = Long.valueOf(text);
-        }
-        catch (NumberFormatException e)
-        {
+        } catch (NumberFormatException e) {
             // The number may be too big to fit in a long.
             value = new BigDecimal(text);
         }
 
         long l = value.longValue();
-        if ((Integer.MIN_VALUE <= l) && (l <= Integer.MAX_VALUE))
-        {
+        if ((Integer.MIN_VALUE <= l) && (l <= Integer.MAX_VALUE)) {
             value = value.intValue();
         }
 
         return new ConstantExpression<>(value);
     }
 
-    public static <E> ConstantExpression<E> createFromHex(String text)
-    {
+    public static <E> ConstantExpression<E> createFromHex(String text) {
         Number value = Long.parseLong(text.substring(2), 16);
         long l = value.longValue();
-        if ((Integer.MIN_VALUE <= l) && (l <= Integer.MAX_VALUE))
-        {
+        if ((Integer.MIN_VALUE <= l) && (l <= Integer.MAX_VALUE)) {
             value = value.intValue();
         }
 
         return new ConstantExpression<>(value);
     }
 
-    public static <E> ConstantExpression<E> createFromOctal(String text)
-    {
+    public static <E> ConstantExpression<E> createFromOctal(String text) {
         Number value = Long.parseLong(text, 8);
         long l = value.longValue();
-        if ((Integer.MIN_VALUE <= l) && (l <= Integer.MAX_VALUE))
-        {
+        if ((Integer.MIN_VALUE <= l) && (l <= Integer.MAX_VALUE)) {
             value = value.intValue();
         }
 
         return new ConstantExpression<>(value);
     }
 
-    public static <E> ConstantExpression<E> createFloat(String text)
-    {
+    public static <E> ConstantExpression<E> createFloat(String text) {
         Number value = Double.valueOf(text);
 
         return new ConstantExpression<>(value);
     }
 
-    public ConstantExpression(Object value)
-    {
+    public ConstantExpression(Object value) {
         this._value = value;
     }
 
     @Override
-    public Object evaluate(T message)
-    {
+    public Object evaluate(T message) {
         return _value;
     }
 
-    public Object getValue()
-    {
+    public Object getValue() {
         return _value;
     }
 
@@ -150,20 +128,16 @@ public class ConstantExpression<T> implements Expression<T>
      * @see java.lang.Object#toString()
      */
     @Override
-    public String toString()
-    {
-        if (_value == null)
-        {
+    public String toString() {
+        if (_value == null) {
             return "NULL";
         }
 
-        if (_value instanceof Boolean)
-        {
+        if (_value instanceof Boolean) {
             return ((Boolean) _value) ? "TRUE" : "FALSE";
         }
 
-        if (_value instanceof String)
-        {
+        if (_value instanceof String) {
             return encodeString((String) _value);
         }
 
@@ -176,8 +150,7 @@ public class ConstantExpression<T> implements Expression<T>
      * @see java.lang.Object#hashCode()
      */
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return toString().hashCode();
     }
 
@@ -187,11 +160,9 @@ public class ConstantExpression<T> implements Expression<T>
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
-    public boolean equals(Object o)
-    {
+    public boolean equals(Object o) {
 
-        if ((o == null) || !this.getClass().equals(o.getClass()))
-        {
+        if ((o == null) || !this.getClass().equals(o.getClass())) {
             return false;
         }
 
@@ -206,15 +177,12 @@ public class ConstantExpression<T> implements Expression<T>
      * @param s string to encode
      * @return encoded string
      */
-    public static String encodeString(String s)
-    {
+    public static String encodeString(String s) {
         StringBuilder b = new StringBuilder();
         b.append('\'');
-        for (int i = 0; i < s.length(); i++)
-        {
+        for (int i = 0; i < s.length(); i++) {
             char c = s.charAt(i);
-            if (c == '\'')
-            {
+            if (c == '\'') {
                 b.append(c);
             }
 

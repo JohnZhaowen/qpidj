@@ -28,28 +28,21 @@ import org.apache.qpid.server.plugin.MessageFilterFactory;
 import org.apache.qpid.server.plugin.PluggableService;
 
 @PluggableService
-public final class JMSSelectorFilterFactory implements MessageFilterFactory
-{
+public final class JMSSelectorFilterFactory implements MessageFilterFactory {
     @Override
-    public String getType()
-    {
+    public String getType() {
         return AMQPFilterTypes.JMS_SELECTOR.toString();
     }
 
     @Override
-    public MessageFilter newInstance(final List<String> arguments)
-    {
-        if(arguments == null || arguments.size() != 1)
-        {
+    public MessageFilter newInstance(final List<String> arguments) {
+        if (arguments == null || arguments.size() != 1) {
             throw new IllegalArgumentException("Cannot create a filter from these arguments: " + arguments);
         }
         String arg = arguments.get(0);
-        try
-        {
+        try {
             return new JMSSelectorFilter(arg);
-        }
-        catch (ParseException | TokenMgrError | SelectorParsingException e)
-        {
+        } catch (ParseException | TokenMgrError | SelectorParsingException e) {
             throw new IllegalArgumentException("Cannot create an JMS Selector from '" + arg + "'", e);
         }
     }

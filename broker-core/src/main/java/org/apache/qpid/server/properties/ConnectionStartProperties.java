@@ -27,8 +27,7 @@ import org.slf4j.LoggerFactory;
  * Constants for the various properties clients can
  * set values for during the ConnectionStartOk reply.
  */
-public class ConnectionStartProperties
-{
+public class ConnectionStartProperties {
     private static final Logger LOGGER = LoggerFactory.getLogger(ConnectionStartProperties.class);
 
     /**
@@ -50,7 +49,7 @@ public class ConnectionStartProperties
 
     public static final String PID = "qpid.client_pid";
 
-    public static final String PRODUCT ="product";
+    public static final String PRODUCT = "product";
 
     public static final String QPID_CONFIRMED_PUBLISH_SUPPORTED = "qpid.confirmed_publish_supported";
 

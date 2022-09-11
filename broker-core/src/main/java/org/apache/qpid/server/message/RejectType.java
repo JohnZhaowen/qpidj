@@ -20,8 +20,7 @@
  */
 package org.apache.qpid.server.message;
 
-public enum RejectType
-{
+public enum RejectType {
     LIMIT_EXCEEDED,
     ALREADY_ENQUEUED,
     PRECONDITION_FAILED
