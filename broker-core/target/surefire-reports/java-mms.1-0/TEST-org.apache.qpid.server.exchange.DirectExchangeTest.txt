@@ -1,0 +1,2 @@
+2022-09-11 21:00:22,178 INFO  [main] o.a.q.t.u.QpidUnitTestRunner ========================= executing test : DirectExchangeTest#testRouteToQueue
+2022-09-11 21:01:45,307 INFO  [main] o.a.q.t.u.QpidUnitTestRunner ========================= cleaning up test environment for test : DirectExchangeTest#testRouteToQueue

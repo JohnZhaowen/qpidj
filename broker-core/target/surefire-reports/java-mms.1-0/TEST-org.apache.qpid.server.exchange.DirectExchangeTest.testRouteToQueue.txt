@@ -1,0 +1,56 @@
+2022-09-11 21:00:22,313 INFO  [main] o.a.q.t.u.QpidUnitTestRunner ========================= start executing test : DirectExchangeTest#testRouteToQueue
+2022-09-11 21:00:24,145 DEBUG [main] o.a.q.s.p.QpidServiceLoader Found 58 implementations of interface org.apache.qpid.server.plugin.ConfiguredObjectTypeFactory
+2022-09-11 21:00:24,175 DEBUG [main] o.a.q.s.p.QpidServiceLoader Found 15 implementations of interface org.apache.qpid.server.plugin.ConfiguredObjectRegistration
+2022-09-11 21:00:24,283 DEBUG [main] o.a.q.s.p.QpidServiceLoader Found 1 implementations of interface org.apache.qpid.server.plugin.ConfiguredObjectAttributeInjector
+2022-09-11 21:00:24,667 DEBUG [main] o.a.q.s.p.QpidServiceLoader Found 0 implementations of interface org.apache.qpid.server.plugin.ProtocolEngineCreator
+2022-09-11 21:00:25,002 DEBUG [main] o.a.q.s.p.QpidServiceLoader Found 15 implementations of interface org.apache.qpid.server.plugin.ConfiguredObjectRegistration
+2022-09-11 21:00:25,011 DEBUG [main] o.a.q.s.p.QpidServiceLoader Found 58 implementations of interface org.apache.qpid.server.plugin.ConfiguredObjectTypeFactory
+2022-09-11 21:00:26,283 DEBUG [main] o.a.q.s.p.QpidServiceLoader Found 2 implementations of interface org.apache.qpid.server.plugin.SystemNodeCreator
+2022-09-11 21:00:26,295 DEBUG [main] o.a.q.s.p.QpidServiceLoader Found 1 implementations of interface org.apache.qpid.server.plugin.ConnectionValidator
+2022-09-11 21:00:26,297 DEBUG [main] o.a.q.s.p.QpidServiceLoader Found 0 implementations of interface org.apache.qpid.server.virtualhost.LinkRegistryFactory
+2022-09-11 21:00:26,394 DEBUG [main] o.a.q.s.v.AbstractVirtualHost Updating access control list with 0 provider children
+2022-09-11 21:00:26,425 DEBUG [main] o.a.q.s.c.u.TaskExecutorImpl Starting task executor virtualhost-testRouteToQueue-preferences
+2022-09-11 21:00:26,436 DEBUG [main] o.a.q.s.c.u.TaskExecutorImpl Task executor is started
+2022-09-11 21:00:26,611 DEBUG [main] o.a.q.s.m.AbstractConfiguredObject authorise returned DEFER
+2022-09-11 21:00:26,611 DEBUG [main] o.a.q.s.m.AbstractConfiguredObject authorise returned DEFER, returing default: ALLOWED
+2022-09-11 21:00:26,626 DEBUG [main] o.a.q.s.m.AbstractConfiguredObject authorise returned DEFER
+2022-09-11 21:00:26,626 DEBUG [main] o.a.q.s.m.AbstractConfiguredObject authorise returned DEFER, returing default: ALLOWED
+2022-09-11 21:00:26,731 DEBUG [main] o.a.q.s.m.AbstractConfiguredObject authorise returned DEFER
+2022-09-11 21:00:26,731 DEBUG [main] o.a.q.s.m.AbstractConfiguredObject authorise returned DEFER, returing default: ALLOWED
+2022-09-11 21:00:26,898 DEBUG [main] o.a.q.s.m.AbstractConfiguredObject authorise returned DEFER
+2022-09-11 21:00:26,899 DEBUG [main] o.a.q.s.m.AbstractConfiguredObject authorise returned DEFER, returing default: ALLOWED
+2022-09-11 21:00:26,923 DEBUG [main] o.a.q.s.m.AbstractConfiguredObject authorise returned DEFER
+2022-09-11 21:00:26,923 DEBUG [main] o.a.q.s.m.AbstractConfiguredObject authorise returned DEFER, returing default: ALLOWED
+2022-09-11 21:00:26,923 DEBUG [main] o.a.q.s.m.AbstractConfiguredObject authorise returned DEFER
+2022-09-11 21:00:26,923 DEBUG [main] o.a.q.s.m.AbstractConfiguredObject authorise returned DEFER, returing default: ALLOWED
+2022-09-11 21:01:45,254 DEBUG [main] o.a.q.s.m.AbstractConfiguredObject authorise returned DEFER
+2022-09-11 21:01:45,254 DEBUG [main] o.a.q.s.m.AbstractConfiguredObject authorise returned DEFER, returing default: ALLOWED
+2022-09-11 21:01:45,258 DEBUG [Housekeeping[testRouteToQueue]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testRouteToQueue_queue
+2022-09-11 21:01:45,260 DEBUG [Housekeeping[testRouteToQueue]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testRouteToQueue_queue
+2022-09-11 21:01:45,261 DEBUG [Housekeeping[testRouteToQueue]] o.a.q.s.v.AbstractVirtualHost Checking message status for queue: testRouteToQueue_queue
+2022-09-11 21:01:45,261 DEBUG [main] o.a.q.s.m.AbstractConfiguredObject Closing TestMemoryVirtualHostWithAccessChecking : testRouteToQueue
+2022-09-11 21:01:45,262 DEBUG [main] o.a.q.s.v.AbstractVirtualHost Closing connection registry : 0 connection(s).
+2022-09-11 21:01:45,271 DEBUG [main] o.a.q.s.m.AbstractConfiguredObject Closing DirectExchangeImplWithAccessChecking : amq.direct
+2022-09-11 21:01:45,272 DEBUG [main] o.a.q.s.m.AbstractConfiguredObject All children closed DirectExchangeImplWithAccessChecking : amq.direct
+2022-09-11 21:01:45,276 DEBUG [main] o.a.q.s.m.AbstractConfiguredObject Closed DirectExchangeImplWithAccessChecking : amq.direct
+2022-09-11 21:01:45,278 DEBUG [main] o.a.q.s.m.AbstractConfiguredObject Closing TopicExchangeImplWithAccessChecking : amq.topic
+2022-09-11 21:01:45,278 DEBUG [main] o.a.q.s.m.AbstractConfiguredObject All children closed TopicExchangeImplWithAccessChecking : amq.topic
+2022-09-11 21:01:45,278 DEBUG [main] o.a.q.s.m.AbstractConfiguredObject Closed TopicExchangeImplWithAccessChecking : amq.topic
+2022-09-11 21:01:45,279 DEBUG [main] o.a.q.s.m.AbstractConfiguredObject Closing HeadersExchangeImplWithAccessChecking : amq.match
+2022-09-11 21:01:45,279 DEBUG [main] o.a.q.s.m.AbstractConfiguredObject All children closed HeadersExchangeImplWithAccessChecking : amq.match
+2022-09-11 21:01:45,279 DEBUG [main] o.a.q.s.m.AbstractConfiguredObject Closed HeadersExchangeImplWithAccessChecking : amq.match
+2022-09-11 21:01:45,279 DEBUG [main] o.a.q.s.m.AbstractConfiguredObject Closing FanoutExchangeImplWithAccessChecking : amq.fanout
+2022-09-11 21:01:45,279 DEBUG [main] o.a.q.s.m.AbstractConfiguredObject All children closed FanoutExchangeImplWithAccessChecking : amq.fanout
+2022-09-11 21:01:45,279 DEBUG [main] o.a.q.s.m.AbstractConfiguredObject Closed FanoutExchangeImplWithAccessChecking : amq.fanout
+2022-09-11 21:01:45,279 DEBUG [main] o.a.q.s.m.AbstractConfiguredObject Closing DirectExchangeImplWithAccessChecking : test
+2022-09-11 21:01:45,279 DEBUG [main] o.a.q.s.m.AbstractConfiguredObject All children closed DirectExchangeImplWithAccessChecking : test
+2022-09-11 21:01:45,280 DEBUG [main] o.a.q.s.m.AbstractConfiguredObject Closed DirectExchangeImplWithAccessChecking : test
+2022-09-11 21:01:45,280 DEBUG [main] o.a.q.s.m.AbstractConfiguredObject Closing StandardQueueImplWithAccessChecking : testRouteToQueue_queue
+2022-09-11 21:01:45,280 DEBUG [main] o.a.q.s.m.AbstractConfiguredObject All children closed StandardQueueImplWithAccessChecking : testRouteToQueue_queue
+2022-09-11 21:01:45,280 DEBUG [main] o.a.q.s.m.AbstractConfiguredObject Closed StandardQueueImplWithAccessChecking : testRouteToQueue_queue
+2022-09-11 21:01:45,280 DEBUG [main] o.a.q.s.m.AbstractConfiguredObject All children closed TestMemoryVirtualHostWithAccessChecking : testRouteToQueue
+2022-09-11 21:01:45,282 DEBUG [main] o.a.q.s.c.u.TaskExecutorImpl Stopping task executor virtualhost-testRouteToQueue-preferences
+2022-09-11 21:01:45,283 DEBUG [main] o.a.q.s.c.u.TaskExecutorImpl Task executor is stopped
+2022-09-11 21:01:45,300 DEBUG [main] o.a.q.s.m.AbstractConfiguredObject Closed TestMemoryVirtualHostWithAccessChecking : testRouteToQueue
+2022-09-11 21:01:45,301 DEBUG [main] o.a.q.s.m.AbstractConfiguredObject Closing TestMemoryVirtualHostWithAccessChecking : testRouteToQueue
+2022-09-11 21:01:45,307 INFO  [main] o.a.q.t.u.QpidUnitTestRunner ========================= stop executing test : DirectExchangeTest#testRouteToQueue 
