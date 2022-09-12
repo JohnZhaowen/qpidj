@@ -34,93 +34,77 @@ import org.apache.qpid.server.store.MessageStore;
 import org.apache.qpid.server.store.StoredMessage;
 
 
-public class RejectPolicyHandler
-{
+public class RejectPolicyHandler {
     private final Handler _handler;
 
-    RejectPolicyHandler(final Queue<?> queue)
-    {
+    RejectPolicyHandler(final Queue<?> queue) {
         _handler = new Handler(queue);
         addMessageDeleteListener();
         queue.addChangeListener(_handler);
     }
 
-    void messageDeleted(final StoredMessage storedMessage)
-    {
+    void messageDeleted(final StoredMessage storedMessage) {
         _handler.messageDeleted(storedMessage);
     }
 
-    void checkReject(final ServerMessage<?> newMessage) throws MessageUnacceptableException
-    {
+    void checkReject(final ServerMessage<?> newMessage) throws MessageUnacceptableException {
         _handler.checkReject(newMessage);
     }
 
-    void postEnqueue(MessageInstance instance)
-    {
+    void postEnqueue(MessageInstance instance) {
         _handler.postEnqueue(instance);
     }
 
-    private void addMessageDeleteListener()
-    {
+    private void addMessageDeleteListener() {
         MessageStore messageStore = _handler.getMessageStore();
-        if (messageStore != null)
-        {
+        if (messageStore != null) {
             messageStore.addMessageDeleteListener(_handler);
         }
     }
 
-    private static class Handler extends AbstractConfigurationChangeListener implements MessageStore.MessageDeleteListener
-    {
+    private static class Handler extends AbstractConfigurationChangeListener implements MessageStore.MessageDeleteListener {
         private final Queue<?> _queue;
         private final AtomicLong _pendingDepthBytes = new AtomicLong();
         private final AtomicInteger _pendingDepthMessages = new AtomicInteger();
         private final Map<StoredMessage<?>, Long> _pendingMessages = new ConcurrentHashMap<>();
 
-        private Handler(final Queue<?> queue)
-        {
+        private Handler(final Queue<?> queue) {
             _queue = queue;
         }
 
         @Override
-        public void messageDeleted(final StoredMessage<?> m)
-        {
+        public void messageDeleted(final StoredMessage<?> m) {
             decrementPendingCountersIfNecessary(m);
         }
 
         @Override
-        public void bulkChangeEnd(final ConfiguredObject<?> object)
-        {
+        public void bulkChangeEnd(final ConfiguredObject<?> object) {
             super.bulkChangeEnd(object);
-            if (_queue.getOverflowPolicy() != OverflowPolicy.REJECT)
-            {
+            if (_queue.getOverflowPolicy() != OverflowPolicy.REJECT) {
                 _queue.removeChangeListener(this);
 
                 MessageStore messageStore = getMessageStore();
-                if (messageStore != null)
-                {
+                if (messageStore != null) {
                     messageStore.removeMessageDeleteListener(this);
                 }
             }
         }
 
-        private void checkReject(final ServerMessage<?> newMessage) throws MessageUnacceptableException
-        {
+        private void checkReject(final ServerMessage<?> newMessage) throws MessageUnacceptableException {
             final long maximumQueueDepthMessages = _queue.getMaximumQueueDepthMessages();
             final long maximumQueueDepthBytes = _queue.getMaximumQueueDepthBytes();
             final int queueDepthMessages = _queue.getQueueDepthMessages();
             final long queueDepthBytes = _queue.getQueueDepthBytes();
             final long size = newMessage.getSizeIncludingHeader();
-            if (_pendingMessages.putIfAbsent(newMessage.getStoredMessage(), size) == null)
-            {
+            if (_pendingMessages.putIfAbsent(newMessage.getStoredMessage(), size) == null) {
                 int pendingMessages = _pendingDepthMessages.addAndGet(1);
                 long pendingBytes = _pendingDepthBytes.addAndGet(size);
 
                 boolean messagesOverflow = maximumQueueDepthMessages >= 0
-                                           && queueDepthMessages + pendingMessages > maximumQueueDepthMessages;
+                        && queueDepthMessages + pendingMessages > maximumQueueDepthMessages;
                 boolean bytesOverflow = maximumQueueDepthBytes >= 0
-                                        && queueDepthBytes + pendingBytes > maximumQueueDepthBytes;
-                if (bytesOverflow || messagesOverflow)
-                {
+                        && queueDepthBytes + pendingBytes > maximumQueueDepthBytes;
+                if (bytesOverflow || messagesOverflow) {
                     _pendingDepthBytes.addAndGet(-size);
                     _pendingDepthMessages.addAndGet(-1);
                     _pendingMessages.remove(newMessage.getStoredMessage());
@@ -136,23 +120,19 @@ public class RejectPolicyHandler
             }
         }
 
-        private void postEnqueue(MessageInstance instance)
-        {
+        private void postEnqueue(MessageInstance instance) {
             decrementPendingCountersIfNecessary(instance.getMessage().getStoredMessage());
         }
 
-        private void decrementPendingCountersIfNecessary(final StoredMessage<?> m)
-        {
+        private void decrementPendingCountersIfNecessary(final StoredMessage<?> m) {
             Long size;
-            if ((size = _pendingMessages.remove(m)) != null)
-            {
+            if ((size = _pendingMessages.remove(m)) != null) {
                 _pendingDepthBytes.addAndGet(-size);
                 _pendingDepthMessages.addAndGet(-1);
             }
         }
 
-        private MessageStore getMessageStore()
-        {
+        private MessageStore getMessageStore() {
             return _queue.getVirtualHost().getMessageStore();
         }
     }

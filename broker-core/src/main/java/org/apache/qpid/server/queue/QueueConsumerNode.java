@@ -22,56 +22,45 @@ package org.apache.qpid.server.queue;
 
 import java.util.Collection;
 
-final class QueueConsumerNode
-{
+final class QueueConsumerNode {
     private final QueueConsumerManagerImpl _queueConsumerManager;
-    private final QueueConsumer<?,?> _queueConsumer;
+    private final QueueConsumer<?, ?> _queueConsumer;
     private QueueConsumerNodeListEntry _listEntry;
     private QueueConsumerManagerImpl.NodeState _state = QueueConsumerManagerImpl.NodeState.REMOVED;
     private QueueConsumerNodeListEntry _allEntry;
 
-    QueueConsumerNode(final QueueConsumerManagerImpl queueConsumerManager, final QueueConsumer<?,?> queueConsumer)
-    {
+    QueueConsumerNode(final QueueConsumerManagerImpl queueConsumerManager, final QueueConsumer<?, ?> queueConsumer) {
         _queueConsumerManager = queueConsumerManager;
         _queueConsumer = queueConsumer;
     }
 
-    public QueueConsumer<?,?> getQueueConsumer()
-    {
+    public QueueConsumer<?, ?> getQueueConsumer() {
         return _queueConsumer;
     }
 
-    public QueueConsumerManagerImpl.NodeState getState()
-    {
+    public QueueConsumerManagerImpl.NodeState getState() {
         return _state;
     }
 
     public synchronized boolean moveFromTo(Collection<QueueConsumerManagerImpl.NodeState> fromStates,
-                                           QueueConsumerManagerImpl.NodeState toState)
-    {
-        if (fromStates.contains(_state))
-        {
-            if (_listEntry != null)
-            {
+                                           QueueConsumerManagerImpl.NodeState toState) {
+        if (fromStates.contains(_state)) {
+            if (_listEntry != null) {
                 _listEntry.remove();
             }
             _state = toState;
             _listEntry = _queueConsumerManager.addNodeToInterestList(this);
             return true;
-        }
-        else
-        {
+        } else {
             return false;
         }
     }
 
-    public QueueConsumerNodeListEntry getAllEntry()
-    {
+    public QueueConsumerNodeListEntry getAllEntry() {
         return _allEntry;
     }
 
-    public void setAllEntry(final QueueConsumerNodeListEntry allEntry)
-    {
+    public void setAllEntry(final QueueConsumerNodeListEntry allEntry) {
         _allEntry = allEntry;
     }
 }

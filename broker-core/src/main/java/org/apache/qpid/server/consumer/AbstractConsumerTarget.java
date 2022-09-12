@@ -48,8 +48,7 @@ import org.apache.qpid.server.transport.AMQPConnection;
 import org.apache.qpid.server.util.ConnectionScopedRuntimeException;
 import org.apache.qpid.server.util.ServerScopedRuntimeException;
 
-public abstract class AbstractConsumerTarget<T extends AbstractConsumerTarget<T>> implements ConsumerTarget<T>
-{
+public abstract class AbstractConsumerTarget<T extends AbstractConsumerTarget<T>> implements ConsumerTarget<T> {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractConsumerTarget.class);
 
     private static final LogSubject MULTI_QUEUE_LOG_SUBJECT = () -> "[(** Multi-Queue **)] ";
@@ -66,68 +65,51 @@ public abstract class AbstractConsumerTarget<T extends AbstractConsumerTarget<T>
     private volatile boolean _notifyWorkDesired;
 
     protected AbstractConsumerTarget(final boolean isMultiQueue,
-                                     final AMQPConnection<?> amqpConnection)
-    {
+                                     final AMQPConnection<?> amqpConnection) {
         _isMultiQueue = isMultiQueue;
 
-        _suspendedConsumerLoggingTicker = new SuspendedConsumerLoggingTicker(amqpConnection.getContextValue(Long.class, Consumer.SUSPEND_NOTIFICATION_PERIOD))
-        {
+        _suspendedConsumerLoggingTicker = new SuspendedConsumerLoggingTicker(amqpConnection.getContextValue(Long.class, Consumer.SUSPEND_NOTIFICATION_PERIOD)) {
             @Override
-            protected void log(final long period)
-            {
+            protected void log(final long period) {
                 amqpConnection.getEventLogger().message(AbstractConsumerTarget.this.getLogSubject(), SubscriptionMessages.STATE(period));
             }
         };
     }
 
-    private LogSubject getLogSubject()
-    {
-        if (_consumers.size() == 1 && _consumers.get(0) instanceof LogSubject)
-        {
+    private LogSubject getLogSubject() {
+        if (_consumers.size() == 1 && _consumers.get(0) instanceof LogSubject) {
             return (LogSubject) _consumers.get(0);
-        }
-        else
-        {
+        } else {
             return MULTI_QUEUE_LOG_SUBJECT;
         }
     }
 
     @Override
-    public void acquisitionRemoved(final MessageInstance node)
-    {
+    public void acquisitionRemoved(final MessageInstance node) {
 
     }
 
     @Override
-    public boolean isMultiQueue()
-    {
+    public boolean isMultiQueue() {
         return _isMultiQueue;
     }
 
     @Override
-    public void notifyWork()
-    {
-        @SuppressWarnings("unchecked")
-        final T target = (T) this;
+    public void notifyWork() {
+        @SuppressWarnings("unchecked") final T target = (T) this;
         getSession().notifyWork(target);
     }
 
-    protected final void setNotifyWorkDesired(final boolean desired)
-    {
-        if (desired != _notifyWorkDesired)
-        {
-            if (desired)
-            {
+    protected final void setNotifyWorkDesired(final boolean desired) {
+        if (desired != _notifyWorkDesired) {
+            if (desired) {
                 getSession().removeTicker(_suspendedConsumerLoggingTicker);
-            }
-            else
-            {
+            } else {
                 _suspendedConsumerLoggingTicker.setStartTime(System.currentTimeMillis());
                 getSession().addTicker(_suspendedConsumerLoggingTicker);
             }
 
-            for (MessageInstanceConsumer consumer : _consumers)
-            {
+            for (MessageInstanceConsumer consumer : _consumers) {
                 consumer.setNotifyWorkDesired(desired);
             }
 
@@ -136,16 +118,13 @@ public abstract class AbstractConsumerTarget<T extends AbstractConsumerTarget<T>
     }
 
     @Override
-    public final boolean isNotifyWorkDesired()
-    {
+    public final boolean isNotifyWorkDesired() {
         return _notifyWorkDesired;
     }
 
     @Override
-    public boolean processPending()
-    {
-        if (getSession() == null || !getSession().getAMQPConnection().isIOThread())
-        {
+    public boolean processPending() {
+        if (getSession() == null || !getSession().getAMQPConnection().isIOThread()) {
             return false;
         }
 
@@ -154,77 +133,62 @@ public abstract class AbstractConsumerTarget<T extends AbstractConsumerTarget<T>
     }
 
     @Override
-    public void consumerAdded(final MessageInstanceConsumer sub)
-    {
+    public void consumerAdded(final MessageInstanceConsumer sub) {
         _consumers.add(sub);
     }
 
     @Override
-    public ListenableFuture<Void> consumerRemoved(final MessageInstanceConsumer sub)
-    {
-        if(_consumers.contains(sub))
-        {
+    public ListenableFuture<Void> consumerRemoved(final MessageInstanceConsumer sub) {
+        if (_consumers.contains(sub)) {
             return doOnIoThreadAsync(
                     () -> consumerRemovedInternal(sub));
-        }
-        else
-        {
+        } else {
             return Futures.immediateFuture(null);
         }
     }
 
-    private ListenableFuture<Void> doOnIoThreadAsync(final Runnable task)
-    {
+    private ListenableFuture<Void> doOnIoThreadAsync(final Runnable task) {
         return getSession().getAMQPConnection().doOnIOThreadAsync(task);
     }
 
-    private void consumerRemovedInternal(final MessageInstanceConsumer sub)
-    {
+    private void consumerRemovedInternal(final MessageInstanceConsumer sub) {
         _consumers.remove(sub);
-        if(_consumers.isEmpty())
-        {
+        if (_consumers.isEmpty()) {
             close();
         }
     }
 
-    public List<MessageInstanceConsumer> getConsumers()
-    {
+    public List<MessageInstanceConsumer> getConsumers() {
         return _consumers;
     }
 
 
     @Override
-    public final boolean isSuspended()
-    {
+    public final boolean isSuspended() {
         return !isNotifyWorkDesired();
     }
 
     @Override
-    public final State getState()
-    {
+    public final State getState() {
         return _state.get();
     }
 
     @Override
-    public final void send(final MessageInstanceConsumer consumer, MessageInstance entry, boolean batch)
-    {
+    public final void send(final MessageInstanceConsumer consumer, MessageInstance entry, boolean batch) {
         doSend(consumer, entry, batch);
         getSession().getAMQPConnection().updateLastMessageOutboundTime();
-        if (consumer.acquires())
-        {
+        if (consumer.acquires()) {
             entry.makeAcquisitionStealable();
         }
     }
 
     @Override
-    public long getUnacknowledgedMessages()
-    {
+    public long getUnacknowledgedMessages() {
         return _unacknowledgedCount.longValue();
     }
 
     @Override
-    public long getUnacknowledgedBytes()
-    {
+    public long getUnacknowledgedBytes() {
         return _unacknowledgedBytes.longValue();
     }
 
@@ -232,102 +196,78 @@ public abstract class AbstractConsumerTarget<T extends AbstractConsumerTarget<T>
 
 
     @Override
-    public boolean sendNextMessage()
-    {
+    public boolean sendNextMessage() {
         MessageContainer messageContainer = null;
         MessageInstanceConsumer consumer = null;
         boolean iteratedCompleteList = false;
-        while (messageContainer == null)
-        {
-            if (_pullIterator == null || !_pullIterator.hasNext())
-            {
-                if (iteratedCompleteList)
-                {
+        while (messageContainer == null) {
+            if (_pullIterator == null || !_pullIterator.hasNext()) {
+                if (iteratedCompleteList) {
                     break;
                 }
                 iteratedCompleteList = true;
 
                 _pullIterator = getConsumers().iterator();
             }
-            if (_pullIterator.hasNext())
-            {
+            if (_pullIterator.hasNext()) {
                 consumer = _pullIterator.next();
                 messageContainer = consumer.pullMessage();
             }
         }
 
-        if (messageContainer != null)
-        {
+        if (messageContainer != null) {
             MessageInstance entry = messageContainer.getMessageInstance();
-            try
-            {
+            try {
                 send(consumer, entry, false);
-            }
-            catch (MessageConversionException mce)
-            {
+            } catch (MessageConversionException mce) {
                 restoreCredit(entry.getMessage());
                 final TransactionLogResource owningResource = entry.getOwningResource();
-                if (owningResource instanceof MessageSource)
-                {
+                if (owningResource instanceof MessageSource) {
                     final MessageSource.MessageConversionExceptionHandlingPolicy handlingPolicy =
                             ((MessageSource) owningResource).getMessageConversionExceptionHandlingPolicy();
-                    switch(handlingPolicy)
-                    {
+                    switch (handlingPolicy) {
                         case CLOSE:
                             entry.release(consumer);
                             throw new ConnectionScopedRuntimeException(String.format(
                                     "Unable to convert message %s for this consumer",
                                     entry.getMessage()), mce);
                         case ROUTE_TO_ALTERNATE:
-                            if (consumer.acquires())
-                            {
+                            if (consumer.acquires()) {
                                 int enqueues = entry.routeToAlternate(null, null, null);
-                                if (enqueues == 0)
-                                {
+                                if (enqueues == 0) {
                                     LOGGER.info("Failed to convert message {} for this consumer because '{}'."
-                                                + "  Message discarded.", entry.getMessage(), mce.getMessage());
+                                            + "  Message discarded.", entry.getMessage(), mce.getMessage());
 
-                                }
-                                else
-                                {
+                                } else {
                                     LOGGER.info("Failed to convert message {} for this consumer because '{}'."
-                                                + "  Message routed to alternate.", entry.getMessage(), mce.getMessage());
+                                            + "  Message routed to alternate.", entry.getMessage(), mce.getMessage());
                                 }
-                            }
-                            else
-                            {
+                            } else {
                                 LOGGER.info("Failed to convert message {} for this browser because '{}'."
-                                            + "  Message skipped.", entry.getMessage(), mce.getMessage());
+                                        + "  Message skipped.", entry.getMessage(), mce.getMessage());
                             }
                             break;
                         case REJECT:
                             entry.reject(consumer);
                             entry.release(consumer);
                             LOGGER.info("Failed to convert message {} for this consumer because '{}'."
-                                        + "  Message skipped.", entry.getMessage(), mce.getMessage());
+                                    + "  Message skipped.", entry.getMessage(), mce.getMessage());
                             break;
                         default:
                             throw new ServerScopedRuntimeException("Unrecognised policy " + handlingPolicy);
                     }
-                }
-                else
-                {
+                } else {
                     throw new ConnectionScopedRuntimeException(String.format(
                             "Unable to convert message %s for this consumer",
                             entry.getMessage()), mce);
                 }
-            }
-            finally
-            {
-                if (messageContainer.getMessageReference() != null)
-                {
+            } finally {
+                if (messageContainer.getMessageReference() != null) {
                     messageContainer.getMessageReference().release();
                 }
             }
             return true;
-        }
-        else
-        {
+        } else {
             return false;
         }
 
@@ -335,43 +275,35 @@ public abstract class AbstractConsumerTarget<T extends AbstractConsumerTarget<T>
     }
 
     @Override
-    final public boolean close()
-    {
-        if (_state.compareAndSet(State.OPEN, State.CLOSED))
-        {
+    final public boolean close() {
+        if (_state.compareAndSet(State.OPEN, State.CLOSED)) {
             setNotifyWorkDesired(false);
 
             List<MessageInstanceConsumer> consumers = new ArrayList<>(_consumers);
             _consumers.clear();
 
-            for (MessageInstanceConsumer consumer : consumers)
-            {
+            for (MessageInstanceConsumer consumer : consumers) {
                 consumer.close();
             }
 
             getSession().removeTicker(_suspendedConsumerLoggingTicker);
 
             return true;
-        }
-        else
-        {
+        } else {
             return false;
         }
     }
 
-    final boolean setScheduled()
-    {
+    final boolean setScheduled() {
         return _scheduled.compareAndSet(false, true);
     }
 
-    final void clearScheduled()
-    {
+    final void clearScheduled() {
         _scheduled.set(false);
     }
 
     @Override
-    public void queueDeleted(final Queue queue, final MessageInstanceConsumer sub)
-    {
+    public void queueDeleted(final Queue queue, final MessageInstanceConsumer sub) {
         consumerRemoved(sub);
     }
 

@@ -20,10 +20,11 @@
  */
 package org.apache.qpid.server.message;
 
-public interface MessageReference<M extends ServerMessage> extends AutoCloseable
-{
+public interface MessageReference<M extends ServerMessage> extends AutoCloseable {
     M getMessage();
+
     void release();
+
     @Override
     void close();
 }

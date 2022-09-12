@@ -30,84 +30,63 @@ import org.slf4j.LoggerFactory;
 import org.apache.qpid.server.message.AMQMessageHeader;
 
 
-public class AssignedConsumerMessageGroupManager implements MessageGroupManager
-{
+public class AssignedConsumerMessageGroupManager implements MessageGroupManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(AssignedConsumerMessageGroupManager.class);
 
-
     private final String _groupId;
-    private final ConcurrentMap<Integer, QueueConsumer<?,?>> _groupMap = new ConcurrentHashMap<>();
+    private final ConcurrentMap<Integer, QueueConsumer<?, ?>> _groupMap = new ConcurrentHashMap<>();
     private final int _groupMask;
 
-    AssignedConsumerMessageGroupManager(final String groupId, final int maxGroups)
-    {
+    AssignedConsumerMessageGroupManager(final String groupId, final int maxGroups) {
         _groupId = groupId;
-        _groupMask = pow2(maxGroups)-1;
+        _groupMask = pow2(maxGroups) - 1;
     }
 
-    private static int pow2(final int i)
-    {
+    private static int pow2(final int i) {
         int val = 1;
-        while(val < i)
-        {
-            val<<=1;
+        while (val < i) {
+            val <<= 1;
         }
         return val;
     }
 
     @Override
-    public boolean mightAssign(final QueueEntry entry, QueueConsumer sub)
-    {
+    public boolean mightAssign(final QueueEntry entry, QueueConsumer sub) {
         Object groupVal = getGroupValue(entry);
 
-        if(groupVal == null)
-        {
+        if (groupVal == null) {
             return true;
-        }
-        else
-        {
-            QueueConsumer<?,?> assignedSub = _groupMap.get(groupVal.hashCode() & _groupMask);
+        } else {
+            QueueConsumer<?, ?> assignedSub = _groupMap.get(groupVal.hashCode() & _groupMask);
             return assignedSub == null || assignedSub == sub;
         }
     }
 
     @Override
-    public boolean acceptMessage(QueueConsumer<?,?> sub, QueueEntry entry)
-    {
+    public boolean acceptMessage(QueueConsumer<?, ?> sub, QueueEntry entry) {
         return assignMessage(sub, entry) && entry.acquire(sub);
     }
 
-    private Object getGroupValue(final QueueEntry entry)
-    {
+    private Object getGroupValue(final QueueEntry entry) {
         final AMQMessageHeader messageHeader = entry.getMessage().getMessageHeader();
         return _groupId == null ? messageHeader.getGroupId() : messageHeader.getHeader(_groupId);
     }
 
-    private boolean assignMessage(QueueConsumer<?,?> sub, QueueEntry entry)
-    {
+    private boolean assignMessage(QueueConsumer<?, ?> sub, QueueEntry entry) {
         Object groupVal = getGroupValue(entry);
-        if(groupVal == null)
-        {
+        if (groupVal == null) {
             return true;
-        }
-        else
-        {
+        } else {
             Integer group = groupVal.hashCode() & _groupMask;
-            QueueConsumer<?,?> assignedSub = _groupMap.get(group);
-            if(assignedSub == sub)
-            {
+            QueueConsumer<?, ?> assignedSub = _groupMap.get(group);
+            if (assignedSub == sub) {
                 return true;
-            }
-            else
-            {
-                if(assignedSub == null)
-                {
+            } else {
+                if (assignedSub == null) {
                     LOGGER.debug("Assigning group {} to sub {}", groupVal, sub);
                     assignedSub = _groupMap.putIfAbsent(group, sub);
                     return assignedSub == null || assignedSub == sub;
-                }
-                else
-                {
+                } else {
                     return false;
                 }
             }
@@ -115,64 +94,51 @@ public class AssignedConsumerMessageGroupManager implements MessageGroupManager
     }
 
     @Override
-    public QueueEntry findEarliestAssignedAvailableEntry(QueueConsumer<?,?> sub)
-    {
+    public QueueEntry findEarliestAssignedAvailableEntry(QueueConsumer<?, ?> sub) {
         EntryFinder visitor = new EntryFinder(sub);
         sub.getQueue().visit(visitor);
         return visitor.getEntry();
     }
 
-    private class EntryFinder implements QueueEntryVisitor
-    {
+    private class EntryFinder implements QueueEntryVisitor {
         private QueueEntry _entry;
-        private QueueConsumer<?,?> _sub;
+        private QueueConsumer<?, ?> _sub;
 
-        EntryFinder(final QueueConsumer<?, ?> sub)
-        {
+        EntryFinder(final QueueConsumer<?, ?> sub) {
             _sub = sub;
         }
 
         @Override
-        public boolean visit(final QueueEntry entry)
-        {
-            if(!entry.isAvailable())
-            {
+        public boolean visit(final QueueEntry entry) {
+            if (!entry.isAvailable()) {
                 return false;
             }
 
             Object groupVal = getGroupValue(entry);
-            if(groupVal == null)
-            {
+            if (groupVal == null) {
                 return false;
             }
 
             Integer group = groupVal.hashCode() & _groupMask;
-            QueueConsumer<?,?> assignedSub = _groupMap.get(group);
-            if(assignedSub == _sub)
-            {
+            QueueConsumer<?, ?> assignedSub = _groupMap.get(group);
+            if (assignedSub == _sub) {
                 _entry = entry;
                 return true;
-            }
-            else
-            {
+            } else {
                 return false;
             }
         }
 
-        public QueueEntry getEntry()
-        {
+        public QueueEntry getEntry() {
             return _entry;
         }
     }
 
     @Override
-    public void clearAssignments(QueueConsumer<?,?> sub)
-    {
-        Iterator<QueueConsumer<?,?>> subIter = _groupMap.values().iterator();
-        while(subIter.hasNext())
-        {
-            if(subIter.next() == sub)
-            {
+    public void clearAssignments(QueueConsumer<?, ?> sub) {
+        Iterator<QueueConsumer<?, ?>> subIter = _groupMap.values().iterator();
+        while (subIter.hasNext()) {
+            if (subIter.next() == sub) {
                 subIter.remove();
             }
         }

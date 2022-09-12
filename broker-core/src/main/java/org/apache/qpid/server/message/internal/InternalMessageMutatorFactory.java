@@ -26,18 +26,15 @@ import org.apache.qpid.server.plugin.PluggableService;
 import org.apache.qpid.server.store.MessageStore;
 
 @PluggableService
-public class InternalMessageMutatorFactory implements ServerMessageMutatorFactory<InternalMessage>
-{
+public class InternalMessageMutatorFactory implements ServerMessageMutatorFactory<InternalMessage> {
     @Override
     public ServerMessageMutator<InternalMessage> create(final InternalMessage serverMessage,
-                                                        final MessageStore messageStore)
-    {
+                                                        final MessageStore messageStore) {
         return new InternalMessageMutator(serverMessage, messageStore);
     }
 
     @Override
-    public String getType()
-    {
+    public String getType() {
         return InternalMessage.class.getName();
     }
 }

@@ -20,10 +20,10 @@
  */
 package org.apache.qpid.server.queue;
 
-public class MessageUnacceptableException extends Exception
-{
-    public MessageUnacceptableException(final String message)
-    {
+public class MessageUnacceptableException extends Exception {
+    private static final long serialVersionUID = 3474301745222659238L;
+
+    public MessageUnacceptableException(final String message) {
         super(message);
     }
 }

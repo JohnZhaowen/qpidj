@@ -25,12 +25,10 @@ import org.apache.qpid.server.store.MessageEnqueueRecord;
 /**
  * An implementation of QueueEntryImpl to be used in SortedQueueEntryList.
  */
-public class SortedQueueEntry extends QueueEntryImpl
-{
-    public static enum Colour
-    {
+public class SortedQueueEntry extends QueueEntryImpl {
+    public static enum Colour {
         RED, BLACK
-    };
+    }
 
     private volatile SortedQueueEntry _next;
     private SortedQueueEntry _prev;
@@ -41,108 +39,89 @@ public class SortedQueueEntry extends QueueEntryImpl
     private SortedQueueEntry _left;
     private SortedQueueEntry _right;
 
-    public SortedQueueEntry(final SortedQueueEntryList queueEntryList)
-    {
+    public SortedQueueEntry(final SortedQueueEntryList queueEntryList) {
         super(queueEntryList);
     }
 
     public SortedQueueEntry(final SortedQueueEntryList queueEntryList,
                             final ServerMessage message,
                             final long entryId,
-                            final MessageEnqueueRecord messageEnqueueRecord)
-    {
+                            final MessageEnqueueRecord messageEnqueueRecord) {
         super(queueEntryList, message, entryId, messageEnqueueRecord);
     }
 
     @Override
-    public int compareTo(final QueueEntry other)
-    {
-        SortedQueueEntry o = (SortedQueueEntry)other;
+    public int compareTo(final QueueEntry other) {
+        SortedQueueEntry o = (SortedQueueEntry) other;
         final String otherKey = o._key;
         final int compare = _key == null ? (otherKey == null ? 0 : -1) : otherKey == null ? 1 : _key.compareTo(otherKey);
         return compare == 0 ? super.compareTo(o) : compare;
     }
 
-    public Colour getColour()
-    {
+    public Colour getColour() {
         return _colour;
     }
 
-    public String getKey()
-    {
+    public String getKey() {
         return _key;
     }
 
-    public SortedQueueEntry getLeft()
-    {
+    public SortedQueueEntry getLeft() {
         return _left;
     }
 
     @Override
-    public SortedQueueEntry getNextNode()
-    {
+    public SortedQueueEntry getNextNode() {
         return _next;
     }
 
     @Override
-    public SortedQueueEntry getNextValidEntry()
-    {
+    public SortedQueueEntry getNextValidEntry() {
         return getNextNode();
     }
 
-    public SortedQueueEntry getParent()
-    {
+    public SortedQueueEntry getParent() {
         return _parent;
     }
 
-    public SortedQueueEntry getPrev()
-    {
+    public SortedQueueEntry getPrev() {
         return _prev;
     }
 
-    public SortedQueueEntry getRight()
-    {
+    public SortedQueueEntry getRight() {
         return _right;
     }
 
-    public void setColour(final Colour colour)
-    {
+    public void setColour(final Colour colour) {
         _colour = colour;
     }
 
-    public void setKey(final String key)
-    {
+    public void setKey(final String key) {
         _key = key;
     }
 
-    public void setLeft(final SortedQueueEntry left)
-    {
+    public void setLeft(final SortedQueueEntry left) {
         _left = left;
     }
 
-    public void setNext(final SortedQueueEntry next)
-    {
+    public void setNext(final SortedQueueEntry next) {
         _next = next;
     }
 
-    public void setParent(final SortedQueueEntry parent)
-    {
+    public void setParent(final SortedQueueEntry parent) {
         _parent = parent;
     }
 
-    public void setPrev(final SortedQueueEntry prev)
-    {
+    public void setPrev(final SortedQueueEntry prev) {
         _prev = prev;
     }
 
-    public void setRight(final SortedQueueEntry right)
-    {
+    public void setRight(final SortedQueueEntry right) {
         _right = right;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "(" + (_colour == Colour.RED ? "Red," : "Black,") + _key + ")";
     }
 }

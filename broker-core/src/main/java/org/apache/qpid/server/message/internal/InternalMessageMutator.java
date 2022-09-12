@@ -28,14 +28,15 @@ import org.apache.qpid.server.store.MessageHandle;
 import org.apache.qpid.server.store.MessageStore;
 import org.apache.qpid.server.store.StoredMessage;
 
-public class InternalMessageMutator implements ServerMessageMutator<InternalMessage>
-{
+/**
+ * mutator: 对应每个属性的getter/setter方法
+ */
+public class InternalMessageMutator implements ServerMessageMutator<InternalMessage> {
     private final InternalMessage _message;
     private final MessageStore _messageStore;
     private byte _priority;
 
-    InternalMessageMutator(final InternalMessage message, final MessageStore messageStore)
-    {
+    InternalMessageMutator(final InternalMessage message, final MessageStore messageStore) {
         _message = message;
         _messageStore = messageStore;
         final InternalMessageHeader messageHeader = _message.getMessageHeader();
@@ -43,43 +44,39 @@ public class InternalMessageMutator implements ServerMessageMutator<InternalMess
     }
 
     @Override
-    public void setPriority(final byte priority)
-    {
+    public void setPriority(final byte priority) {
         _priority = priority;
     }
 
     @Override
-    public byte getPriority()
-    {
+    public byte getPriority() {
         return _priority;
     }
 
     @Override
-    public InternalMessage create()
-    {
+    public InternalMessage create() {
         final InternalMessageHeader messageHeader = _message.getMessageHeader();
         final InternalMessageHeader newHeader = new InternalMessageHeader(new HashMap<>(messageHeader.getHeaderMap()),
-                                                                          messageHeader.getCorrelationId(),
-                                                                          messageHeader.getExpiration(),
-                                                                          messageHeader.getUserId(),
-                                                                          messageHeader.getAppId(),
-                                                                          messageHeader.getMessageId(),
-                                                                          messageHeader.getMimeType(),
-                                                                          messageHeader.getEncoding(),
-                                                                          _priority,
-                                                                          messageHeader.getTimestamp(),
-                                                                          messageHeader.getNotValidBefore(),
-                                                                          messageHeader.getType(),
-                                                                          messageHeader.getReplyTo(),
-                                                                          _message.getArrivalTime());
+                messageHeader.getCorrelationId(),
+                messageHeader.getExpiration(),
+                messageHeader.getUserId(),
+                messageHeader.getAppId(),
+                messageHeader.getMessageId(),
+                messageHeader.getMimeType(),
+                messageHeader.getEncoding(),
+                _priority,
+                messageHeader.getTimestamp(),
+                messageHeader.getNotValidBefore(),
+                messageHeader.getType(),
+                messageHeader.getReplyTo(),
+                _message.getArrivalTime());
 
         final long contentSize = _message.getSize();
         final InternalMessageMetaData metaData =
                 InternalMessageMetaData.create(_message.isPersistent(), newHeader, (int) contentSize);
         final MessageHandle<InternalMessageMetaData> handle = _messageStore.addMessage(metaData);
         final QpidByteBuffer content = _message.getContent();
-        if (content != null)
-        {
+        if (content != null) {
             handle.addContent(content);
         }
         final StoredMessage<InternalMessageMetaData> storedMessage = handle.allContentAdded();

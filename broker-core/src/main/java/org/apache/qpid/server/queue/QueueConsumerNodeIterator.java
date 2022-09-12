@@ -23,37 +23,29 @@ package org.apache.qpid.server.queue;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-public class QueueConsumerNodeIterator implements Iterator<QueueConsumerNode>
-{
+public class QueueConsumerNodeIterator implements Iterator<QueueConsumerNode> {
     private QueueConsumerNodeListEntry _previous;
     private QueueConsumerNodeListEntry _next;
     private QueueConsumerNode _nextQueueConsumerNode;
 
-    QueueConsumerNodeIterator(QueueConsumerNodeList list)
-    {
+    QueueConsumerNodeIterator(QueueConsumerNodeList list) {
         _previous = list.getHead();
     }
 
     @Override
-    public boolean hasNext()
-    {
-        do
-        {
+    public boolean hasNext() {
+        do {
             _next = _previous.findNext();
             _nextQueueConsumerNode = _next == null ? null : _next.getQueueConsumerNode();
-        }
-        while(_next != null && _nextQueueConsumerNode == null);
+        } while (_next != null && _nextQueueConsumerNode == null);
 
         return _next != null;
     }
 
     @Override
-    public QueueConsumerNode next()
-    {
-        if(_next == null)
-        {
-            if (!hasNext())
-            {
+    public QueueConsumerNode next() {
+        if (_next == null) {
+            if (!hasNext()) {
                 throw new NoSuchElementException();
             }
         }
@@ -67,8 +59,7 @@ public class QueueConsumerNodeIterator implements Iterator<QueueConsumerNode>
     }
 
     @Override
-    public void remove()
-    {
+    public void remove() {
         // code should use QueueConsumerNodeListEntry#remove instead
         throw new UnsupportedOperationException();
     }

@@ -3081,6 +3081,9 @@ public abstract class AbstractQueue<X extends AbstractQueue<X>>
 
 
         private class MessageRangeList extends ArrayList<MessageInfo> implements CustomRestHeaders {
+
+            private static final long serialVersionUID = -769897924632269897L;
+
             @RestContentHeader("Content-Range")
             public String getContentRange() {
                 String min = isEmpty() ? "0" : String.valueOf(_first);

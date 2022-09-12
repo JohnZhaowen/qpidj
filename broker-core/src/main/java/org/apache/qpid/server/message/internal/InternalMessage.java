@@ -40,8 +40,7 @@ import org.apache.qpid.server.store.StoredMessage;
 import org.apache.qpid.server.store.TransactionLogResource;
 import org.apache.qpid.server.util.ConnectionScopedRuntimeException;
 
-public class InternalMessage extends AbstractServerMessageImpl<InternalMessage, InternalMessageMetaData>
-{
+public class InternalMessage extends AbstractServerMessageImpl<InternalMessage, InternalMessageMetaData> {
     private static final String NON_AMQP_MESSAGE = "Non-AMQP Message";
     private final Object _messageBody;
     private InternalMessageHeader _header;
@@ -52,8 +51,7 @@ public class InternalMessage extends AbstractServerMessageImpl<InternalMessage, 
     public InternalMessage(final StoredMessage<InternalMessageMetaData> handle,
                            final InternalMessageHeader header,
                            final Object messageBody,
-                           final String destinationName)
-    {
+                           final String destinationName) {
         super(handle, null);
         _header = header;
         _messageBody = messageBody;
@@ -62,79 +60,62 @@ public class InternalMessage extends AbstractServerMessageImpl<InternalMessage, 
 
     // used by recovery path
     InternalMessage(final StoredMessage<InternalMessageMetaData> msg,
-                    final String destinationName)
-    {
+                    final String destinationName) {
         super(msg, null);
         _header = msg.getMetaData().getHeader();
         long contentSize = getSize();
-        if (contentSize > 0)
-        {
+        if (contentSize > 0) {
             try (QpidByteBuffer buf = msg.getContent(0, (int) contentSize);
-                 ObjectInputStream is = new ObjectInputStream(buf.asInputStream()))
-            {
+                 ObjectInputStream is = new ObjectInputStream(buf.asInputStream())) {
                 _messageBody = is.readObject();
-            }
-            catch (IOException e)
-            {
+            } catch (IOException e) {
                 throw new ConnectionScopedRuntimeException("Unexpected IO Exception in operation in memory", e);
-            }
-            catch (ClassNotFoundException e)
-            {
+            } catch (ClassNotFoundException e) {
                 throw new ConnectionScopedRuntimeException("Object message contained an object which could not " +
-                                                           "be deserialized", e);
+                        "be deserialized", e);
             }
-        }
-        else
-        {
+        } else {
             _messageBody = null;
         }
         _destinationName = destinationName;
     }
 
     @Override
-    public String getInitialRoutingAddress()
-    {
+    public String getInitialRoutingAddress() {
         return _initialRoutingAddress;
     }
 
     @Override
-    public String getTo()
-    {
+    public String getTo() {
         return _destinationName;
     }
 
     @Override
-    public InternalMessageHeader getMessageHeader()
-    {
+    public InternalMessageHeader getMessageHeader() {
         return _header;
     }
 
     @Override
-    public long getExpiration()
-    {
+    public long getExpiration() {
         return _header.getExpiration();
     }
 
     @Override
-    public String getMessageType()
-    {
+    public String getMessageType() {
         return NON_AMQP_MESSAGE;
     }
 
     @Override
-    public long getArrivalTime()
-    {
+    public long getArrivalTime() {
         return _header.getArrivalTime();
     }
 
     @Override
-    public boolean isResourceAcceptable(final TransactionLogResource resource)
-    {
+    public boolean isResourceAcceptable(final TransactionLogResource resource) {
         return true;
     }
 
-    public Object getMessageBody()
-    {
+    public Object getMessageBody() {
         return _messageBody;
     }
 
@@ -142,20 +123,15 @@ public class InternalMessage extends AbstractServerMessageImpl<InternalMessage, 
                                                 final AMQMessageHeader header,
                                                 final Serializable bodyObject,
                                                 final boolean persistent,
-                                                final String destinationName)
-    {
+                                                final String destinationName) {
         InternalMessageHeader internalHeader;
-        if(header instanceof InternalMessageHeader)
-        {
+        if (header instanceof InternalMessageHeader) {
             internalHeader = (InternalMessageHeader) header;
-        }
-        else
-        {
+        } else {
             internalHeader = new InternalMessageHeader(header);
         }
         ByteArrayOutputStream bytesOut = new ByteArrayOutputStream();
-        try (ObjectOutputStream os = new ObjectOutputStream(bytesOut))
-        {
+        try (ObjectOutputStream os = new ObjectOutputStream(bytesOut)) {
             os.writeObject(bodyObject);
             os.close();
             byte[] bytes = bytesOut.toByteArray();
@@ -164,55 +140,45 @@ public class InternalMessage extends AbstractServerMessageImpl<InternalMessage, 
             final InternalMessageMetaData metaData = InternalMessageMetaData.create(persistent, internalHeader, bytes.length);
             MessageHandle<InternalMessageMetaData> handle = store.addMessage(metaData);
             final StoredMessage<InternalMessageMetaData> storedMessage;
-            try (QpidByteBuffer wrap = QpidByteBuffer.wrap(bytes))
-            {
+            try (QpidByteBuffer wrap = QpidByteBuffer.wrap(bytes)) {
                 handle.addContent(wrap);
             }
             storedMessage = handle.allContentAdded();
             return new InternalMessage(storedMessage, internalHeader, bodyObject, destinationName);
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             throw new ConnectionScopedRuntimeException("Unexpected IO Exception on operation in memory", e);
         }
     }
 
-    public static InternalMessage createStringMessage(MessageStore store, AMQMessageHeader header, String messageBody)
-    {
+    public static InternalMessage createStringMessage(MessageStore store, AMQMessageHeader header, String messageBody) {
         return createStringMessage(store, header, messageBody, false);
     }
 
 
-    public static InternalMessage createStringMessage(MessageStore store, AMQMessageHeader header, String messageBody, boolean persistent)
-    {
+    public static InternalMessage createStringMessage(MessageStore store, AMQMessageHeader header, String messageBody, boolean persistent) {
         return createMessage(store, header, messageBody, persistent, null);
     }
 
-    public static InternalMessage createMapMessage(MessageStore store, AMQMessageHeader header, Map<? extends Object,? extends Object> messageBody)
-    {
-        return createMessage(store, header, new LinkedHashMap<Object,Object>(messageBody), false, null);
+    public static InternalMessage createMapMessage(MessageStore store, AMQMessageHeader header, Map<? extends Object, ? extends Object> messageBody) {
+        return createMessage(store, header, new LinkedHashMap<Object, Object>(messageBody), false, null);
     }
 
-    public static InternalMessage createListMessage(MessageStore store, AMQMessageHeader header, List<? extends Object> messageBody)
-    {
+    public static InternalMessage createListMessage(MessageStore store, AMQMessageHeader header, List<? extends Object> messageBody) {
         return createMessage(store, header, new ArrayList<Object>(messageBody), false, null);
     }
 
-    public static InternalMessage createBytesMessage(MessageStore store, AMQMessageHeader header, byte[] messageBody)
-    {
+    public static InternalMessage createBytesMessage(MessageStore store, AMQMessageHeader header, byte[] messageBody) {
         return createBytesMessage(store, header, messageBody, false);
     }
 
 
-    public static InternalMessage createBytesMessage(MessageStore store, AMQMessageHeader header, byte[] messageBody, boolean persist)
-    {
+    public static InternalMessage createBytesMessage(MessageStore store, AMQMessageHeader header, byte[] messageBody, boolean persist) {
         return createMessage(store, header, messageBody, persist, null);
     }
 
     public static InternalMessage convert(final ServerMessage serverMessage,
                                           AMQMessageHeader header,
-                                          Object messageBody)
-    {
+                                          Object messageBody) {
         long messageNumber = serverMessage.getMessageNumber();
         boolean persistent = serverMessage.isPersistent();
         String destinationName = serverMessage.getTo();
@@ -226,14 +192,11 @@ public class InternalMessage extends AbstractServerMessageImpl<InternalMessage, 
     private static StoredMessage<InternalMessageMetaData> createReadOnlyHandle(final long messageNumber,
                                                                                final boolean persistent,
                                                                                final InternalMessageHeader header,
-                                                                               final Object messageBody)
-    {
+                                                                               final Object messageBody) {
 
 
-        try(ByteArrayOutputStream bytesOut = new ByteArrayOutputStream())
-        {
-            try(ObjectOutputStream os = new ObjectOutputStream(bytesOut))
-            {
+        try (ByteArrayOutputStream bytesOut = new ByteArrayOutputStream()) {
+            try (ObjectOutputStream os = new ObjectOutputStream(bytesOut)) {
                 os.writeObject(messageBody);
                 final byte[] bytes = bytesOut.toByteArray();
 
@@ -242,79 +205,65 @@ public class InternalMessage extends AbstractServerMessageImpl<InternalMessage, 
                         InternalMessageMetaData.create(persistent, header, bytes.length);
                 final int metadataSize = metaData.getStorableSize();
 
-                return new StoredMessage<InternalMessageMetaData>()
-                {
+                return new StoredMessage<InternalMessageMetaData>() {
                     @Override
-                    public InternalMessageMetaData getMetaData()
-                    {
+                    public InternalMessageMetaData getMetaData() {
                         return metaData;
                     }
 
                     @Override
-                    public long getMessageNumber()
-                    {
+                    public long getMessageNumber() {
                         return messageNumber;
                     }
 
                     @Override
-                    public QpidByteBuffer getContent(final int offset, final int length)
-                    {
+                    public QpidByteBuffer getContent(final int offset, final int length) {
                         return QpidByteBuffer.wrap(bytes, offset, length);
                     }
 
                     @Override
-                    public int getContentSize()
-                    {
+                    public int getContentSize() {
                         return bytes.length;
                     }
 
                     @Override
-                    public int getMetadataSize()
-                    {
+                    public int getMetadataSize() {
                         return metadataSize;
                     }
 
                     @Override
-                    public void remove()
-                    {
+                    public void remove() {
                         throw new UnsupportedOperationException();
                     }
 
                     @Override
-                    public boolean isInContentInMemory()
-                    {
+                    public boolean isInContentInMemory() {
                         return true;
                     }
 
                     @Override
-                    public long getInMemorySize()
-                    {
+                    public long getInMemorySize() {
                         return getContentSize() + getMetadataSize();
                     }
 
                     @Override
-                    public boolean flowToDisk()
-                    {
+                    public boolean flowToDisk() {
                         return false;
                     }
 
                     @Override
-                    public void reallocate()
-                    {
+                    public void reallocate() {
 
                     }
                 };
             }
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             throw new ConnectionScopedRuntimeException("Unexpected IO Exception on operation in memory", e);
         }
     }
 
 
-    public void setInitialRoutingAddress(final String initialRoutingAddress)
-    {
+    public void setInitialRoutingAddress(final String initialRoutingAddress) {
         _initialRoutingAddress = initialRoutingAddress == null ? "" : initialRoutingAddress;
     }
 }

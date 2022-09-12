@@ -26,19 +26,16 @@ import org.apache.qpid.server.filter.MessageFilter;
 import org.apache.qpid.server.model.Queue;
 import org.apache.qpid.server.virtualhost.QueueManagingVirtualHost;
 
-public class DeleteMessagesTransaction extends QueueEntryTransaction
-{
+public class DeleteMessagesTransaction extends QueueEntryTransaction {
     public DeleteMessagesTransaction(Queue sourceQueue,
                                      List<Long> messageIds,
                                      final MessageFilter filter,
-                                     final int limit)
-    {
+                                     final int limit) {
         super(sourceQueue, messageIds, filter, limit);
     }
 
     @Override
-    protected boolean updateEntry(QueueEntry entry, QueueManagingVirtualHost.Transaction txn)
-    {
+    protected boolean updateEntry(QueueEntry entry, QueueManagingVirtualHost.Transaction txn) {
         txn.dequeue(entry);
         return false;
     }

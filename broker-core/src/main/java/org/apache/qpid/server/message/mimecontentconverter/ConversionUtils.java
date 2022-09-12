@@ -22,8 +22,7 @@ package org.apache.qpid.server.message.mimecontentconverter;
 
 import java.util.regex.Pattern;
 
-public class ConversionUtils
-{
+public class ConversionUtils {
     public static final Pattern
             TEXT_CONTENT_TYPES = Pattern.compile("^(text/.*)|(application/(xml|xml-dtd|.*\\+xml|json|.*\\+json|javascript|ecmascript))$");
     public static final Pattern MAP_MESSAGE_CONTENT_TYPES = Pattern.compile("^amqp/map|jms/map-message$");

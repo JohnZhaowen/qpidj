@@ -20,8 +20,7 @@
  */
 package org.apache.qpid.server.queue;
 
-public enum MessageGroupType
-{
+public enum MessageGroupType {
     NONE,
     STANDARD,
     SHARED_GROUPS

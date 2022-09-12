@@ -22,8 +22,7 @@ package org.apache.qpid.server.store;
 
 import org.apache.qpid.server.bytebuffer.QpidByteBuffer;
 
-public interface MessageHandle<M extends StorableMessageMetaData>
-{
+public interface MessageHandle<M extends StorableMessageMetaData> {
 
     void addContent(QpidByteBuffer src);
 

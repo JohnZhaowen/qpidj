@@ -30,54 +30,45 @@ import org.apache.qpid.server.store.MessageStore;
 import org.apache.qpid.server.txn.AsyncAutoCommitTransaction;
 import org.apache.qpid.server.txn.ServerTransaction;
 
-public class RingOverflowPolicyHandler implements OverflowPolicyHandler
-{
+public class RingOverflowPolicyHandler implements OverflowPolicyHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(RingOverflowPolicyHandler.class);
     private final Handler _handler;
 
     RingOverflowPolicyHandler(final Queue<?> queue,
-                              final EventLogger eventLogger)
-    {
+                              final EventLogger eventLogger) {
         _handler = new Handler(queue, eventLogger);
         queue.addChangeListener(_handler);
     }
 
     @Override
-    public void checkOverflow(final QueueEntry newlyEnqueued)
-    {
+    public void checkOverflow(final QueueEntry newlyEnqueued) {
         _handler.checkOverflow(newlyEnqueued);
     }
 
-    private static class Handler extends OverflowPolicyMaximumQueueDepthChangeListener
-    {
+    private static class Handler extends OverflowPolicyMaximumQueueDepthChangeListener {
         private final Queue<?> _queue;
         private final EventLogger _eventLogger;
         private final ThreadLocal<Boolean> _recursionTracker = ThreadLocal.withInitial(() -> Boolean.FALSE);
 
-        public Handler(final Queue<?> queue, final EventLogger eventLogger)
-        {
+        public Handler(final Queue<?> queue, final EventLogger eventLogger) {
             super(OverflowPolicy.RING);
             _queue = queue;
             _eventLogger = eventLogger;
         }
 
         @Override
-        void onMaximumQueueDepthChange(final Queue<?> queue)
-        {
+        void onMaximumQueueDepthChange(final Queue<?> queue) {
             checkOverflow(null);
         }
 
-        private void checkOverflow(final QueueEntry newlyEnqueued)
-        {
+        private void checkOverflow(final QueueEntry newlyEnqueued) {
             // When this method causes an entry to be deleted, the size of the queue is changed, leading to
             // checkOverflow being called again (because for other policies this may trigger relaxation of flow control,
             // for instance.  This needless recursion is avoided by using this ThreadLocal to track if the method is
             // being called (indirectly) from itself
-            if (!_recursionTracker.get())
-            {
+            if (!_recursionTracker.get()) {
                 _recursionTracker.set(Boolean.TRUE);
-                try
-                {
+                try {
                     final long maximumQueueDepthMessages = _queue.getMaximumQueueDepthMessages();
                     final long maximumQueueDepthBytes = _queue.getMaximumQueueDepthBytes();
 
@@ -86,8 +77,7 @@ public class RingOverflowPolicyHandler implements OverflowPolicyHandler
                     int queueDepthMessages;
                     long queueDepthBytes;
                     QueueEntry lastSeenEntry = null;
-                    do
-                    {
+                    do {
                         queueDepthMessages = _queue.getQueueDepthMessages();
                         queueDepthBytes = _queue.getQueueDepthBytes();
 
@@ -95,70 +85,56 @@ public class RingOverflowPolicyHandler implements OverflowPolicyHandler
                                 maximumQueueDepthMessages >= 0 && queueDepthMessages > maximumQueueDepthMessages;
                         bytesOverflow = maximumQueueDepthBytes >= 0 && queueDepthBytes > maximumQueueDepthBytes;
 
-                        if (bytesOverflow || messagesOverflow)
-                        {
-                            if (!overflow)
-                            {
+                        if (bytesOverflow || messagesOverflow) {
+                            if (!overflow) {
                                 overflow = true;
                             }
 
                             lastSeenEntry = lastSeenEntry == null
                                     ? _queue.getLeastSignificantOldestEntry()
                                     : lastSeenEntry.getNextValidEntry();
-                            if (lastSeenEntry != null)
-                            {
+                            if (lastSeenEntry != null) {
                                 // ensure that we are deleting only entries before the newly enqueued one
-                                if (newlyEnqueued != null && lastSeenEntry.compareTo(newlyEnqueued) >= 0)
-                                {
+                                if (newlyEnqueued != null && lastSeenEntry.compareTo(newlyEnqueued) >= 0) {
                                     // stop at new entry
                                     lastSeenEntry = null;
-                                }
-                                else if (lastSeenEntry.acquireOrSteal(null))
-                                {
+                                } else if (lastSeenEntry.acquireOrSteal(null)) {
                                     counter++;
                                     deleteAcquiredEntry(lastSeenEntry);
                                 }
                             }
                         }
-                    }
-                    while ((bytesOverflow || messagesOverflow) && lastSeenEntry != null);
+                    } while ((bytesOverflow || messagesOverflow) && lastSeenEntry != null);
 
-                    if (overflow)
-                    {
+                    if (overflow) {
                         _eventLogger.message(_queue.getLogSubject(), QueueMessages.DROPPED(counter,
-                                                                                           queueDepthBytes,
-                                                                                           queueDepthMessages,
-                                                                                           maximumQueueDepthBytes,
-                                                                                           maximumQueueDepthMessages));
+                                queueDepthBytes,
+                                queueDepthMessages,
+                                maximumQueueDepthBytes,
+                                maximumQueueDepthMessages));
                     }
-                }
-                finally
-                {
+                } finally {
                     _recursionTracker.set(Boolean.FALSE);
                 }
             }
         }
 
-        private void deleteAcquiredEntry(final QueueEntry entry)
-        {
+        private void deleteAcquiredEntry(final QueueEntry entry) {
             final MessageStore messageStore = _queue.getVirtualHost().getMessageStore();
             final ServerTransaction txn =
                     new AsyncAutoCommitTransaction(messageStore, (future, action) -> action.postCommit());
             txn.dequeue(entry.getEnqueueRecord(),
-                        new ServerTransaction.Action()
-                        {
-                            @Override
-                            public void postCommit()
-                            {
-                                entry.delete();
-                            }
+                    new ServerTransaction.Action() {
+                        @Override
+                        public void postCommit() {
+                            entry.delete();
+                        }
 
-                            @Override
-                            public void onRollback()
-                            {
+                        @Override
+                        public void onRollback() {
 
-                            }
-                        });
+                        }
+                    });
         }
     }
 }

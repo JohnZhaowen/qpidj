@@ -34,64 +34,48 @@ import org.apache.qpid.server.store.ConfiguredObjectRecord;
 import org.apache.qpid.server.store.UnresolvedConfiguredObject;
 
 @PluggableService
-public class QueueFactory<X extends Queue<X>>  implements ConfiguredObjectTypeFactory<X>
-{
+public class QueueFactory<X extends Queue<X>> implements ConfiguredObjectTypeFactory<X> {
     @Override
-    public Class<? super X> getCategoryClass()
-    {
+    public Class<? super X> getCategoryClass() {
         return Queue.class;
     }
 
     @Override
     public X create(final ConfiguredObjectFactory factory,
                     final Map<String, Object> attributes,
-                    final ConfiguredObject<?> parent)
-    {
+                    final ConfiguredObject<?> parent) {
         return getQueueFactory(factory, attributes).create(factory, attributes, parent);
     }
 
     @Override
     public ListenableFuture<X> createAsync(final ConfiguredObjectFactory factory,
                                            final Map<String, Object> attributes,
-                                           final ConfiguredObject<?> parent)
-    {
+                                           final ConfiguredObject<?> parent) {
         return getQueueFactory(factory, attributes).createAsync(factory, attributes, parent);
     }
 
     @Override
     public UnresolvedConfiguredObject<X> recover(final ConfiguredObjectFactory factory,
                                                  final ConfiguredObjectRecord record,
-                                                 final ConfiguredObject<?> parent)
-    {
+                                                 final ConfiguredObject<?> parent) {
         return getQueueFactory(factory, record.getAttributes()).recover(factory, record, parent);
     }
 
     private ConfiguredObjectTypeFactory<X> getQueueFactory(final ConfiguredObjectFactory factory,
-                                                           Map<String, Object> attributes)
-    {
+                                                           Map<String, Object> attributes) {
 
         String type;
 
-        if(attributes.containsKey(Port.TYPE))
-        {
+        if (attributes.containsKey(Port.TYPE)) {
             type = (String) attributes.get(Port.TYPE);
-        }
-        else
-        {
-            if(attributes.containsKey(PriorityQueue.PRIORITIES))
-            {
+        } else {
+            if (attributes.containsKey(PriorityQueue.PRIORITIES)) {
                 type = "priority";
-            }
-            else if(attributes.containsKey(SortedQueue.SORT_KEY))
-            {
+            } else if (attributes.containsKey(SortedQueue.SORT_KEY)) {
                 type = "sorted";
-            }
-            else if(attributes.containsKey(LastValueQueue.LVQ_KEY))
-            {
+            } else if (attributes.containsKey(LastValueQueue.LVQ_KEY)) {
                 type = "lvq";
-            }
-            else
-            {
+            } else {
                 type = "standard";
             }
         }
@@ -100,8 +84,7 @@ public class QueueFactory<X extends Queue<X>>  implements ConfiguredObjectTypeFa
     }
 
     @Override
-    public String getType()
-    {
+    public String getType() {
         return null;
     }
 }

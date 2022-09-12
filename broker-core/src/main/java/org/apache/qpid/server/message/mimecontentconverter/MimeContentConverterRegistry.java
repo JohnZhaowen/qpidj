@@ -36,37 +36,31 @@ import org.slf4j.LoggerFactory;
 
 import org.apache.qpid.server.plugin.QpidServiceLoader;
 
-public class MimeContentConverterRegistry
-{
+public class MimeContentConverterRegistry {
     private static final Logger LOGGER = LoggerFactory.getLogger(MimeContentConverterRegistry.class);
 
     private static final Map<String, MimeContentToObjectConverter> _mimeContentToObjectConverters;
     private static final Multimap<Class, ObjectToMimeContentConverter> _classToMimeContentConverters;
 
-    static
-    {
+    static {
         _classToMimeContentConverters = buildClassToMimeConverters();
         _mimeContentToObjectConverters = buildMimeContentToObjectMap();
     }
 
-    private static Multimap<Class, ObjectToMimeContentConverter> buildClassToMimeConverters()
-    {
+    private static Multimap<Class, ObjectToMimeContentConverter> buildClassToMimeConverters() {
         Multimap<Class, ObjectToMimeContentConverter> classToMineConverters = HashMultimap.create();
         Iterable<ObjectToMimeContentConverter> objectToMimeContentConverters = new QpidServiceLoader().instancesOf(ObjectToMimeContentConverter.class);
-        for(ObjectToMimeContentConverter converter : objectToMimeContentConverters)
-        {
+        for (ObjectToMimeContentConverter converter : objectToMimeContentConverters) {
             Class objectClass = converter.getObjectClass();
-            for(ObjectToMimeContentConverter existing : classToMineConverters.get(objectClass))
-            {
-                if (existing.getRank() == converter.getRank())
-                {
+            for (ObjectToMimeContentConverter existing : classToMineConverters.get(objectClass)) {
+                if (existing.getRank() == converter.getRank()) {
                     LOGGER.warn("MIME converter for object class {} has two or more implementations"
-                                + " with the same rank {}. It is undefined which one will be used."
-                                + " Implementations are: {} {} ",
-                                existing.getObjectClass().getName(),
-                                existing.getRank(),
-                                existing.getClass().getName(),
-                                converter.getClass().getName());
+                                    + " with the same rank {}. It is undefined which one will be used."
+                                    + " Implementations are: {} {} ",
+                            existing.getObjectClass().getName(),
+                            existing.getRank(),
+                            existing.getClass().getName(),
+                            converter.getClass().getName());
                 }
 
             }
@@ -76,45 +70,35 @@ public class MimeContentConverterRegistry
         return ImmutableMultimap.copyOf(classToMineConverters);
     }
 
-    private static Map<String, MimeContentToObjectConverter> buildMimeContentToObjectMap()
-    {
+    private static Map<String, MimeContentToObjectConverter> buildMimeContentToObjectMap() {
         final Map<String, MimeContentToObjectConverter> mimeContentToObjectConverters = new HashMap<>();
-        for(MimeContentToObjectConverter converter : (new QpidServiceLoader()).instancesOf(MimeContentToObjectConverter.class))
-        {
+        for (MimeContentToObjectConverter converter : (new QpidServiceLoader()).instancesOf(MimeContentToObjectConverter.class)) {
             final String mimeType = converter.getMimeType();
             final MimeContentToObjectConverter existing = mimeContentToObjectConverters.put(mimeType, converter);
-            if (existing != null)
-            {
+            if (existing != null) {
                 LOGGER.warn("MIME converter {} for mime type '{}' replaced by {}.",
-                            existing.getClass().getName(),
-                            existing.getMimeType(),
-                            converter.getClass().getName());
+                        existing.getClass().getName(),
+                        existing.getMimeType(),
+                        converter.getClass().getName());
             }
 
         }
         return Collections.unmodifiableMap(mimeContentToObjectConverters);
     }
 
-    public static MimeContentToObjectConverter getMimeContentToObjectConverter(String mimeType)
-    {
+    public static MimeContentToObjectConverter getMimeContentToObjectConverter(String mimeType) {
         return _mimeContentToObjectConverters.get(mimeType);
     }
 
-    public static ObjectToMimeContentConverter getBestFitObjectToMimeContentConverter(Object object)
-    {
+    public static ObjectToMimeContentConverter getBestFitObjectToMimeContentConverter(Object object) {
         ObjectToMimeContentConverter converter = null;
-        if (object != null)
-        {
+        if (object != null) {
             final List<Class<?>> classes = new ArrayList<>(Arrays.asList(object.getClass().getInterfaces()));
             classes.add(object.getClass());
-            for (Class<?> i : classes)
-            {
-                for (ObjectToMimeContentConverter candidate : _classToMimeContentConverters.get(i))
-                {
-                    if (candidate.isAcceptable(object))
-                    {
-                        if (converter == null || candidate.getRank() > converter.getRank())
-                        {
+            for (Class<?> i : classes) {
+                for (ObjectToMimeContentConverter candidate : _classToMimeContentConverters.get(i)) {
+                    if (candidate.isAcceptable(object)) {
+                        if (converter == null || candidate.getRank() > converter.getRank()) {
                             converter = candidate;
                         }
                     }
@@ -124,15 +108,11 @@ public class MimeContentConverterRegistry
         return converter;
     }
 
-    public static ObjectToMimeContentConverter getBestFitObjectToMimeContentConverter(Object object, Class<?> typeHint)
-    {
+    public static ObjectToMimeContentConverter getBestFitObjectToMimeContentConverter(Object object, Class<?> typeHint) {
         ObjectToMimeContentConverter converter = null;
-        for (ObjectToMimeContentConverter candidate : _classToMimeContentConverters.get(typeHint))
-        {
-            if (candidate.isAcceptable(object))
-            {
-                if (converter == null || candidate.getRank() > converter.getRank())
-                {
+        for (ObjectToMimeContentConverter candidate : _classToMimeContentConverters.get(typeHint)) {
+            if (candidate.isAcceptable(object)) {
+                if (converter == null || candidate.getRank() > converter.getRank()) {
                     converter = candidate;
                 }
             }

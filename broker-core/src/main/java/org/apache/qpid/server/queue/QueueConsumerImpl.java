@@ -64,9 +64,8 @@ import org.apache.qpid.server.session.AMQPSession;
 import org.apache.qpid.server.util.StateChangeListener;
 
 class QueueConsumerImpl<T extends ConsumerTarget>
-    extends AbstractConfiguredObject<QueueConsumerImpl<T>>
-        implements QueueConsumer<QueueConsumerImpl<T>,T>, LogSubject
-{
+        extends AbstractConfiguredObject<QueueConsumerImpl<T>>
+        implements QueueConsumer<QueueConsumerImpl<T>, T>, LogSubject {
     private final static Logger LOGGER = LoggerFactory.getLogger(QueueConsumerImpl.class);
     private final AtomicBoolean _closed = new AtomicBoolean(false);
     private final long _consumerNumber;
@@ -112,10 +111,9 @@ class QueueConsumerImpl<T extends ConsumerTarget>
                       final FilterManager filters,
                       final Class<? extends ServerMessage> messageClass,
                       EnumSet<ConsumerOption> optionSet,
-                      final Integer priority)
-    {
+                      final Integer priority) {
         super(queue,
-              createAttributeMap(target.getSession(), consumerName, filters, optionSet, priority));
+                createAttributeMap(target.getSession(), consumerName, filters, optionSet, priority));
         _messageClass = messageClass;
         _sessionReference = target.getSession().getConnectionReference();
         _consumerNumber = CONSUMER_NUMBER_GENERATOR.getAndIncrement();
@@ -135,37 +133,32 @@ class QueueConsumerImpl<T extends ConsumerTarget>
         setupLogging();
     }
 
-    private static Map<String, Object> createAttributeMap(final AMQPSession<?,?> session,
+    private static Map<String, Object> createAttributeMap(final AMQPSession<?, ?> session,
                                                           String linkName,
                                                           FilterManager filters,
                                                           EnumSet<ConsumerOption> optionSet,
-                                                          Integer priority)
-    {
-        Map<String,Object> attributes = new HashMap<String, Object>();
+                                                          Integer priority) {
+        Map<String, Object> attributes = new HashMap<String, Object>();
         attributes.put(ID, UUID.randomUUID());
         String name = session.getAMQPConnection().getConnectionId()
-                      + "|"
-                      + session.getChannelId()
-                      + "|"
-                      + linkName;
+                + "|"
+                + session.getChannelId()
+                + "|"
+                + linkName;
         attributes.put(NAME, name);
         attributes.put(EXCLUSIVE, optionSet.contains(ConsumerOption.EXCLUSIVE));
         attributes.put(NO_LOCAL, optionSet.contains(ConsumerOption.NO_LOCAL));
         attributes.put(DISTRIBUTION_MODE, optionSet.contains(ConsumerOption.ACQUIRES) ? "MOVE" : "COPY");
-        attributes.put(DURABLE,optionSet.contains(ConsumerOption.DURABLE));
+        attributes.put(DURABLE, optionSet.contains(ConsumerOption.DURABLE));
         attributes.put(LIFETIME_POLICY, LifetimePolicy.DELETE_ON_SESSION_END);
-        if(priority != null)
-        {
+        if (priority != null) {
             attributes.put(PRIORITY, priority);
         }
-        if(filters != null)
-        {
+        if (filters != null) {
             Iterator<MessageFilter> iter = filters.filters();
-            while(iter.hasNext())
-            {
+            while (iter.hasNext()) {
                 MessageFilter filter = iter.next();
-                if(filter instanceof JMSSelectorFilter)
-                {
+                if (filter instanceof JMSSelectorFilter) {
                     attributes.put(SELECTOR, ((JMSSelectorFilter) filter).getSelector());
                     break;
                 }
@@ -176,170 +169,141 @@ class QueueConsumerImpl<T extends ConsumerTarget>
     }
 
     @Override
-    public T getTarget()
-    {
+    public T getTarget() {
         return _target;
     }
 
     @Override
-    public String getLinkName()
-    {
+    public String getLinkName() {
         return _linkName;
     }
 
     @Override
-    public void awaitCredit(final QueueEntry node)
-    {
+    public void awaitCredit(final QueueEntry node) {
         _waitingOnCreditMessageListener.update(node);
     }
 
     @Override
-    public boolean isNotifyWorkDesired()
-    {
+    public boolean isNotifyWorkDesired() {
         return !isNonLive() && _target.isNotifyWorkDesired();
     }
 
     @Override
-    public void externalStateChange()
-    {
+    public void externalStateChange() {
         _target.notifyWork();
     }
 
     @Override
-    public long getUnacknowledgedBytes()
-    {
+    public long getUnacknowledgedBytes() {
         return _target.getUnacknowledgedBytes();
     }
 
     @Override
-    public long getUnacknowledgedMessages()
-    {
+    public long getUnacknowledgedMessages() {
         return _target.getUnacknowledgedMessages();
     }
 
     @Override
-    public AMQPSession<?,?> getSession()
-    {
+    public AMQPSession<?, ?> getSession() {
         return _target.getSession();
     }
 
     @Override
-    public Object getIdentifier()
-    {
+    public Object getIdentifier() {
         return getConsumerNumber();
     }
 
     @Override
-    public boolean isSuspended()
-    {
+    public boolean isSuspended() {
         return _target.isSuspended();
     }
 
     @Override
-    protected ListenableFuture<Void> onClose()
-    {
-        if(_closed.compareAndSet(false,true))
-        {
+    protected ListenableFuture<Void> onClose() {
+        if (_closed.compareAndSet(false, true)) {
             getEventLogger().message(getLogSubject(), SubscriptionMessages.CLOSE());
 
             _waitingOnCreditMessageListener.remove();
 
             return doAfter(_target.consumerRemoved(this),
-                           () -> {
-                               _queue.unregisterConsumer(QueueConsumerImpl.this);
-                           }).then(this::deleteNoChecks);
-        }
-        else
-        {
+                    () -> {
+                        _queue.unregisterConsumer(QueueConsumerImpl.this);
+                    }).then(this::deleteNoChecks);
+        } else {
             return Futures.immediateFuture(null);
         }
     }
 
     @Override
-    public int getPriority()
-    {
+    public int getPriority() {
         return _priority;
     }
 
     @Override
-    public void flushBatched()
-    {
+    public void flushBatched() {
         _target.flushBatched();
     }
 
     @Override
-    public void notifyWork()
-    {
+    public void notifyWork() {
         _target.notifyWork();
     }
 
     @Override
-    public void setQueueConsumerNode(final QueueConsumerNode node)
-    {
+    public void setQueueConsumerNode(final QueueConsumerNode node) {
         _queueConsumerNode = node;
     }
 
     @Override
-    public QueueConsumerNode getQueueConsumerNode()
-    {
+    public QueueConsumerNode getQueueConsumerNode() {
         return _queueConsumerNode;
     }
 
     @Override
-    public void queueDeleted()
-    {
+    public void queueDeleted() {
         _target.queueDeleted(getQueue(), this);
     }
 
     @Override
-    public boolean allocateCredit(final QueueEntry msg)
-    {
+    public boolean allocateCredit(final QueueEntry msg) {
         return _target.allocateCredit(msg.getMessage());
     }
 
     @Override
-    public void restoreCredit(final QueueEntry queueEntry)
-    {
+    public void restoreCredit(final QueueEntry queueEntry) {
         _target.restoreCredit(queueEntry.getMessage());
     }
 
     @Override
-    public void noMessagesAvailable()
-    {
+    public void noMessagesAvailable() {
         _target.noMessagesAvailable();
     }
 
     @Override
-    protected void logOperation(final String operation)
-    {
+    protected void logOperation(final String operation) {
         getEventLogger().message(SubscriptionMessages.OPERATION(operation));
     }
 
     @Override
-    public final Queue<?> getQueue()
-    {
+    public final Queue<?> getQueue() {
         return _queue;
     }
 
-    private void setupLogging()
-    {
+    private void setupLogging() {
         final String filterLogString = getFilterLogString();
         getEventLogger().message(this,
-                                 SubscriptionMessages.CREATE(filterLogString, _queue.isDurable() && _exclusive,
-                                                             filterLogString.length() > 0));
+                SubscriptionMessages.CREATE(filterLogString, _queue.isDurable() && _exclusive,
+                        filterLogString.length() > 0));
     }
 
-    protected final LogSubject getLogSubject()
-    {
+    protected final LogSubject getLogSubject() {
         return this;
     }
 
     @Override
-    public MessageContainer pullMessage()
-    {
+    public MessageContainer pullMessage() {
         MessageContainer messageContainer = _queue.deliverSingleMessage(this);
-        if (messageContainer != null)
-        {
+        if (messageContainer != null) {
             _deliveredCount.incrementAndGet();
             _deliveredBytes.addAndGet(messageContainer.getMessageInstance().getMessage().getSizeIncludingHeader());
         }
@@ -347,122 +311,92 @@ class QueueConsumerImpl<T extends ConsumerTarget>
     }
 
     @Override
-    public void setNotifyWorkDesired(final boolean desired)
-    {
+    public void setNotifyWorkDesired(final boolean desired) {
         _queue.setNotifyWorkDesired(this, desired);
     }
 
     @Override
-    public final long getConsumerNumber()
-    {
+    public final long getConsumerNumber() {
         return _consumerNumber;
     }
 
     @Override
-    public final QueueContext getQueueContext()
-    {
+    public final QueueContext getQueueContext() {
         return _queueContext;
     }
 
-    final void setQueueContext(QueueContext queueContext)
-    {
+    final void setQueueContext(QueueContext queueContext) {
         _queueContext = queueContext;
     }
 
     @Override
-    public final boolean isActive()
-    {
+    public final boolean isActive() {
         return _target.getState() == ConsumerTarget.State.OPEN;
     }
 
     @Override
-    public final boolean isClosed()
-    {
+    public final boolean isClosed() {
         return _target.getState() == ConsumerTarget.State.CLOSED;
     }
 
     @Override
-    public final boolean hasInterest(QueueEntry entry)
-    {
-       //check that the message hasn't been rejected
-        if (entry.isRejectedBy(this) || entry.checkHeld(System.currentTimeMillis()))
-        {
+    public final boolean hasInterest(QueueEntry entry) {
+        //check that the message hasn't been rejected
+        if (entry.isRejectedBy(this) || entry.checkHeld(System.currentTimeMillis())) {
             return false;
         }
 
-        if (entry.getMessage().getClass() == _messageClass)
-        {
-            if(_noLocal)
-            {
+        if (entry.getMessage().getClass() == _messageClass) {
+            if (_noLocal) {
                 Object connectionRef = entry.getMessage().getConnectionReference();
-                if (connectionRef != null && connectionRef == _sessionReference)
-                {
+                if (connectionRef != null && connectionRef == _sessionReference) {
                     return false;
                 }
             }
-        }
-        else
-        {
+        } else {
             // no interest in messages we can't convert
-            if(_messageClass != null && MessageConverterRegistry.getConverter(entry.getMessage().getClass(),
-                                                                              _messageClass)==null)
-            {
+            if (_messageClass != null && MessageConverterRegistry.getConverter(entry.getMessage().getClass(),
+                    _messageClass) == null) {
                 return false;
             }
         }
 
-        if (_filters == null)
-        {
+        if (_filters == null) {
             return true;
-        }
-        else
-        {
+        } else {
             MessageReference ref = entry.newMessageReference();
-            if(ref != null)
-            {
-                try
-                {
+            if (ref != null) {
+                try {
 
                     Filterable msg = entry.asFilterable();
-                    try
-                    {
+                    try {
                         return _filters.allAllow(msg);
-                    }
-                    catch (SelectorParsingException e)
-                    {
+                    } catch (SelectorParsingException e) {
                         LOGGER.info(this + " could not evaluate filter [" + _filters
-                                    + "]  against message " + msg
-                                    + ". Error was : " + e.getMessage());
+                                + "]  against message " + msg
+                                + ". Error was : " + e.getMessage());
                         return false;
                     }
-                }
-                finally
-                {
+                } finally {
                     ref.release();
                 }
-            }
-            else
-            {
+            } else {
                 return false;
             }
         }
     }
 
-    protected String getFilterLogString()
-    {
+    protected String getFilterLogString() {
         StringBuilder filterLogString = new StringBuilder();
         String delimiter = ", ";
         boolean hasEntries = false;
-        if (_filters != null && _filters.hasFilters())
-        {
+        if (_filters != null && _filters.hasFilters()) {
             filterLogString.append(_filters.toString());
             hasEntries = true;
         }
 
-        if (!acquires())
-        {
-            if (hasEntries)
-            {
+        if (!acquires()) {
+            if (hasEntries) {
                 filterLogString.append(delimiter);
             }
             filterLogString.append("Browser");
@@ -471,158 +405,131 @@ class QueueConsumerImpl<T extends ConsumerTarget>
         return filterLogString.toString();
     }
 
-    public final long getCreateTime()
-    {
+    public final long getCreateTime() {
         return _createTime;
     }
 
     @Override
-    public final MessageInstance.StealableConsumerAcquiredState<QueueConsumerImpl<T>> getOwningState()
-    {
+    public final MessageInstance.StealableConsumerAcquiredState<QueueConsumerImpl<T>> getOwningState() {
         return _owningState;
     }
 
     @Override
-    public final boolean acquires()
-    {
+    public final boolean acquires() {
         return _acquires;
     }
 
     @Override
-    public final boolean seesRequeues()
-    {
+    public final boolean seesRequeues() {
         return _seesRequeues;
     }
 
-    public final boolean isTransient()
-    {
+    public final boolean isTransient() {
         return _isTransient;
     }
 
     @Override
-    public final long getBytesOut()
-    {
+    public final long getBytesOut() {
         return _deliveredBytes.longValue();
     }
 
     @Override
-    public final long getMessagesOut()
-    {
+    public final long getMessagesOut() {
         return _deliveredCount.longValue();
     }
 
     @Override
-    public void acquisitionRemoved(final QueueEntry node)
-    {
+    public void acquisitionRemoved(final QueueEntry node) {
         _target.acquisitionRemoved(node);
     }
 
     @Override
-    public String getDistributionMode()
-    {
+    public String getDistributionMode() {
         return _distributionMode;
     }
 
     @Override
-    public String getSettlementMode()
-    {
+    public String getSettlementMode() {
         return _settlementMode;
     }
 
     @Override
-    public boolean isExclusive()
-    {
+    public boolean isExclusive() {
         return _exclusive;
     }
 
     @Override
-    public boolean isNoLocal()
-    {
+    public boolean isNoLocal() {
         return _noLocal;
     }
 
     @Override
-    public String getSelector()
-    {
+    public String getSelector() {
         return _selector;
     }
 
     @Override
-    public boolean isNonLive()
-    {
+    public boolean isNonLive() {
         return _nonLive;
     }
 
-    public void setNonLive(final boolean nonLive)
-    {
+    public void setNonLive(final boolean nonLive) {
         _nonLive = nonLive;
     }
 
     @Override
-    public String toLogString()
-    {
+    public String toLogString() {
         String logString;
-        if(_queue == null)
-        {
+        if (_queue == null) {
             logString = "[" + MessageFormat.format(SUBSCRIPTION_FORMAT, getConsumerNumber())
-                        + "(UNKNOWN)"
-                        + "] ";
-        }
-        else
-        {
+                    + "(UNKNOWN)"
+                    + "] ";
+        } else {
             String queueString = new QueueLogSubject(getName(), getName()).toLogString();
             logString = "[" + MessageFormat.format(SUBSCRIPTION_FORMAT, getConsumerNumber())
-                                     + "("
-                                     // queueString is [vh(/{0})/qu({1}) ] so need to trim
-                                     //                ^                ^^
-                                     + queueString.substring(1,queueString.length() - 3)
-                                     + ")"
-                                     + "] ";
+                    + "("
+                    // queueString is [vh(/{0})/qu({1}) ] so need to trim
+                    //                ^                ^^
+                    + queueString.substring(1, queueString.length() - 3)
+                    + ")"
+                    + "] ";
 
         }
 
         return logString;
     }
 
-    private EventLogger getEventLogger()
-    {
+    private EventLogger getEventLogger() {
         return _queue.getEventLogger();
     }
 
-    public class WaitingOnCreditMessageListener implements StateChangeListener<MessageInstance, MessageInstance.EntryState>
-    {
+    public class WaitingOnCreditMessageListener implements StateChangeListener<MessageInstance, MessageInstance.EntryState> {
         private final AtomicReference<MessageInstance> _entry = new AtomicReference<>();
 
-        public WaitingOnCreditMessageListener()
-        {
+        public WaitingOnCreditMessageListener() {
         }
 
-        public void update(final MessageInstance entry)
-        {
+        public void update(final MessageInstance entry) {
             remove();
             // this only happens under send lock so only one thread can be setting to a non null value at any time
             _entry.set(entry);
             entry.addStateChangeListener(this);
-            if(!entry.isAvailable())
-            {
+            if (!entry.isAvailable()) {
                 _target.notifyWork();
                 remove();
             }
         }
 
-        public void remove()
-        {
+        public void remove() {
             MessageInstance instance;
-            if((instance = _entry.getAndSet(null)) != null)
-            {
+            if ((instance = _entry.getAndSet(null)) != null) {
                 instance.removeStateChangeListener(this);
             }
 
         }
 
         @Override
-        public void stateChanged(MessageInstance entry, MessageInstance.EntryState oldState, MessageInstance.EntryState newState)
-        {
+        public void stateChanged(MessageInstance entry, MessageInstance.EntryState oldState, MessageInstance.EntryState newState) {
             entry.removeStateChangeListener(this);
             _entry.compareAndSet(entry, null);
             _target.notifyWork();
@@ -632,22 +539,20 @@ class QueueConsumerImpl<T extends ConsumerTarget>
 
     @Override
     protected void logCreated(final Map<String, Object> attributes,
-                              final Outcome outcome)
-    {
+                              final Outcome outcome) {
         LOGGER.debug("{} : {} ({}) : Create : {}",
-                     LogMessage.getActor(),
-                     getCategoryClass().getSimpleName(),
-                     getName(),
-                     outcome);
+                LogMessage.getActor(),
+                getCategoryClass().getSimpleName(),
+                getName(),
+                outcome);
     }
 
     @Override
-    protected void logDeleted(final Outcome outcome)
-    {
+    protected void logDeleted(final Outcome outcome) {
         LOGGER.debug("{} : {} ({}) : Delete : {}",
-                     LogMessage.getActor(),
-                     getCategoryClass().getSimpleName(),
-                     getName(),
-                     outcome);
+                LogMessage.getActor(),
+                getCategoryClass().getSimpleName(),
+                getName(),
+                outcome);
     }
 }

@@ -25,49 +25,40 @@ import org.apache.qpid.server.store.MessageEnqueueRecord;
 
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 
-public abstract class OrderedQueueEntry extends QueueEntryImpl
-{
+public abstract class OrderedQueueEntry extends QueueEntryImpl {
     static final AtomicReferenceFieldUpdater<OrderedQueueEntry, OrderedQueueEntry>
-                _nextUpdater =
+            _nextUpdater =
             AtomicReferenceFieldUpdater.newUpdater
-            (OrderedQueueEntry.class, OrderedQueueEntry.class, "_next");
+                    (OrderedQueueEntry.class, OrderedQueueEntry.class, "_next");
 
     private volatile OrderedQueueEntry _next;
 
-    public OrderedQueueEntry(OrderedQueueEntryList queueEntryList)
-    {
+    public OrderedQueueEntry(OrderedQueueEntryList queueEntryList) {
         super(queueEntryList);
     }
 
     public OrderedQueueEntry(OrderedQueueEntryList queueEntryList,
                              ServerMessage message,
-                             final MessageEnqueueRecord messageEnqueueRecord)
-    {
+                             final MessageEnqueueRecord messageEnqueueRecord) {
         super(queueEntryList, message, messageEnqueueRecord);
     }
 
     @Override
-    public OrderedQueueEntry getNextNode()
-    {
+    public OrderedQueueEntry getNextNode() {
         return _next;
     }
 
     @Override
-    public OrderedQueueEntry getNextValidEntry()
-    {
+    public OrderedQueueEntry getNextValidEntry() {
 
         OrderedQueueEntry next = getNextNode();
-        while(next != null && next.isDeleted())
-        {
+        while (next != null && next.isDeleted()) {
 
             final OrderedQueueEntry newNext = next.getNextNode();
-            if(newNext != null)
-            {
-                OrderedQueueEntryList._nextUpdater.compareAndSet(this,next, newNext);
+            if (newNext != null) {
+                OrderedQueueEntryList._nextUpdater.compareAndSet(this, next, newNext);
                 next = getNextNode();
-            }
-            else
-            {
+            } else {
                 next = null;
             }
 

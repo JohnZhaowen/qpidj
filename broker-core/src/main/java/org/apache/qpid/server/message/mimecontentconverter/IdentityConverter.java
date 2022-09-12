@@ -22,41 +22,34 @@ package org.apache.qpid.server.message.mimecontentconverter;
 import org.apache.qpid.server.plugin.PluggableService;
 
 @PluggableService
-public class IdentityConverter implements ObjectToMimeContentConverter<Object>
-{
+public class IdentityConverter implements ObjectToMimeContentConverter<Object> {
     @Override
-    public String getType()
-    {
+    public String getType() {
         return getMimeType();
     }
 
     @Override
-    public String getMimeType()
-    {
+    public String getMimeType() {
         return null;
     }
 
     @Override
-    public Class<Object> getObjectClass()
-    {
+    public Class<Object> getObjectClass() {
         return Object.class;
     }
 
     @Override
-    public int getRank()
-    {
+    public int getRank() {
         return Integer.MIN_VALUE;
     }
 
     @Override
-    public boolean isAcceptable(final Object object)
-    {
+    public boolean isAcceptable(final Object object) {
         return object == null;
     }
 
     @Override
-    public byte[] toMimeContent(final Object object)
-    {
+    public byte[] toMimeContent(final Object object) {
         return new byte[0];
     }
 }

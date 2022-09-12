@@ -20,23 +20,19 @@
  */
 package org.apache.qpid.server.model;
 
-public abstract class AbstractConfigurationChangeListener implements ConfigurationChangeListener
-{
+public abstract class AbstractConfigurationChangeListener implements ConfigurationChangeListener {
     @Override
-    public void stateChanged(final ConfiguredObject<?> object, final State oldState, final State newState)
-    {
+    public void stateChanged(final ConfiguredObject<?> object, final State oldState, final State newState) {
 
     }
 
     @Override
-    public void childAdded(final ConfiguredObject<?> object, final ConfiguredObject<?> child)
-    {
+    public void childAdded(final ConfiguredObject<?> object, final ConfiguredObject<?> child) {
 
     }
 
     @Override
-    public void childRemoved(final ConfiguredObject<?> object, final ConfiguredObject<?> child)
-    {
+    public void childRemoved(final ConfiguredObject<?> object, final ConfiguredObject<?> child) {
 
     }
 
@@ -44,20 +40,17 @@ public abstract class AbstractConfigurationChangeListener implements Configurati
     public void attributeSet(final ConfiguredObject<?> object,
                              final String attributeName,
                              final Object oldAttributeValue,
-                             final Object newAttributeValue)
-    {
+                             final Object newAttributeValue) {
 
     }
 
     @Override
-    public void bulkChangeStart(final ConfiguredObject<?> object)
-    {
+    public void bulkChangeStart(final ConfiguredObject<?> object) {
 
     }
 
     @Override
-    public void bulkChangeEnd(final ConfiguredObject<?> object)
-    {
+    public void bulkChangeEnd(final ConfiguredObject<?> object) {
 
     }
 }

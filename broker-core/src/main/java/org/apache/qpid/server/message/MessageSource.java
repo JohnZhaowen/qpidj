@@ -29,32 +29,30 @@ import org.apache.qpid.server.filter.FilterManager;
 import org.apache.qpid.server.session.AMQPSession;
 import org.apache.qpid.server.store.TransactionLogResource;
 
-public interface MessageSource extends TransactionLogResource, MessageNode
-{
+public interface MessageSource extends TransactionLogResource, MessageNode {
     <T extends ConsumerTarget<T>> MessageInstanceConsumer<T> addConsumer(T target, FilterManager filters,
-                                                                      Class<? extends ServerMessage> messageClass,
-                                                                      String consumerName,
-                                                                      EnumSet<ConsumerOption> options,
-                                                                      Integer priority)
+                                                                         Class<? extends ServerMessage> messageClass,
+                                                                         String consumerName,
+                                                                         EnumSet<ConsumerOption> options,
+                                                                         Integer priority)
             throws ExistingExclusiveConsumer, ExistingConsumerPreventsExclusive,
-                   ConsumerAccessRefused, QueueDeleted;
+            ConsumerAccessRefused, QueueDeleted;
 
     Collection<? extends MessageInstanceConsumer> getConsumers();
 
-    boolean verifySessionAccess(AMQPSession<?,?> session);
+    boolean verifySessionAccess(AMQPSession<?, ?> session);
 
     void close();
+
     /**
      * ExistingExclusiveConsumer signals a failure to create a consumer, because an exclusive consumer
      * already exists.
      * <p>
      * TODO Move to top level, used outside this class.
      */
-    static final class ExistingExclusiveConsumer extends Exception
-    {
+    static final class ExistingExclusiveConsumer extends Exception {
 
-        public ExistingExclusiveConsumer()
-        {
+        public ExistingExclusiveConsumer() {
         }
     }
 
@@ -63,11 +61,9 @@ public interface MessageSource extends TransactionLogResource, MessageNode
      * <p>
      * TODO Move to top level, used outside this class.
      */
-    final class QueueDeleted extends Exception
-    {
+    final class QueueDeleted extends Exception {
 
-        public QueueDeleted()
-        {
+        public QueueDeleted() {
         }
     }
 
@@ -77,22 +73,17 @@ public interface MessageSource extends TransactionLogResource, MessageNode
      * <p>
      * TODO Move to top level, used outside this class.
      */
-    static final class ExistingConsumerPreventsExclusive extends Exception
-    {
-        public ExistingConsumerPreventsExclusive()
-        {
+    static final class ExistingConsumerPreventsExclusive extends Exception {
+        public ExistingConsumerPreventsExclusive() {
         }
     }
 
-    static final class ConsumerAccessRefused extends Exception
-    {
-        public ConsumerAccessRefused()
-        {
+    static final class ConsumerAccessRefused extends Exception {
+        public ConsumerAccessRefused() {
         }
     }
 
-    enum MessageConversionExceptionHandlingPolicy
-    {
+    enum MessageConversionExceptionHandlingPolicy {
         CLOSE,
         ROUTE_TO_ALTERNATE,
         REJECT

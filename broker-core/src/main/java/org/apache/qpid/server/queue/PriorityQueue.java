@@ -29,16 +29,15 @@ import org.apache.qpid.server.model.ManagedOperation;
 import org.apache.qpid.server.model.Param;
 import org.apache.qpid.server.model.Queue;
 
-@ManagedObject( category = false, type="priority",
-        amqpName = "org.apache.qpid.PriorityQueue" )
-public interface PriorityQueue<X extends PriorityQueue<X>> extends Queue<X>
-{
+@ManagedObject(category = false, type = "priority",
+        amqpName = "org.apache.qpid.PriorityQueue")
+public interface PriorityQueue<X extends PriorityQueue<X>> extends Queue<X> {
     String PRIORITIES = "priorities";
 
-    @ManagedContextDefault( name = "queue.priorities")
+    @ManagedContextDefault(name = "queue.priorities")
     int DEFAULT_PRIORITY_LEVELS = 10;
 
-    @ManagedAttribute( defaultValue = "${queue.priorities}")
+    @ManagedAttribute(defaultValue = "${queue.priorities}")
     int getPriorities();
 
     /**
@@ -47,13 +46,13 @@ public interface PriorityQueue<X extends PriorityQueue<X>> extends Queue<X>
      * The operation results in a deletion of original message and creation of new message
      * which is a copy of original one except for different message id and priority.
      *
-     * @param messageId message id
+     * @param messageId   message id
      * @param newPriority new priority
-     * @return  new message id, or -1 if message is not found or priority is not changed
+     * @return new message id, or -1 if message is not found or priority is not changed
      */
     @ManagedOperation(description = "Change the priority of the message with given message ID",
-                      nonModifying = true,
-                      changesConfiguredObjectState = false)
+            nonModifying = true,
+            changesConfiguredObjectState = false)
     long reenqueueMessageForPriorityChange(@Param(name = "messageId", description = "A message ID") long messageId,
                                            @Param(name = "newPriority", description = "the new priority") int newPriority);
 
@@ -65,13 +64,13 @@ public interface PriorityQueue<X extends PriorityQueue<X>> extends Queue<X>
      * The operation results in a deletion of original messages and creation of new messages
      * having the same properties and content as original ones except for different message id and priority.
      *
-     * @param selector selector expression
+     * @param selector    selector expression
      * @param newPriority new priority
      * @return the list containing ids of re-enqueed message s
      */
     @ManagedOperation(description = "Change the priority of the messages matching the given selector expression",
-                      nonModifying = true,
-                      changesConfiguredObjectState = false)
+            nonModifying = true,
+            changesConfiguredObjectState = false)
     List<Long> reenqueueMessagesForPriorityChange(@Param(name = "selector", description = "A message selector (can be empty)") String selector,
                                                   @Param(name = "newPriority", description = "the new priority") int newPriority);
 

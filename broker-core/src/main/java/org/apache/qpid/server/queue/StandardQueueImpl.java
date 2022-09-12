@@ -25,26 +25,22 @@ import java.util.Map;
 import org.apache.qpid.server.model.ManagedObjectFactoryConstructor;
 import org.apache.qpid.server.virtualhost.QueueManagingVirtualHost;
 
-public class StandardQueueImpl extends AbstractQueue<StandardQueueImpl> implements StandardQueue<StandardQueueImpl>
-{
+public class StandardQueueImpl extends AbstractQueue<StandardQueueImpl> implements StandardQueue<StandardQueueImpl> {
     private StandardQueueEntryList _entries;
 
     @ManagedObjectFactoryConstructor
-    public StandardQueueImpl(final Map<String, Object> arguments, final QueueManagingVirtualHost<?> virtualHost)
-    {
+    public StandardQueueImpl(final Map<String, Object> arguments, final QueueManagingVirtualHost<?> virtualHost) {
         super(arguments, virtualHost);
     }
 
     @Override
-    protected void onOpen()
-    {
+    protected void onOpen() {
         super.onOpen();
         _entries = new StandardQueueEntryList(this, getQueueStatistics());
     }
 
     @Override
-    StandardQueueEntryList getEntries()
-    {
+    StandardQueueEntryList getEntries() {
         return _entries;
     }
 }

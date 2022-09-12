@@ -22,8 +22,7 @@ package org.apache.qpid.server.message.mimecontentconverter;
 
 import org.apache.qpid.server.plugin.Pluggable;
 
-public interface MimeContentToObjectConverter<O extends Object> extends Pluggable
-{
+public interface MimeContentToObjectConverter<O extends Object> extends Pluggable {
     String getMimeType();
 
     Class<O> getObjectClass();

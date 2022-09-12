@@ -25,13 +25,12 @@ import org.apache.qpid.server.model.ManagedContextDefault;
 import org.apache.qpid.server.model.ManagedObject;
 import org.apache.qpid.server.model.Queue;
 
-@ManagedObject( category = false, type= LastValueQueue.LAST_VALUE_QUEUE_TYPE,
+@ManagedObject(category = false, type = LastValueQueue.LAST_VALUE_QUEUE_TYPE,
         amqpName = "org.apache.qpid.LastValueQueue")
-public interface LastValueQueue<X extends LastValueQueue<X>> extends Queue<X>
-{
+public interface LastValueQueue<X extends LastValueQueue<X>> extends Queue<X> {
     String LVQ_KEY = "lvqKey";
 
-    @ManagedContextDefault( name = "queue.lvqKey" )
+    @ManagedContextDefault(name = "queue.lvqKey")
     String DEFAULT_LVQ_KEY = "qpid.LVQ_key";
     String LAST_VALUE_QUEUE_TYPE = "lvq";
 

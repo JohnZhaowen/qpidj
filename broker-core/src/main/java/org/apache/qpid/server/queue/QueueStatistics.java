@@ -23,8 +23,7 @@ package org.apache.qpid.server.queue;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
-final class QueueStatistics
-{
+final class QueueStatistics {
     private final AtomicInteger _queueCount = new AtomicInteger();
     private final AtomicLong _queueSize = new AtomicLong();
 
@@ -57,204 +56,166 @@ final class QueueStatistics
     private final AtomicInteger _malformedCount = new AtomicInteger();
     private final AtomicLong _malformedSize = new AtomicLong();
 
-    public final int getQueueCount()
-    {
+    public final int getQueueCount() {
         return _queueCount.get();
     }
 
-    public final long getQueueSize()
-    {
+    public final long getQueueSize() {
         return _queueSize.get();
     }
 
-    public final int getUnackedCount()
-    {
+    public final int getUnackedCount() {
         return _unackedCount.get();
     }
 
-    public final long getUnackedSize()
-    {
+    public final long getUnackedSize() {
         return _unackedSize.get();
     }
 
-    public final int getAvailableCount()
-    {
+    public final int getAvailableCount() {
         return _availableCount.get();
     }
 
-    public final long getAvailableSize()
-    {
+    public final long getAvailableSize() {
         return _availableSize.get();
     }
 
-    public final long getEnqueueCount()
-    {
+    public final long getEnqueueCount() {
         return _enqueueCount.get();
     }
 
-    public final long getEnqueueSize()
-    {
+    public final long getEnqueueSize() {
         return _enqueueSize.get();
     }
 
-    public final long getDequeueCount()
-    {
+    public final long getDequeueCount() {
         return _dequeueCount.get();
     }
 
-    public final long getDequeueSize()
-    {
+    public final long getDequeueSize() {
         return _dequeueSize.get();
     }
 
-    public final long getPersistentEnqueueCount()
-    {
+    public final long getPersistentEnqueueCount() {
         return _persistentEnqueueCount.get();
     }
 
-    public final long getPersistentEnqueueSize()
-    {
+    public final long getPersistentEnqueueSize() {
         return _persistentEnqueueSize.get();
     }
 
-    public final long getPersistentDequeueCount()
-    {
+    public final long getPersistentDequeueCount() {
         return _persistentDequeueCount.get();
     }
 
-    public final long getPersistentDequeueSize()
-    {
+    public final long getPersistentDequeueSize() {
         return _persistentDequeueSize.get();
     }
 
-    public final int getQueueCountHwm()
-    {
+    public final int getQueueCountHwm() {
         return _queueCountHwm.get();
     }
 
-    public final long getQueueSizeHwm()
-    {
+    public final long getQueueSizeHwm() {
         return _queueSizeHwm.get();
     }
 
-    public final int getAvailableCountHwm()
-    {
+    public final int getAvailableCountHwm() {
         return _availableCountHwm.get();
     }
 
-    public final long getAvailableSizeHwm()
-    {
+    public final long getAvailableSizeHwm() {
         return _availableSizeHwm.get();
     }
 
-    public int getExpiredCount()
-    {
+    public int getExpiredCount() {
         return _expiredCount.get();
     }
 
-    public long getExpiredSize()
-    {
+    public long getExpiredSize() {
         return _expiredSize.get();
     }
 
-    public int getMalformedCount()
-    {
+    public int getMalformedCount() {
         return _malformedCount.get();
     }
 
-    public long getMalformedSize()
-    {
+    public long getMalformedSize() {
         return _malformedSize.get();
     }
 
-    void addToQueue(long size)
-    {
+    void addToQueue(long size) {
         int count = _queueCount.incrementAndGet();
         long queueSize = _queueSize.addAndGet(size);
         int hwm;
-        while((hwm = _queueCountHwm.get()) < count)
-        {
+        while ((hwm = _queueCountHwm.get()) < count) {
             _queueCountHwm.compareAndSet(hwm, count);
         }
         long sizeHwm;
-        while((sizeHwm = _queueSizeHwm.get()) < queueSize)
-        {
+        while ((sizeHwm = _queueSizeHwm.get()) < queueSize) {
             _queueSizeHwm.compareAndSet(sizeHwm, queueSize);
         }
     }
 
-    void removeFromQueue(long size)
-    {
+    void removeFromQueue(long size) {
         _queueCount.decrementAndGet();
         _queueSize.addAndGet(-size);
     }
 
-    void addToAvailable(long size)
-    {
+    void addToAvailable(long size) {
         int count = _availableCount.incrementAndGet();
         long availableSize = _availableSize.addAndGet(size);
         int hwm;
-        while((hwm = _availableCountHwm.get()) < count)
-        {
+        while ((hwm = _availableCountHwm.get()) < count) {
             _availableCountHwm.compareAndSet(hwm, count);
         }
         long sizeHwm;
-        while((sizeHwm = _availableSizeHwm.get()) < availableSize)
-        {
+        while ((sizeHwm = _availableSizeHwm.get()) < availableSize) {
             _availableSizeHwm.compareAndSet(sizeHwm, availableSize);
         }
     }
 
-    void removeFromAvailable(long size)
-    {
+    void removeFromAvailable(long size) {
         _availableCount.decrementAndGet();
         _availableSize.addAndGet(-size);
     }
 
-    void addToUnacknowledged(long size)
-    {
+    void addToUnacknowledged(long size) {
         _unackedCount.incrementAndGet();
         _unackedSize.addAndGet(size);
     }
 
-    void removeFromUnacknowledged(long size)
-    {
+    void removeFromUnacknowledged(long size) {
         _unackedCount.decrementAndGet();
         _unackedSize.addAndGet(-size);
     }
 
-    void addToEnqueued(long size)
-    {
+    void addToEnqueued(long size) {
         _enqueueCount.incrementAndGet();
         _enqueueSize.addAndGet(size);
     }
 
-    void addToDequeued(long size)
-    {
+    void addToDequeued(long size) {
         _dequeueCount.incrementAndGet();
         _dequeueSize.addAndGet(size);
     }
 
-    void addToPersistentEnqueued(long size)
-    {
+    void addToPersistentEnqueued(long size) {
         _persistentEnqueueCount.incrementAndGet();
         _persistentEnqueueSize.addAndGet(size);
     }
 
-    void addToPersistentDequeued(long size)
-    {
+    void addToPersistentDequeued(long size) {
         _persistentDequeueCount.incrementAndGet();
         _persistentDequeueSize.addAndGet(size);
     }
 
-    void addToExpired(final long size)
-    {
+    void addToExpired(final long size) {
         _expiredCount.incrementAndGet();
         _expiredSize.addAndGet(size);
     }
 
-    void addToMalformed(final long size)
-    {
+    void addToMalformed(final long size) {
         _malformedCount.incrementAndGet();
         _malformedSize.addAndGet(size);
     }

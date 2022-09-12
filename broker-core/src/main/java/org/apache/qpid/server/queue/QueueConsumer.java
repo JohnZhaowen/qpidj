@@ -27,8 +27,7 @@ import org.apache.qpid.server.model.Queue;
 import org.apache.qpid.server.model.Session;
 import org.apache.qpid.server.session.AMQPSession;
 
-public interface QueueConsumer<X extends QueueConsumer<X,T>, T extends ConsumerTarget> extends Consumer<X, T>
-{
+public interface QueueConsumer<X extends QueueConsumer<X, T>, T extends ConsumerTarget> extends Consumer<X, T> {
     void flushBatched();
 
     void noMessagesAvailable();
@@ -60,5 +59,5 @@ public interface QueueConsumer<X extends QueueConsumer<X,T>, T extends ConsumerT
     void setQueueConsumerNode(QueueConsumerNode node);
 
     @Override
-    AMQPSession<?,?> getSession();
+    AMQPSession<?, ?> getSession();
 }

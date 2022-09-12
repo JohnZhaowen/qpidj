@@ -22,56 +22,43 @@ package org.apache.qpid.server.store.serializer.v1;
 
 import java.io.IOException;
 
-enum RecordType
-{
-    VERSION
-            {
-                @Override
-                public VersionRecord read(Deserializer deserializer) throws IOException
-                {
-                    return VersionRecord.read(deserializer);
-                }
-            },
-    MESSAGE
-            {
-                @Override
-                public MessageRecord read(Deserializer deserializer) throws IOException
-                {
-                    return MessageRecord.read(deserializer);
-                }
-            },
-    QUEUE_MAPPING
-            {
-                @Override
-                public QueueMappingRecord read(Deserializer deserializer) throws IOException
-                {
-                    return QueueMappingRecord.read(deserializer);
-                }
-            },
-    MESSAGE_INSTANCE
-            {
-                @Override
-                public MessageInstanceRecord read(Deserializer deserializer) throws IOException
-                {
-                    return MessageInstanceRecord.read(deserializer);
-                }
-            },
-    DTX
-            {
-                @Override
-                public DTXRecord read(Deserializer deserializer) throws IOException
-                {
-                    return DTXRecord.read(deserializer);
-                }
-            },
-    DIGEST
-            {
-                @Override
-                public Record read(Deserializer deserializer) throws IOException
-                {
-                    return deserializer.validateDigest();
-                }
-            };
+enum RecordType {
+    VERSION {
+        @Override
+        public VersionRecord read(Deserializer deserializer) throws IOException {
+            return VersionRecord.read(deserializer);
+        }
+    },
+    MESSAGE {
+        @Override
+        public MessageRecord read(Deserializer deserializer) throws IOException {
+            return MessageRecord.read(deserializer);
+        }
+    },
+    QUEUE_MAPPING {
+        @Override
+        public QueueMappingRecord read(Deserializer deserializer) throws IOException {
+            return QueueMappingRecord.read(deserializer);
+        }
+    },
+    MESSAGE_INSTANCE {
+        @Override
+        public MessageInstanceRecord read(Deserializer deserializer) throws IOException {
+            return MessageInstanceRecord.read(deserializer);
+        }
+    },
+    DTX {
+        @Override
+        public DTXRecord read(Deserializer deserializer) throws IOException {
+            return DTXRecord.read(deserializer);
+        }
+    },
+    DIGEST {
+        @Override
+        public Record read(Deserializer deserializer) throws IOException {
+            return deserializer.validateDigest();
+        }
+    };
 
     abstract public Record read(Deserializer reader) throws IOException;
 

@@ -28,94 +28,77 @@ import org.apache.qpid.server.bytebuffer.QpidByteBuffer;
 import org.apache.qpid.server.store.StorableMessageMetaData;
 import org.apache.qpid.server.util.ConnectionScopedRuntimeException;
 
-public class InternalMessageMetaData implements StorableMessageMetaData
-{
+public class InternalMessageMetaData implements StorableMessageMetaData {
     private final boolean _isPersistent;
     private final InternalMessageHeader _header;
     private final int _contentSize;
     private volatile byte[] _headerBytes;
 
-    public InternalMessageMetaData(final boolean isPersistent, final InternalMessageHeader header, final int contentSize)
-    {
+    public InternalMessageMetaData(final boolean isPersistent, final InternalMessageHeader header, final int contentSize) {
         _isPersistent = isPersistent;
         _header = header;
         _contentSize = contentSize;
     }
 
     @Override
-    public InternalMessageMetaDataType getType()
-    {
+    public InternalMessageMetaDataType getType() {
         return InternalMessageMetaDataType.INSTANCE;
     }
 
     @Override
-    public int getStorableSize()
-    {
+    public int getStorableSize() {
         ensureHeaderIsEncoded();
         return _headerBytes.length;
     }
 
     @Override
-    public void writeToBuffer(final QpidByteBuffer dest)
-    {
+    public void writeToBuffer(final QpidByteBuffer dest) {
         ensureHeaderIsEncoded();
         dest.put(_headerBytes);
     }
 
     @Override
-    public int getContentSize()
-    {
+    public int getContentSize() {
         return _contentSize;
     }
 
     @Override
-    public boolean isPersistent()
-    {
+    public boolean isPersistent() {
         return _isPersistent;
     }
 
     @Override
-    public void dispose()
-    {
+    public void dispose() {
 
     }
 
-    InternalMessageHeader getHeader()
-    {
+    InternalMessageHeader getHeader() {
         return _header;
     }
 
     @Override
-    public void clearEncodedForm()
-    {
+    public void clearEncodedForm() {
 
     }
 
     @Override
-    public void reallocate()
-    {
+    public void reallocate() {
 
     }
 
-    static InternalMessageMetaData create(boolean persistent, final InternalMessageHeader header, int contentSize)
-    {
+    static InternalMessageMetaData create(boolean persistent, final InternalMessageHeader header, int contentSize) {
         return new InternalMessageMetaData(persistent, header, contentSize);
     }
 
-    private void ensureHeaderIsEncoded()
-    {
-        if (_headerBytes == null)
-        {
-            try(ByteArrayOutputStream bytesOut = new ByteArrayOutputStream();
-                ObjectOutputStream os = new ObjectOutputStream(bytesOut))
-            {
+    private void ensureHeaderIsEncoded() {
+        if (_headerBytes == null) {
+            try (ByteArrayOutputStream bytesOut = new ByteArrayOutputStream();
+                 ObjectOutputStream os = new ObjectOutputStream(bytesOut)) {
                 os.writeInt(_contentSize);
                 os.writeObject(_header);
                 os.close();
                 _headerBytes = bytesOut.toByteArray();
-            }
-            catch (IOException e)
-            {
+            } catch (IOException e) {
                 throw new ConnectionScopedRuntimeException("Unexpected IO Exception on in memory operation", e);
             }
         }

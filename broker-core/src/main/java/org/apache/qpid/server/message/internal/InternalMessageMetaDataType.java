@@ -31,46 +31,36 @@ import org.apache.qpid.server.store.StoredMessage;
 import org.apache.qpid.server.util.ConnectionScopedRuntimeException;
 
 @PluggableService
-public class InternalMessageMetaDataType implements MessageMetaDataType<InternalMessageMetaData>
-{
+public class InternalMessageMetaDataType implements MessageMetaDataType<InternalMessageMetaData> {
     public static final int INTERNAL_ORDINAL = 255;
     public static final String TYPE = "INTERNAL";
 
     @Override
-    public int ordinal()
-    {
+    public int ordinal() {
         return INTERNAL_ORDINAL;
     }
 
     @Override
-    public InternalMessageMetaData createMetaData(final QpidByteBuffer buf)
-    {
-        try (ObjectInputStream is = new ObjectInputStream(buf.asInputStream()))
-        {
+    public InternalMessageMetaData createMetaData(final QpidByteBuffer buf) {
+        try (ObjectInputStream is = new ObjectInputStream(buf.asInputStream())) {
             int contentSize = is.readInt();
             InternalMessageHeader header = (InternalMessageHeader) is.readObject();
             return new InternalMessageMetaData(true, header, contentSize);
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             throw new ConnectionScopedRuntimeException("Unexpected IO Exception on operation in memory", e);
-        }
-        catch (ClassNotFoundException e)
-        {
-            throw new ConnectionScopedRuntimeException("Unexpected exception when reading meta data, check classpath",e);
+        } catch (ClassNotFoundException e) {
+            throw new ConnectionScopedRuntimeException("Unexpected exception when reading meta data, check classpath", e);
         }
 
     }
 
     @Override
-    public ServerMessage<InternalMessageMetaData> createMessage(final StoredMessage<InternalMessageMetaData> msg)
-    {
+    public ServerMessage<InternalMessageMetaData> createMessage(final StoredMessage<InternalMessageMetaData> msg) {
         return new InternalMessage(msg, null);
     }
 
     @Override
-    public String getType()
-    {
+    public String getType() {
         return TYPE;
     }
 

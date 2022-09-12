@@ -20,20 +20,18 @@
  */
 package org.apache.qpid.server.queue;
 
-public interface MessageGroupManager
-{
-    interface ConsumerResetHelper
-    {
+public interface MessageGroupManager {
+    interface ConsumerResetHelper {
         void resetSubPointersForGroups(QueueEntry entry);
 
-        boolean isEntryAheadOfConsumer(QueueEntry entry, QueueConsumer<?,?> sub);
+        boolean isEntryAheadOfConsumer(QueueEntry entry, QueueConsumer<?, ?> sub);
     }
 
     boolean mightAssign(QueueEntry entry, final QueueConsumer sub);
 
-    boolean acceptMessage(QueueConsumer<?,?> sub, QueueEntry entry);
+    boolean acceptMessage(QueueConsumer<?, ?> sub, QueueEntry entry);
 
-    QueueEntry findEarliestAssignedAvailableEntry(QueueConsumer<?,?> sub);
+    QueueEntry findEarliestAssignedAvailableEntry(QueueConsumer<?, ?> sub);
 
-    void clearAssignments(QueueConsumer<?,?> sub);
+    void clearAssignments(QueueConsumer<?, ?> sub);
 }

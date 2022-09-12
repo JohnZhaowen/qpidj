@@ -18,7 +18,6 @@
  */
 package org.apache.qpid.server.store;
 
-public interface FileBasedSettings extends Settings
-{
-    public String getStorePath();
+public interface FileBasedSettings extends Settings {
+    String getStorePath();
 }

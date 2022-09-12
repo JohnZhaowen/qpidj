@@ -25,13 +25,11 @@ import org.apache.qpid.server.model.ConfiguredObject;
 import org.apache.qpid.server.model.OverflowPolicy;
 import org.apache.qpid.server.model.Queue;
 
-abstract class OverflowPolicyMaximumQueueDepthChangeListener extends AbstractConfigurationChangeListener
-{
+abstract class OverflowPolicyMaximumQueueDepthChangeListener extends AbstractConfigurationChangeListener {
     private final OverflowPolicy _overflowPolicy;
     private boolean _maximumQueueDepthChangeDetected;
 
-    OverflowPolicyMaximumQueueDepthChangeListener(final OverflowPolicy overflowPolicy)
-    {
+    OverflowPolicyMaximumQueueDepthChangeListener(final OverflowPolicy overflowPolicy) {
         _overflowPolicy = overflowPolicy;
     }
 
@@ -39,34 +37,26 @@ abstract class OverflowPolicyMaximumQueueDepthChangeListener extends AbstractCon
     public void attributeSet(final ConfiguredObject<?> object,
                              final String attributeName,
                              final Object oldAttributeValue,
-                             final Object newAttributeValue)
-    {
+                             final Object newAttributeValue) {
         super.attributeSet(object, attributeName, oldAttributeValue, newAttributeValue);
         if (Queue.MAXIMUM_QUEUE_DEPTH_BYTES.equals(attributeName)
-            || Queue.MAXIMUM_QUEUE_DEPTH_MESSAGES.equals(attributeName))
-        {
+                || Queue.MAXIMUM_QUEUE_DEPTH_MESSAGES.equals(attributeName)) {
             _maximumQueueDepthChangeDetected = true;
         }
     }
 
     @Override
-    public void bulkChangeEnd(final ConfiguredObject<?> object)
-    {
+    public void bulkChangeEnd(final ConfiguredObject<?> object) {
         super.bulkChangeEnd(object);
-        if (object instanceof Queue)
-        {
+        if (object instanceof Queue) {
             Queue<?> queue = (Queue<?>) object;
 
-            if (queue.getOverflowPolicy() == _overflowPolicy)
-            {
-                if (_maximumQueueDepthChangeDetected)
-                {
+            if (queue.getOverflowPolicy() == _overflowPolicy) {
+                if (_maximumQueueDepthChangeDetected) {
                     _maximumQueueDepthChangeDetected = false;
                     onMaximumQueueDepthChange(queue);
                 }
-            }
-            else
-            {
+            } else {
                 queue.removeChangeListener(this);
             }
         }

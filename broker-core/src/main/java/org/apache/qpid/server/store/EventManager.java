@@ -27,43 +27,34 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class EventManager
-{
-    private Map<Event, List<EventListener>> _listeners = new EnumMap<Event, List<EventListener>> (Event.class);
+public class EventManager {
+    private Map<Event, List<EventListener>> _listeners = new EnumMap<Event, List<EventListener>>(Event.class);
     private static final Logger LOGGER = LoggerFactory.getLogger(EventManager.class);
 
-    public synchronized void addEventListener(EventListener listener, Event... events)
-    {
-        for(Event event : events)
-        {
+    public synchronized void addEventListener(EventListener listener, Event... events) {
+        for (Event event : events) {
             List<EventListener> list = _listeners.get(event);
-            if(list == null)
-            {
+            if (list == null) {
                 list = new ArrayList<EventListener>();
-                _listeners.put(event,list);
+                _listeners.put(event, list);
             }
             list.add(listener);
         }
     }
 
-    public synchronized void notifyEvent(Event event)
-    {
-        if (_listeners.containsKey(event))
-        {
-            if(LOGGER.isDebugEnabled())
-            {
+    public synchronized void notifyEvent(Event event) {
+        if (_listeners.containsKey(event)) {
+            if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Received event " + event);
             }
 
-            for (EventListener listener : _listeners.get(event))
-            {
+            for (EventListener listener : _listeners.get(event)) {
                 listener.event(event);
             }
         }
     }
 
-    public synchronized boolean hasListeners(Event event)
-    {
+    public synchronized boolean hasListeners(Event event) {
         return _listeners.containsKey(event);
     }
 }

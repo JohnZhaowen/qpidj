@@ -27,35 +27,30 @@ import org.apache.qpid.server.model.ManagedAttributeField;
 import org.apache.qpid.server.model.ManagedObjectFactoryConstructor;
 import org.apache.qpid.server.virtualhost.QueueManagingVirtualHost;
 
-public class LastValueQueueImpl extends AbstractQueue<LastValueQueueImpl> implements LastValueQueue<LastValueQueueImpl>
-{
+public class LastValueQueueImpl extends AbstractQueue<LastValueQueueImpl> implements LastValueQueue<LastValueQueueImpl> {
     private LastValueQueueList _entries;
 
     @ManagedAttributeField
     private String _lvqKey;
 
     @ManagedObjectFactoryConstructor
-    public LastValueQueueImpl(Map<String, Object> attributes, QueueManagingVirtualHost<?> virtualHost)
-    {
+    public LastValueQueueImpl(Map<String, Object> attributes, QueueManagingVirtualHost<?> virtualHost) {
         super(attributes, virtualHost);
     }
 
     @Override
-    protected void onOpen()
-    {
+    protected void onOpen() {
         super.onOpen();
         _entries = new LastValueQueueList(this, getQueueStatistics());
     }
 
     @Override
-    LastValueQueueList getEntries()
-    {
+    LastValueQueueList getEntries() {
         return _entries;
     }
 
     @Override
-    public String getLvqKey()
-    {
+    public String getLvqKey() {
         return _lvqKey;
     }
 }

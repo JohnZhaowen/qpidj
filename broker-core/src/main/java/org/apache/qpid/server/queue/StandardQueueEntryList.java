@@ -23,35 +23,29 @@ package org.apache.qpid.server.queue;
 import org.apache.qpid.server.message.ServerMessage;
 import org.apache.qpid.server.store.MessageEnqueueRecord;
 
-public class StandardQueueEntryList extends OrderedQueueEntryList
-{
+public class StandardQueueEntryList extends OrderedQueueEntryList {
 
-    private static final HeadCreator HEAD_CREATOR = new HeadCreator()
-    {
+    private static final HeadCreator HEAD_CREATOR = new HeadCreator() {
         @Override
-        public StandardQueueEntry createHead(final QueueEntryList list)
-        {
+        public StandardQueueEntry createHead(final QueueEntryList list) {
             return new StandardQueueEntry((StandardQueueEntryList) list);
         }
     };
 
-    public StandardQueueEntryList(final StandardQueue<?> queue, QueueStatistics queueStatistics)
-    {
+    public StandardQueueEntryList(final StandardQueue<?> queue, QueueStatistics queueStatistics) {
         super(queue, queueStatistics, HEAD_CREATOR);
     }
 
 
     @Override
     protected StandardQueueEntry createQueueEntry(ServerMessage<?> message,
-                                                  final MessageEnqueueRecord enqueueRecord)
-    {
+                                                  final MessageEnqueueRecord enqueueRecord) {
         return new StandardQueueEntry(this, message, enqueueRecord);
     }
 
 
     @Override
-    public QueueEntry getLeastSignificantOldestEntry()
-    {
+    public QueueEntry getLeastSignificantOldestEntry() {
         return getOldestEntry();
     }
 }

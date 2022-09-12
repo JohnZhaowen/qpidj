@@ -27,8 +27,8 @@ import org.apache.qpid.server.store.MessageEnqueueRecord;
 import org.apache.qpid.server.store.TransactionLogResource;
 import org.apache.qpid.server.util.Action;
 
-public interface BaseQueue extends TransactionLogResource
-{
+public interface BaseQueue extends TransactionLogResource {
     void enqueue(ServerMessage message, Action<? super MessageInstance> action, MessageEnqueueRecord record);
+
     boolean isDeleted();
 }

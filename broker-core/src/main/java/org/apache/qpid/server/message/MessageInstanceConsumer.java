@@ -22,8 +22,7 @@ package org.apache.qpid.server.message;
 
 import org.apache.qpid.server.consumer.ConsumerTarget;
 
-public interface MessageInstanceConsumer<T extends ConsumerTarget>
-{
+public interface MessageInstanceConsumer<T extends ConsumerTarget> {
     boolean isClosed();
 
     boolean acquires();

@@ -22,17 +22,22 @@ package org.apache.qpid.server.queue;
 
 import java.util.Iterator;
 
-public interface QueueConsumerManager
-{
-    void addConsumer(QueueConsumer<?,?> consumer);
-    boolean removeConsumer(QueueConsumer<?,?> consumer);
-    boolean setInterest(QueueConsumer<?,?> consumer, boolean interested);
-    boolean setNotified(QueueConsumer<?,?> consumer, boolean notified);
+public interface QueueConsumerManager {
+    void addConsumer(QueueConsumer<?, ?> consumer);
 
-    Iterator<QueueConsumer<?,?>> getInterestedIterator();
-    Iterator<QueueConsumer<?,?>> getAllIterator();
-    Iterator<QueueConsumer<?,?>> getNonAcquiringIterator();
+    boolean removeConsumer(QueueConsumer<?, ?> consumer);
+
+    boolean setInterest(QueueConsumer<?, ?> consumer, boolean interested);
+
+    boolean setNotified(QueueConsumer<?, ?> consumer, boolean notified);
+
+    Iterator<QueueConsumer<?, ?>> getInterestedIterator();
+
+    Iterator<QueueConsumer<?, ?>> getAllIterator();
+
+    Iterator<QueueConsumer<?, ?>> getNonAcquiringIterator();
 
     int getAllSize();
+
     int getHighestNotifiedPriority();
 }

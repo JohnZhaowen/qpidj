@@ -23,42 +23,37 @@ package org.apache.qpid.server.queue;
 
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 
-final class QueueContext
-{
+final class QueueContext {
     private volatile QueueEntry _lastSeenEntry;
     private volatile QueueEntry _releasedEntry;
 
     static final AtomicReferenceFieldUpdater<QueueContext, QueueEntry>
             _lastSeenUpdater =
-        AtomicReferenceFieldUpdater.newUpdater
-        (QueueContext.class, QueueEntry.class, "_lastSeenEntry");
+            AtomicReferenceFieldUpdater.newUpdater
+                    (QueueContext.class, QueueEntry.class, "_lastSeenEntry");
     static final AtomicReferenceFieldUpdater<QueueContext, QueueEntry>
             _releasedUpdater =
-        AtomicReferenceFieldUpdater.newUpdater
-        (QueueContext.class, QueueEntry.class, "_releasedEntry");
+            AtomicReferenceFieldUpdater.newUpdater
+                    (QueueContext.class, QueueEntry.class, "_releasedEntry");
 
-    public QueueContext(QueueEntry head)
-    {
+    public QueueContext(QueueEntry head) {
         _lastSeenEntry = head;
     }
 
-    public QueueEntry getLastSeenEntry()
-    {
+    public QueueEntry getLastSeenEntry() {
         return _lastSeenEntry;
     }
 
 
-    QueueEntry getReleasedEntry()
-    {
+    QueueEntry getReleasedEntry() {
         return _releasedEntry;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "QueueContext{" +
-               "_lastSeenEntry=" + _lastSeenEntry +
-               ", _releasedEntry=" + _releasedEntry +
-               '}';
+                "_lastSeenEntry=" + _lastSeenEntry +
+                ", _releasedEntry=" + _releasedEntry +
+                '}';
     }
 }

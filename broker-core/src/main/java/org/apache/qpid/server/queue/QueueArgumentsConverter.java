@@ -42,8 +42,7 @@ import org.apache.qpid.server.model.OverflowPolicy;
 import org.apache.qpid.server.model.Queue;
 import org.apache.qpid.server.util.ConnectionScopedRuntimeException;
 
-public class QueueArgumentsConverter
-{
+public class QueueArgumentsConverter {
     private static final Logger LOGGER = LoggerFactory.getLogger(QueueArgumentsConverter.class);
 
     private static final String SHARED_MSG_GROUP_ARG_VALUE = "1";
@@ -100,8 +99,7 @@ public class QueueArgumentsConverter
     private static final String DEFAULT_DLQ_NAME_SUFFIX = "_DLQ";
     private static final String PROPERTY_DEAD_LETTER_QUEUE_SUFFIX = "qpid.broker_dead_letter_queue_suffix";
 
-    static
-    {
+    static {
         ATTRIBUTE_MAPPINGS.put(X_QPID_MINIMUM_ALERT_REPEAT_GAP, Queue.ALERT_REPEAT_GAP);
         ATTRIBUTE_MAPPINGS.put(X_QPID_MAXIMUM_MESSAGE_AGE, Queue.ALERT_THRESHOLD_MESSAGE_AGE);
         ATTRIBUTE_MAPPINGS.put(X_QPID_MAXIMUM_MESSAGE_SIZE, Queue.ALERT_THRESHOLD_MESSAGE_SIZE);
@@ -139,90 +137,73 @@ public class QueueArgumentsConverter
     }
 
 
-    public static Map<String,Object> convertWireArgsToModel(final String queueName,
-                                                            final Map<String, Object> wireArguments,
-                                                            final Model model,
-                                                            final Queue.BehaviourOnUnknownDeclareArgument unknownArgumentBehaviour)
-    {
-        Map<String,Object> modelArguments = new HashMap<>();
-        if(wireArguments != null)
-        {
+    public static Map<String, Object> convertWireArgsToModel(final String queueName,
+                                                             final Map<String, Object> wireArguments,
+                                                             final Model model,
+                                                             final Queue.BehaviourOnUnknownDeclareArgument unknownArgumentBehaviour) {
+        Map<String, Object> modelArguments = new HashMap<>();
+        if (wireArguments != null) {
             final ConfiguredObjectTypeRegistry typeRegistry = model.getTypeRegistry();
             final List<ConfiguredObjectAttribute<?, ?>> attributeTypes =
                     new ArrayList<>(typeRegistry.getAttributeTypes(Queue.class).values());
             typeRegistry.getTypeSpecialisations(Queue.class)
-                        .forEach(type -> attributeTypes.addAll(typeRegistry.getTypeSpecificAttributes(type)));
+                    .forEach(type -> attributeTypes.addAll(typeRegistry.getTypeSpecificAttributes(type)));
 
             final Set<String> wireArgumentNames = new HashSet<>(wireArguments.keySet());
             wireArguments.entrySet()
-                         .stream()
-                         .filter(entry -> attributeTypes.stream()
-                                                        .anyMatch(type -> Objects.equals(entry.getKey(), type.getName())
-                                                                          && !type.isDerived()))
-                         .forEach(entry -> {
-                             modelArguments.put(entry.getKey(), entry.getValue());
-                             wireArgumentNames.remove(entry.getKey());
-                         });
+                    .stream()
+                    .filter(entry -> attributeTypes.stream()
+                            .anyMatch(type -> Objects.equals(entry.getKey(), type.getName())
+                                    && !type.isDerived()))
+                    .forEach(entry -> {
+                        modelArguments.put(entry.getKey(), entry.getValue());
+                        wireArgumentNames.remove(entry.getKey());
+                    });
 
-            for(Map.Entry<String,String> entry : ATTRIBUTE_MAPPINGS.entrySet())
-            {
-                if(wireArguments.containsKey(entry.getKey()))
-                {
+            for (Map.Entry<String, String> entry : ATTRIBUTE_MAPPINGS.entrySet()) {
+                if (wireArguments.containsKey(entry.getKey())) {
                     modelArguments.put(entry.getValue(), wireArguments.get(entry.getKey()));
                     wireArgumentNames.remove(entry.getKey());
                 }
             }
-            if(wireArguments.containsKey(QPID_LAST_VALUE_QUEUE))
-            {
+            if (wireArguments.containsKey(QPID_LAST_VALUE_QUEUE)) {
                 wireArgumentNames.remove(QPID_LAST_VALUE_QUEUE);
-                if (!wireArguments.containsKey(QPID_LAST_VALUE_QUEUE_KEY))
-                {
+                if (!wireArguments.containsKey(QPID_LAST_VALUE_QUEUE_KEY)) {
                     modelArguments.put(LastValueQueue.LVQ_KEY, LastValueQueue.DEFAULT_LVQ_KEY);
                 }
             }
-            if(wireArguments.containsKey(QPID_POLICY_TYPE))
-            {
+            if (wireArguments.containsKey(QPID_POLICY_TYPE)) {
                 modelArguments.put(Queue.OVERFLOW_POLICY, OverflowPolicy.valueOf(String.valueOf(wireArguments.get(QPID_POLICY_TYPE)).toUpperCase()));
             }
 
-            if(wireArguments.containsKey(QPID_SHARED_MSG_GROUP))
-            {
+            if (wireArguments.containsKey(QPID_SHARED_MSG_GROUP)) {
                 wireArgumentNames.remove(QPID_SHARED_MSG_GROUP);
-                if (SHARED_MSG_GROUP_ARG_VALUE.equals(String.valueOf(wireArguments.get(QPID_SHARED_MSG_GROUP))))
-                {
+                if (SHARED_MSG_GROUP_ARG_VALUE.equals(String.valueOf(wireArguments.get(QPID_SHARED_MSG_GROUP)))) {
                     modelArguments.put(Queue.MESSAGE_GROUP_TYPE, MessageGroupType.SHARED_GROUPS);
                 }
-            }
-            else if(wireArguments.containsKey(QPID_GROUP_HEADER_KEY))
-            {
+            } else if (wireArguments.containsKey(QPID_GROUP_HEADER_KEY)) {
                 modelArguments.put(Queue.MESSAGE_GROUP_TYPE, MessageGroupType.STANDARD);
-                if ("JMSXGroupId".equals(wireArguments.get(QPID_GROUP_HEADER_KEY)))
-                {
+                if ("JMSXGroupId".equals(wireArguments.get(QPID_GROUP_HEADER_KEY))) {
                     modelArguments.remove(Queue.MESSAGE_GROUP_KEY_OVERRIDE);
                 }
             }
 
 
-            if(wireArguments.get(QPID_NO_LOCAL) != null)
-            {
+            if (wireArguments.get(QPID_NO_LOCAL) != null) {
                 modelArguments.put(Queue.NO_LOCAL, Boolean.parseBoolean(wireArguments.get(QPID_NO_LOCAL).toString()));
             }
 
-            if (wireArguments.containsKey(X_QPID_FLOW_RESUME_CAPACITY))
-            {
+            if (wireArguments.containsKey(X_QPID_FLOW_RESUME_CAPACITY)) {
                 wireArgumentNames.remove(X_QPID_FLOW_RESUME_CAPACITY);
-                if (wireArguments.get(X_QPID_FLOW_RESUME_CAPACITY) != null && wireArguments.get(X_QPID_CAPACITY) != null)
-                {
+                if (wireArguments.get(X_QPID_FLOW_RESUME_CAPACITY) != null && wireArguments.get(X_QPID_CAPACITY) != null) {
                     double resumeCapacity = Integer.parseInt(wireArguments.get(X_QPID_FLOW_RESUME_CAPACITY).toString());
                     double maximumCapacity = Integer.parseInt(wireArguments.get(X_QPID_CAPACITY).toString());
-                    if (resumeCapacity > maximumCapacity)
-                    {
+                    if (resumeCapacity > maximumCapacity) {
                         throw new ConnectionScopedRuntimeException(
                                 "Flow resume size can't be greater than flow control size");
                     }
                     Map<String, String> context = (Map<String, String>) modelArguments.get(Queue.CONTEXT);
-                    if (context == null)
-                    {
+                    if (context == null) {
                         context = new HashMap<>();
                         modelArguments.put(Queue.CONTEXT, context);
                     }
@@ -232,42 +213,34 @@ public class QueueArgumentsConverter
                 }
             }
 
-            if (wireArguments.containsKey(ALTERNATE_EXCHANGE))
-            {
+            if (wireArguments.containsKey(ALTERNATE_EXCHANGE)) {
                 wireArgumentNames.remove(ALTERNATE_EXCHANGE);
                 modelArguments.put(Queue.ALTERNATE_BINDING,
-                                   Collections.singletonMap(AlternateBinding.DESTINATION,
-                                                            wireArguments.get(ALTERNATE_EXCHANGE)));
-            }
-            else if (wireArguments.containsKey(X_QPID_DLQ_ENABLED))
-            {
+                        Collections.singletonMap(AlternateBinding.DESTINATION,
+                                wireArguments.get(ALTERNATE_EXCHANGE)));
+            } else if (wireArguments.containsKey(X_QPID_DLQ_ENABLED)) {
                 wireArgumentNames.remove(X_QPID_DLQ_ENABLED);
                 Object argument = wireArguments.get(X_QPID_DLQ_ENABLED);
                 if ((argument instanceof Boolean && ((Boolean) argument).booleanValue())
-                    || (argument instanceof String && Boolean.parseBoolean((String)argument)))
-                {
+                        || (argument instanceof String && Boolean.parseBoolean((String) argument))) {
                     modelArguments.put(Queue.ALTERNATE_BINDING,
-                                       Collections.singletonMap(AlternateBinding.DESTINATION,
-                                                                getDeadLetterQueueName(queueName)));
+                            Collections.singletonMap(AlternateBinding.DESTINATION,
+                                    getDeadLetterQueueName(queueName)));
                 }
             }
 
-            if(wireArguments.containsKey(X_SINGLE_ACTIVE_CONSUMER))
-            {
+            if (wireArguments.containsKey(X_SINGLE_ACTIVE_CONSUMER)) {
                 wireArgumentNames.remove(X_SINGLE_ACTIVE_CONSUMER);
                 Object argument = wireArguments.get(X_SINGLE_ACTIVE_CONSUMER);
                 if ((argument instanceof Boolean && ((Boolean) argument).booleanValue())
-                    || (argument instanceof String && Boolean.parseBoolean((String)argument)))
-                {
+                        || (argument instanceof String && Boolean.parseBoolean((String) argument))) {
                     modelArguments.putIfAbsent(Queue.MAXIMUM_LIVE_CONSUMERS, 1);
                 }
             }
 
-            if (!wireArgumentNames.isEmpty())
-            {
+            if (!wireArgumentNames.isEmpty()) {
 
-                switch(unknownArgumentBehaviour)
-                {
+                switch (unknownArgumentBehaviour) {
                     case LOG:
                         LOGGER.warn("Unsupported queue declare argument(s) : {}", String.join(",", wireArgumentNames));
                         break;
@@ -276,7 +249,7 @@ public class QueueArgumentsConverter
                     case FAIL:
                     default:
                         throw new IllegalArgumentException(String.format("Unsupported queue declare argument(s) : %s",
-                                                                         String.join(",", wireArgumentNames)));
+                                String.join(",", wireArgumentNames)));
                 }
             }
         }
@@ -284,36 +257,28 @@ public class QueueArgumentsConverter
     }
 
 
-    public static Map<String,Object> convertModelArgsToWire(Map<String,Object> modelArguments)
-    {
-        Map<String,Object> wireArguments = new HashMap<>();
-        for(Map.Entry<String,String> entry : ATTRIBUTE_MAPPINGS.entrySet())
-        {
-            if(modelArguments.containsKey(entry.getValue()))
-            {
+    public static Map<String, Object> convertModelArgsToWire(Map<String, Object> modelArguments) {
+        Map<String, Object> wireArguments = new HashMap<>();
+        for (Map.Entry<String, String> entry : ATTRIBUTE_MAPPINGS.entrySet()) {
+            if (modelArguments.containsKey(entry.getValue())) {
                 Object value = modelArguments.get(entry.getValue());
-                if(value instanceof Enum)
-                {
+                if (value instanceof Enum) {
                     value = ((Enum) value).name();
-                }
-                else if(value instanceof ConfiguredObject)
-                {
-                    value = ((ConfiguredObject)value).getName();
+                } else if (value instanceof ConfiguredObject) {
+                    value = ((ConfiguredObject) value).getName();
                 }
                 wireArguments.put(entry.getKey(), value);
             }
         }
 
-        if(MessageGroupType.SHARED_GROUPS.equals(modelArguments.get(Queue.MESSAGE_GROUP_TYPE)))
-        {
+        if (MessageGroupType.SHARED_GROUPS.equals(modelArguments.get(Queue.MESSAGE_GROUP_TYPE))) {
             wireArguments.put(QPID_SHARED_MSG_GROUP, SHARED_MSG_GROUP_ARG_VALUE);
         }
 
         return wireArguments;
     }
 
-    private static String getDeadLetterQueueName(String name)
-    {
+    private static String getDeadLetterQueueName(String name) {
         return name + System.getProperty(PROPERTY_DEAD_LETTER_QUEUE_SUFFIX, DEFAULT_DLQ_NAME_SUFFIX);
     }
 }

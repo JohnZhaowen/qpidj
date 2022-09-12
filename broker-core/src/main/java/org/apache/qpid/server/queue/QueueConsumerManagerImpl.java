@@ -27,8 +27,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class QueueConsumerManagerImpl implements QueueConsumerManager
-{
+public class QueueConsumerManagerImpl implements QueueConsumerManager {
     private static final EnumSet<NodeState> REMOVED = EnumSet.of(NodeState.REMOVED);
     private static final EnumSet<NodeState> STATES_OTHER_THAN_REMOVED =
             EnumSet.complementOf(REMOVED);
@@ -50,8 +49,7 @@ public class QueueConsumerManagerImpl implements QueueConsumerManager
 
     private volatile int _count;
 
-    enum NodeState
-    {
+    enum NodeState {
         REMOVED,
         INTERESTED,
         NOT_INTERESTED,
@@ -59,8 +57,7 @@ public class QueueConsumerManagerImpl implements QueueConsumerManager
         NON_ACQUIRING;
     }
 
-    public QueueConsumerManagerImpl(final AbstractQueue<?> queue)
-    {
+    public QueueConsumerManagerImpl(final AbstractQueue<?> queue) {
         _queue = queue;
         _notInterested = new QueueConsumerNodeList(queue);
         _interested = new CopyOnWriteArrayList<>();
@@ -71,24 +68,17 @@ public class QueueConsumerManagerImpl implements QueueConsumerManager
 
     // Always in the config thread
     @Override
-    public void addConsumer(final QueueConsumer<?,?> consumer)
-    {
+    public void addConsumer(final QueueConsumer<?, ?> consumer) {
         QueueConsumerNode node = new QueueConsumerNode(this, consumer);
         consumer.setQueueConsumerNode(node);
         addToAll(node);
-        if (consumer.isNotifyWorkDesired())
-        {
-            if (consumer.acquires())
-            {
+        if (consumer.isNotifyWorkDesired()) {
+            if (consumer.acquires()) {
                 node.moveFromTo(REMOVED, NodeState.INTERESTED);
-            }
-            else
-            {
+            } else {
                 node.moveFromTo(REMOVED, NodeState.NON_ACQUIRING);
             }
-        }
-        else
-        {
+        } else {
             node.moveFromTo(REMOVED, NodeState.NOT_INTERESTED);
         }
         _count++;
@@ -96,13 +86,11 @@ public class QueueConsumerManagerImpl implements QueueConsumerManager
 
     // Always in the config thread
     @Override
-    public boolean removeConsumer(final QueueConsumer<?,?> consumer)
-    {
+    public boolean removeConsumer(final QueueConsumer<?, ?> consumer) {
         removeFromAll(consumer);
         QueueConsumerNode node = consumer.getQueueConsumerNode();
 
-        if (node.moveFromTo(STATES_OTHER_THAN_REMOVED, NodeState.REMOVED))
-        {
+        if (node.moveFromTo(STATES_OTHER_THAN_REMOVED, NodeState.REMOVED)) {
             _count--;
             return true;
         }
@@ -111,28 +99,18 @@ public class QueueConsumerManagerImpl implements QueueConsumerManager
 
     // Set by the consumer always in the IO thread
     @Override
-    public boolean setInterest(final QueueConsumer<?,?> consumer, final boolean interested)
-    {
+    public boolean setInterest(final QueueConsumer<?, ?> consumer, final boolean interested) {
         QueueConsumerNode node = consumer.getQueueConsumerNode();
-        if (interested)
-        {
-            if (consumer.acquires())
-            {
+        if (interested) {
+            if (consumer.acquires()) {
                 return node.moveFromTo(NOT_INTERESTED, NodeState.INTERESTED);
-            }
-            else
-            {
+            } else {
                 return node.moveFromTo(NOT_INTERESTED, NodeState.NON_ACQUIRING);
             }
-        }
-        else
-        {
-            if (consumer.acquires())
-            {
+        } else {
+            if (consumer.acquires()) {
                 return node.moveFromTo(EITHER_INTERESTED_OR_NOTIFIED, NodeState.NOT_INTERESTED);
-            }
-            else
-            {
+            } else {
                 return node.moveFromTo(NON_ACQUIRING, NodeState.NOT_INTERESTED);
             }
         }
@@ -140,77 +118,58 @@ public class QueueConsumerManagerImpl implements QueueConsumerManager
 
     // Set by the Queue any IO thread
     @Override
-    public boolean setNotified(final QueueConsumer<?,?> consumer, final boolean notified)
-    {
+    public boolean setNotified(final QueueConsumer<?, ?> consumer, final boolean notified) {
         QueueConsumerNode node = consumer.getQueueConsumerNode();
-        if (consumer.acquires())
-        {
-            if (notified)
-            {
+        if (consumer.acquires()) {
+            if (notified) {
                 return node.moveFromTo(INTERESTED, NodeState.NOTIFIED);
-            }
-            else
-            {
+            } else {
                 return node.moveFromTo(NOTIFIED, NodeState.INTERESTED);
             }
-        }
-        else
-        {
+        } else {
             return true;
         }
     }
 
     @Override
-    public Iterator<QueueConsumer<?,?>> getInterestedIterator()
-    {
+    public Iterator<QueueConsumer<?, ?>> getInterestedIterator() {
         return new QueueConsumerIterator(new PrioritisedQueueConsumerNodeIterator(_interested));
     }
 
     @Override
-    public Iterator<QueueConsumer<?,?>> getAllIterator()
-    {
+    public Iterator<QueueConsumer<?, ?>> getAllIterator() {
         return new QueueConsumerIterator(new PrioritisedQueueConsumerNodeIterator(_allConsumers));
     }
 
     @Override
-    public Iterator<QueueConsumer<?,?>> getNonAcquiringIterator()
-    {
+    public Iterator<QueueConsumer<?, ?>> getNonAcquiringIterator() {
         return new QueueConsumerIterator(_nonAcquiring.iterator());
     }
 
     @Override
-    public int getAllSize()
-    {
+    public int getAllSize() {
         return _count;
     }
 
     @Override
-    public int getHighestNotifiedPriority()
-    {
+    public int getHighestNotifiedPriority() {
         final Iterator<QueueConsumerNode> notifiedIterator =
                 new PrioritisedQueueConsumerNodeIterator(_notified);
-        if(notifiedIterator.hasNext())
-        {
+        if (notifiedIterator.hasNext()) {
             final QueueConsumerNode queueConsumerNode = notifiedIterator.next();
             return queueConsumerNode.getQueueConsumer().getPriority();
-        }
-        else
-        {
+        } else {
             return Integer.MIN_VALUE;
         }
     }
 
-    QueueConsumerNodeListEntry addNodeToInterestList(final QueueConsumerNode queueConsumerNode)
-    {
+    QueueConsumerNodeListEntry addNodeToInterestList(final QueueConsumerNode queueConsumerNode) {
         QueueConsumerNodeListEntry newListEntry;
-        switch (queueConsumerNode.getState())
-        {
+        switch (queueConsumerNode.getState()) {
             case INTERESTED:
                 newListEntry = null;
-                for (PriorityConsumerListPair pair : _interested)
-                {
-                    if (pair._priority == queueConsumerNode.getQueueConsumer().getPriority())
-                    {
+                for (PriorityConsumerListPair pair : _interested) {
+                    if (pair._priority == queueConsumerNode.getQueueConsumer().getPriority()) {
                         newListEntry = pair._consumers.add(queueConsumerNode);
                         break;
                     }
@@ -221,10 +180,8 @@ public class QueueConsumerManagerImpl implements QueueConsumerManager
                 break;
             case NOTIFIED:
                 newListEntry = null;
-                for (PriorityConsumerListPair pair : _notified)
-                {
-                    if (pair._priority == queueConsumerNode.getQueueConsumer().getPriority())
-                    {
+                for (PriorityConsumerListPair pair : _notified) {
+                    if (pair._priority == queueConsumerNode.getQueueConsumer().getPriority()) {
                         newListEntry = pair._consumers.add(queueConsumerNode);
                         break;
                     }
@@ -240,49 +197,39 @@ public class QueueConsumerManagerImpl implements QueueConsumerManager
         return newListEntry;
     }
 
-    private static class QueueConsumerIterator implements Iterator<QueueConsumer<?,?>>
-    {
+    private static class QueueConsumerIterator implements Iterator<QueueConsumer<?, ?>> {
         private final Iterator<QueueConsumerNode> _underlying;
 
-        private QueueConsumerIterator(final Iterator<QueueConsumerNode> underlying)
-        {
+        private QueueConsumerIterator(final Iterator<QueueConsumerNode> underlying) {
             _underlying = underlying;
         }
 
         @Override
-        public boolean hasNext()
-        {
+        public boolean hasNext() {
             return _underlying.hasNext();
         }
 
         @Override
-        public QueueConsumer<?,?> next()
-        {
+        public QueueConsumer<?, ?> next() {
             return _underlying.next().getQueueConsumer();
         }
 
         @Override
-        public void remove()
-        {
+        public void remove() {
             _underlying.remove();
         }
     }
 
-    private void addToAll(final QueueConsumerNode consumerNode)
-    {
+    private void addToAll(final QueueConsumerNode consumerNode) {
         int consumerPriority = consumerNode.getQueueConsumer().getPriority();
         int i;
-        for (i = 0; i < _allConsumers.size(); ++i)
-        {
+        for (i = 0; i < _allConsumers.size(); ++i) {
             final PriorityConsumerListPair priorityConsumerListPair = _allConsumers.get(i);
-            if (priorityConsumerListPair._priority == consumerPriority)
-            {
+            if (priorityConsumerListPair._priority == consumerPriority) {
                 final QueueConsumerNodeListEntry entry = priorityConsumerListPair._consumers.add(consumerNode);
                 consumerNode.setAllEntry(entry);
                 return;
-            }
-            else if (priorityConsumerListPair._priority < consumerPriority)
-            {
+            } else if (priorityConsumerListPair._priority < consumerPriority) {
                 break;
             }
         }
@@ -295,93 +242,71 @@ public class QueueConsumerManagerImpl implements QueueConsumerManager
         _interested.add(i, new PriorityConsumerListPair(consumerPriority));
     }
 
-    private void removeFromAll(final QueueConsumer<?,?> consumer)
-    {
+    private void removeFromAll(final QueueConsumer<?, ?> consumer) {
         final QueueConsumerNode node = consumer.getQueueConsumerNode();
         int consumerPriority = consumer.getPriority();
-        for (int i = 0; i < _allConsumers.size(); ++i)
-        {
+        for (int i = 0; i < _allConsumers.size(); ++i) {
             final PriorityConsumerListPair priorityConsumerListPair = _allConsumers.get(i);
-            if (priorityConsumerListPair._priority == consumerPriority)
-            {
+            if (priorityConsumerListPair._priority == consumerPriority) {
                 priorityConsumerListPair._consumers.removeEntry(node.getAllEntry());
-                if (priorityConsumerListPair._consumers.isEmpty())
-                {
+                if (priorityConsumerListPair._consumers.isEmpty()) {
                     _allConsumers.remove(i);
                     _notified.remove(i);
                     _interested.remove(i);
                 }
                 return;
-            }
-            else if (priorityConsumerListPair._priority < consumerPriority)
-            {
+            } else if (priorityConsumerListPair._priority < consumerPriority) {
                 break;
             }
         }
     }
 
 
-    private class PriorityConsumerListPair
-    {
+    private class PriorityConsumerListPair {
         final int _priority;
         final QueueConsumerNodeList _consumers;
 
-        private PriorityConsumerListPair(final int priority)
-        {
+        private PriorityConsumerListPair(final int priority) {
             _priority = priority;
             _consumers = new QueueConsumerNodeList(_queue);
         }
     }
 
-    private class PrioritisedQueueConsumerNodeIterator implements Iterator<QueueConsumerNode>
-    {
+    private class PrioritisedQueueConsumerNodeIterator implements Iterator<QueueConsumerNode> {
         final Iterator<PriorityConsumerListPair> _outerIterator;
         Iterator<QueueConsumerNode> _innerIterator;
 
-        private PrioritisedQueueConsumerNodeIterator(List<PriorityConsumerListPair> list)
-        {
+        private PrioritisedQueueConsumerNodeIterator(List<PriorityConsumerListPair> list) {
             _outerIterator = list.iterator();
             _innerIterator = Collections.emptyIterator();
         }
 
         @Override
-        public boolean hasNext()
-        {
-            while (true)
-            {
-                if (_innerIterator.hasNext())
-                {
+        public boolean hasNext() {
+            while (true) {
+                if (_innerIterator.hasNext()) {
                     return true;
-                }
-                else if (_outerIterator.hasNext())
-                {
+                } else if (_outerIterator.hasNext()) {
                     final PriorityConsumerListPair priorityConsumersPair = _outerIterator.next();
                     _innerIterator = priorityConsumersPair._consumers.iterator();
-                }
-                else
-                {
+                } else {
                     return false;
                 }
             }
         }
 
         @Override
-        public QueueConsumerNode next()
-        {
-            try
-            {
+        public QueueConsumerNode next() {
+            try {
                 return _innerIterator.next();
-            }
-            catch (NoSuchElementException e)
-            {
+            } catch (NoSuchElementException e) {
                 hasNext();
                 return _innerIterator.next();
             }
         }
 
         @Override
-        public void remove()
-        {
+        public void remove() {
             throw new UnsupportedOperationException();
         }
     }

@@ -28,32 +28,25 @@ import java.util.LinkedList;
  * Allows a series of input streams to be treated as if they were one.
  * NotThreadSafe
  */
-public class CompositeInputStream extends InputStream
-{
+public class CompositeInputStream extends InputStream {
     private final LinkedList<InputStream> _inputStreams;
     private InputStream _current = null;
 
-    public CompositeInputStream(Collection<InputStream> streams)
-    {
-        if (streams == null)
-        {
+    public CompositeInputStream(Collection<InputStream> streams) {
+        if (streams == null) {
             throw new IllegalArgumentException("streams cannot be null");
         }
         _inputStreams = new LinkedList<>(streams);
     }
 
     @Override
-    public int read() throws IOException
-    {
+    public int read() throws IOException {
         int count = -1;
-        if (_current != null)
-        {
+        if (_current != null) {
             count = _current.read();
         }
-        if (count == -1 && _inputStreams.size() > 0)
-        {
-            if (_current != null)
-            {
+        if (count == -1 && _inputStreams.size() > 0) {
+            if (_current != null) {
                 _current.close();
             }
             _current = _inputStreams.removeFirst();
@@ -63,18 +56,14 @@ public class CompositeInputStream extends InputStream
     }
 
     @Override
-    public int read(byte[] b, int off, int len) throws IOException
-    {
+    public int read(byte[] b, int off, int len) throws IOException {
         int count = -1;
-        if (_current != null)
-        {
+        if (_current != null) {
             count = _current.read(b, off, len);
         }
 
-        if (count < len && _inputStreams.size() > 0)
-        {
-            if (_current != null)
-            {
+        if (count < len && _inputStreams.size() > 0) {
+            if (_current != null) {
                 _current.close();
             }
 
@@ -83,16 +72,11 @@ public class CompositeInputStream extends InputStream
 
             int recursiveCount = read(b, off + numRead, len - numRead);
 
-            if (recursiveCount == -1 && count == -1)
-            {
+            if (recursiveCount == -1 && count == -1) {
                 count = -1;
-            }
-            else if (recursiveCount == -1)
-            {
+            } else if (recursiveCount == -1) {
                 count = numRead;
-            }
-            else
-            {
+            } else {
                 count = recursiveCount + numRead;
             }
         }
@@ -100,26 +84,20 @@ public class CompositeInputStream extends InputStream
     }
 
     @Override
-    public int read(byte[] b) throws IOException
-    {
+    public int read(byte[] b) throws IOException {
         return read(b, 0, b.length);
     }
 
     @Override
-    public int available() throws IOException
-    {
+    public int available() throws IOException {
 
         int available = 0;
-        if (_current != null)
-        {
+        if (_current != null) {
             available = _current.available();
         }
-        if (_inputStreams != null)
-        {
-            for (InputStream is : _inputStreams)
-            {
-                if (is != null)
-                {
+        if (_inputStreams != null) {
+            for (InputStream is : _inputStreams) {
+                if (is != null) {
                     available += is.available();
                 }
             }
@@ -128,59 +106,42 @@ public class CompositeInputStream extends InputStream
     }
 
     @Override
-    public boolean markSupported()
-    {
+    public boolean markSupported() {
         return false;
     }
 
     @Override
-    public void mark(final int readlimit)
-    {
+    public void mark(final int readlimit) {
     }
 
     @Override
-    public void reset() throws IOException
-    {
+    public void reset() throws IOException {
         throw new IOException("mark/reset not supported");
     }
 
     @Override
-    public void close() throws IOException
-    {
+    public void close() throws IOException {
         IOException ioException = null;
-        try
-        {
-            if (_current != null)
-            {
-                try
-                {
+        try {
+            if (_current != null) {
+                try {
                     _current.close();
                     _current = null;
-                }
-                catch (IOException e)
-                {
+                } catch (IOException e) {
                     ioException = e;
                 }
             }
-            for (InputStream is : _inputStreams)
-            {
-                try
-                {
+            for (InputStream is : _inputStreams) {
+                try {
                     is.close();
-                }
-                catch (IOException e)
-                {
-                    if (ioException != null)
-                    {
+                } catch (IOException e) {
+                    if (ioException != null) {
                         ioException = e;
                     }
                 }
             }
-        }
-        finally
-        {
-            if (ioException != null)
-            {
+        } finally {
+            if (ioException != null) {
                 throw ioException;
             }
         }

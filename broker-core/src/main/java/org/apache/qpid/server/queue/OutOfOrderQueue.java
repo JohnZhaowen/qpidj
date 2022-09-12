@@ -25,38 +25,28 @@ import java.util.Map;
 
 import org.apache.qpid.server.virtualhost.QueueManagingVirtualHost;
 
-public abstract class OutOfOrderQueue<X extends OutOfOrderQueue<X>> extends AbstractQueue<X>
-{
+public abstract class OutOfOrderQueue<X extends OutOfOrderQueue<X>> extends AbstractQueue<X> {
 
-    OutOfOrderQueue(Map<String, Object> attributes, QueueManagingVirtualHost<?> virtualHost)
-    {
+    OutOfOrderQueue(Map<String, Object> attributes, QueueManagingVirtualHost<?> virtualHost) {
         super(attributes, virtualHost);
     }
 
     @Override
-    protected void checkConsumersNotAheadOfDelivery(final QueueEntry entry)
-    {
+    protected void checkConsumersNotAheadOfDelivery(final QueueEntry entry) {
         // check that all consumers are not in advance of the entry
-        Iterator<QueueConsumer<?,?>> consumerIterator = getQueueConsumerManager().getAllIterator();
+        Iterator<QueueConsumer<?, ?>> consumerIterator = getQueueConsumerManager().getAllIterator();
 
-        while (consumerIterator.hasNext() && !entry.isAcquired())
-        {
-            QueueConsumer<?,?> consumer = consumerIterator.next();
+        while (consumerIterator.hasNext() && !entry.isAcquired()) {
+            QueueConsumer<?, ?> consumer = consumerIterator.next();
 
-            if(!consumer.isClosed())
-            {
+            if (!consumer.isClosed()) {
                 QueueContext context = consumer.getQueueContext();
-                if(context != null)
-                {
+                if (context != null) {
                     QueueEntry released = context.getReleasedEntry();
-                    while(!entry.isAcquired() && (released == null || released.compareTo(entry) > 0))
-                    {
-                        if(QueueContext._releasedUpdater.compareAndSet(context,released,entry))
-                        {
+                    while (!entry.isAcquired() && (released == null || released.compareTo(entry) > 0)) {
+                        if (QueueContext._releasedUpdater.compareAndSet(context, released, entry)) {
                             break;
-                        }
-                        else
-                        {
+                        } else {
                             released = context.getReleasedEntry();
                         }
                     }

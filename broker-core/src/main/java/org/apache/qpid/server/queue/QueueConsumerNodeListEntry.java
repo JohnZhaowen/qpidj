@@ -23,8 +23,7 @@ package org.apache.qpid.server.queue;
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 
-final class QueueConsumerNodeListEntry
-{
+final class QueueConsumerNodeListEntry {
     private static final AtomicIntegerFieldUpdater<QueueConsumerNodeListEntry> DELETED_UPDATER =
             AtomicIntegerFieldUpdater.newUpdater(QueueConsumerNodeListEntry.class, "_deleted");
     @SuppressWarnings("unused")
@@ -37,22 +36,19 @@ final class QueueConsumerNodeListEntry
     private volatile QueueConsumerNode _queueConsumerNode;
     private final QueueConsumerNodeList _list;
 
-    QueueConsumerNodeListEntry(final QueueConsumerNodeList list, final QueueConsumerNode queueConsumerNode)
-    {
+    QueueConsumerNodeListEntry(final QueueConsumerNodeList list, final QueueConsumerNode queueConsumerNode) {
         _list = list;
         _queueConsumerNode = queueConsumerNode;
     }
 
-    public QueueConsumerNodeListEntry(QueueConsumerNodeList list)
-    {
+    public QueueConsumerNodeListEntry(QueueConsumerNodeList list) {
         _list = list;
         //used for sentinel head and dummy node construction
         _queueConsumerNode = null;
         DELETED_UPDATER.set(this, 1);
     }
 
-    public QueueConsumerNode getQueueConsumerNode()
-    {
+    public QueueConsumerNode getQueueConsumerNode() {
         return _queueConsumerNode;
     }
 
@@ -63,21 +59,16 @@ final class QueueConsumerNodeListEntry
      *
      * @return the next non-deleted node, or null if none was found.
      */
-    public QueueConsumerNodeListEntry findNext()
-    {
+    public QueueConsumerNodeListEntry findNext() {
         QueueConsumerNodeListEntry next = nextNode();
-        while(next != null && next.isDeleted())
-        {
+        while (next != null && next.isDeleted()) {
             final QueueConsumerNodeListEntry newNext = next.nextNode();
-            if(newNext != null)
-            {
+            if (newNext != null) {
                 //try to move our _next reference forward to the 'newNext'
                 //node to unlink the deleted node
                 NEXT_UPDATER.compareAndSet(this, next, newNext);
                 next = nextNode();
-            }
-            else
-            {
+            } else {
                 //'newNext' is null, meaning 'next' is the current tail. Can't unlink
                 //the tail node for thread safety reasons, just use the null.
                 next = null;
@@ -92,8 +83,7 @@ final class QueueConsumerNodeListEntry
      *
      * @return the immediately next node in the structure, or null if at the tail.
      */
-    protected QueueConsumerNodeListEntry nextNode()
-    {
+    protected QueueConsumerNodeListEntry nextNode() {
         return _next;
     }
 
@@ -103,26 +93,21 @@ final class QueueConsumerNodeListEntry
      * @param node the ConsumerNode to set as 'next'
      * @return whether the operation succeeded
      */
-    boolean setNext(final QueueConsumerNodeListEntry node)
-    {
+    boolean setNext(final QueueConsumerNodeListEntry node) {
         return NEXT_UPDATER.compareAndSet(this, null, node);
     }
 
-    public void remove()
-    {
+    public void remove() {
         _list.removeEntry(this);
     }
 
-    public boolean isDeleted()
-    {
+    public boolean isDeleted() {
         return _deleted == 1;
     }
 
-    boolean setDeleted()
-    {
+    boolean setDeleted() {
         final boolean deleted = DELETED_UPDATER.compareAndSet(this, 0, 1);
-        if (deleted)
-        {
+        if (deleted) {
             _queueConsumerNode = null;
         }
         return deleted;

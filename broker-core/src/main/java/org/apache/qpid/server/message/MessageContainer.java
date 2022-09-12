@@ -20,30 +20,25 @@
  */
 package org.apache.qpid.server.message;
 
-public final class MessageContainer
-{
+public final class MessageContainer {
     private final MessageInstance _messageInstance;
     private final MessageReference<?> _messageReference;
 
-    public MessageContainer()
-    {
+    public MessageContainer() {
         this(null, null);
     }
 
     public MessageContainer(final MessageInstance messageInstance,
-                            final MessageReference<?> messageReference)
-    {
+                            final MessageReference<?> messageReference) {
         _messageInstance = messageInstance;
         _messageReference = messageReference;
     }
 
-    public MessageInstance getMessageInstance()
-    {
+    public MessageInstance getMessageInstance() {
         return _messageInstance;
     }
 
-    public MessageReference<?> getMessageReference()
-    {
+    public MessageReference<?> getMessageReference() {
         return _messageReference;
     }
 }

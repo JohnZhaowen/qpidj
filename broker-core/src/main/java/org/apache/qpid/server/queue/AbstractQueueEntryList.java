@@ -24,16 +24,14 @@ import org.apache.qpid.server.message.MessageInstance;
 import org.apache.qpid.server.model.Queue;
 import org.apache.qpid.server.store.MessageDurability;
 
-abstract class AbstractQueueEntryList implements QueueEntryList
-{
+abstract class AbstractQueueEntryList implements QueueEntryList {
 
     private final boolean _forcePersistent;
     private final boolean _respectPersistent;
     private final Queue<?> _queue;
     private final QueueStatistics _queueStatistics;
 
-    protected AbstractQueueEntryList(final Queue<?> queue, final QueueStatistics queueStatistics)
-    {
+    protected AbstractQueueEntryList(final Queue<?> queue, final QueueStatistics queueStatistics) {
 
         final MessageDurability messageDurability = queue.getMessageDurability();
         _queue = queue;
@@ -43,57 +41,49 @@ abstract class AbstractQueueEntryList implements QueueEntryList
     }
 
 
-    void updateStatsOnEnqueue(QueueEntry entry)
-    {
+    void updateStatsOnEnqueue(QueueEntry entry) {
         final long sizeWithHeader = entry.getSizeWithHeader();
         final QueueStatistics queueStatistics = _queueStatistics;
         queueStatistics.addToAvailable(sizeWithHeader);
         queueStatistics.addToQueue(sizeWithHeader);
         queueStatistics.addToEnqueued(sizeWithHeader);
-        if(_forcePersistent || (_respectPersistent && entry.getMessage().isPersistent()))
-        {
+        if (_forcePersistent || (_respectPersistent && entry.getMessage().isPersistent())) {
             queueStatistics.addToPersistentEnqueued(sizeWithHeader);
         }
     }
 
     @Override
-    public void updateStatsOnStateChange(QueueEntry entry, QueueEntry.EntryState fromState, QueueEntry.EntryState toState)
-    {
+    public void updateStatsOnStateChange(QueueEntry entry, QueueEntry.EntryState fromState, QueueEntry.EntryState toState) {
         final QueueStatistics queueStatistics = _queueStatistics;
         final long sizeWithHeader = entry.getSizeWithHeader();
 
         final boolean isConsumerAcquired = toState instanceof MessageInstance.ConsumerAcquiredState;
         final boolean wasConsumerAcquired = fromState instanceof MessageInstance.ConsumerAcquiredState;
 
-        switch(fromState.getState())
-        {
+        switch (fromState.getState()) {
             case AVAILABLE:
                 queueStatistics.removeFromAvailable(sizeWithHeader);
                 break;
             case ACQUIRED:
-                if(wasConsumerAcquired && !isConsumerAcquired)
-                {
+                if (wasConsumerAcquired && !isConsumerAcquired) {
                     queueStatistics.removeFromUnacknowledged(sizeWithHeader);
                 }
                 break;
         }
-        switch(toState.getState())
-        {
+        switch (toState.getState()) {
             case AVAILABLE:
                 queueStatistics.addToAvailable(sizeWithHeader);
                 _queue.checkCapacity();
                 break;
             case ACQUIRED:
-                if(isConsumerAcquired && !wasConsumerAcquired)
-                {
+                if (isConsumerAcquired && !wasConsumerAcquired) {
                     queueStatistics.addToUnacknowledged(sizeWithHeader);
                 }
                 break;
             case DELETED:
                 queueStatistics.removeFromQueue(sizeWithHeader);
                 queueStatistics.addToDequeued(sizeWithHeader);
-                if(_forcePersistent || (_respectPersistent && entry.isPersistent()))
-                {
+                if (_forcePersistent || (_respectPersistent && entry.isPersistent())) {
                     queueStatistics.addToPersistentDequeued(sizeWithHeader);
                 }
                 _queue.checkCapacity();

@@ -29,8 +29,7 @@ import org.apache.qpid.server.store.MessageEnqueueRecord;
 import org.apache.qpid.server.util.Action;
 import org.apache.qpid.server.virtualhost.QueueManagingVirtualHost;
 
-public class SortedQueueImpl extends OutOfOrderQueue<SortedQueueImpl> implements SortedQueue<SortedQueueImpl>
-{
+public class SortedQueueImpl extends OutOfOrderQueue<SortedQueueImpl> implements SortedQueue<SortedQueueImpl> {
     //Lock object to synchronize enqueue. Used instead of the object
     //monitor to prevent lock order issues with consumer sendLocks
     //and consumer updates in the super classes
@@ -41,38 +40,32 @@ public class SortedQueueImpl extends OutOfOrderQueue<SortedQueueImpl> implements
     private SortedQueueEntryList _entries;
 
     @ManagedObjectFactoryConstructor
-    public SortedQueueImpl(Map<String, Object> attributes, QueueManagingVirtualHost<?> virtualHost)
-    {
+    public SortedQueueImpl(Map<String, Object> attributes, QueueManagingVirtualHost<?> virtualHost) {
         super(attributes, virtualHost);
     }
 
     @Override
-    protected void onOpen()
-    {
+    protected void onOpen() {
         super.onOpen();
         _entries = new SortedQueueEntryList(this, getQueueStatistics());
     }
 
     @Override
     protected QueueEntry doEnqueue(final ServerMessage message,
-                        final Action<? super MessageInstance> action,
-                        MessageEnqueueRecord record)
-    {
-        synchronized (_sortedQueueLock)
-        {
+                                   final Action<? super MessageInstance> action,
+                                   MessageEnqueueRecord record) {
+        synchronized (_sortedQueueLock) {
             return super.doEnqueue(message, action, record);
         }
     }
 
     @Override
-    SortedQueueEntryList getEntries()
-    {
+    SortedQueueEntryList getEntries() {
         return _entries;
     }
 
     @Override
-    public String getSortKey()
-    {
+    public String getSortKey() {
         return _sortKey;
     }
 }

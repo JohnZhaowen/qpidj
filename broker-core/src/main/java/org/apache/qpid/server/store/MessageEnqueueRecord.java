@@ -22,8 +22,8 @@ package org.apache.qpid.server.store;
 
 import java.util.UUID;
 
-public interface MessageEnqueueRecord
-{
+public interface MessageEnqueueRecord {
     UUID getQueueId();
+
     long getMessageNumber();
 }

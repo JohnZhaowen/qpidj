@@ -20,7 +20,6 @@
  */
 package org.apache.qpid.server.queue;
 
-public interface OverflowPolicyHandler
-{
+public interface OverflowPolicyHandler {
     void checkOverflow(QueueEntry newlyEnqueued);
 }

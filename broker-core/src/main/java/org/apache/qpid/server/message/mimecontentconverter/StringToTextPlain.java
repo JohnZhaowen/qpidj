@@ -25,47 +25,37 @@ import java.nio.charset.StandardCharsets;
 import org.apache.qpid.server.plugin.PluggableService;
 
 @PluggableService
-public class StringToTextPlain implements ObjectToMimeContentConverter<String>
-{
+public class StringToTextPlain implements ObjectToMimeContentConverter<String> {
     @Override
-    public String getType()
-    {
+    public String getType() {
         return getMimeType();
     }
 
     @Override
-    public int getRank()
-    {
+    public int getRank() {
         return 0;
     }
 
     @Override
-    public Class<String> getObjectClass()
-    {
+    public Class<String> getObjectClass() {
         return String.class;
     }
 
     @Override
-    public String getMimeType()
-    {
+    public String getMimeType() {
         return "text/plain";
     }
 
     @Override
-    public boolean isAcceptable(final String object)
-    {
+    public boolean isAcceptable(final String object) {
         return true;
     }
 
     @Override
-    public byte[] toMimeContent(final String object)
-    {
-        if (object == null)
-        {
+    public byte[] toMimeContent(final String object) {
+        if (object == null) {
             return new byte[0];
-        }
-        else
-        {
+        } else {
             return object.getBytes(StandardCharsets.UTF_8);
         }
     }

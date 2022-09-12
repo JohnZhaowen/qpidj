@@ -18,7 +18,6 @@
  */
 package org.apache.qpid.server.store;
 
-public interface Settings
-{
+public interface Settings {
 
 }

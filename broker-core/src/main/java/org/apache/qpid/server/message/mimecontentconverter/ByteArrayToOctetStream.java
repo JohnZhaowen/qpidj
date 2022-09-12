@@ -22,44 +22,39 @@ package org.apache.qpid.server.message.mimecontentconverter;
 
 import org.apache.qpid.server.plugin.PluggableService;
 
+/**
+ * 8进制
+ */
 @PluggableService
-public class ByteArrayToOctetStream implements ObjectToMimeContentConverter<byte[]>
-{
+public class ByteArrayToOctetStream implements ObjectToMimeContentConverter<byte[]> {
     @Override
-    public String getType()
-    {
+    public String getType() {
         return getMimeType();
     }
 
     @Override
-    public String getMimeType()
-    {
+    public String getMimeType() {
         return "application/octet-stream";
     }
 
     @Override
-    public Class<byte[]> getObjectClass()
-    {
+    public Class<byte[]> getObjectClass() {
         return byte[].class;
     }
 
     @Override
-    public int getRank()
-    {
+    public int getRank() {
         return 0;
     }
 
     @Override
-    public boolean isAcceptable(final byte[] object)
-    {
+    public boolean isAcceptable(final byte[] object) {
         return true;
     }
 
     @Override
-    public byte[] toMimeContent(final byte[] object)
-    {
-        if (object == null)
-        {
+    public byte[] toMimeContent(final byte[] object) {
+        if (object == null) {
             return new byte[0];
         }
         return object;

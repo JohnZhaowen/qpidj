@@ -22,35 +22,29 @@ package org.apache.qpid.server.queue;
 
 import org.apache.qpid.server.transport.network.Ticker;
 
-abstract public class SuspendedConsumerLoggingTicker implements Ticker
-{
+abstract public class SuspendedConsumerLoggingTicker implements Ticker {
     private volatile long _nextTick;
     private volatile long _startTime;
     private final long _repeatPeriod;
 
-    public SuspendedConsumerLoggingTicker(final long repeatPeriod)
-    {
+    public SuspendedConsumerLoggingTicker(final long repeatPeriod) {
         _repeatPeriod = repeatPeriod;
     }
 
-    public void setStartTime(final long currentTime)
-    {
+    public void setStartTime(final long currentTime) {
         _startTime = currentTime;
         _nextTick = currentTime + _repeatPeriod;
     }
 
     @Override
-    public int getTimeToNextTick(final long currentTime)
-    {
+    public int getTimeToNextTick(final long currentTime) {
         return (int) (_nextTick - currentTime);
     }
 
     @Override
-    public int tick(final long currentTime)
-    {
+    public int tick(final long currentTime) {
         int nextTick = getTimeToNextTick(currentTime);
-        if(nextTick <= 0)
-        {
+        if (nextTick <= 0) {
             log(currentTime - _startTime);
             _nextTick = _nextTick + _repeatPeriod;
             nextTick = getTimeToNextTick(currentTime);

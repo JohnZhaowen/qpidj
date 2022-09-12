@@ -25,29 +25,24 @@ import java.nio.charset.StandardCharsets;
 import org.apache.qpid.server.plugin.PluggableService;
 
 @PluggableService
-public class TextPlainToString implements MimeContentToObjectConverter<String>
-{
+public class TextPlainToString implements MimeContentToObjectConverter<String> {
     @Override
-    public String getType()
-    {
+    public String getType() {
         return getMimeType();
     }
 
     @Override
-    public Class<String> getObjectClass()
-    {
+    public Class<String> getObjectClass() {
         return String.class;
     }
 
     @Override
-    public String getMimeType()
-    {
+    public String getMimeType() {
         return "text/plain";
     }
 
     @Override
-    public String toObject(final byte[] data)
-    {
+    public String toObject(final byte[] data) {
         return data == null ? "" : new String(data, StandardCharsets.UTF_8);
     }
 }

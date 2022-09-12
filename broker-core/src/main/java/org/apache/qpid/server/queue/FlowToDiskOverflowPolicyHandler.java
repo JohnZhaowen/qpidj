@@ -24,84 +24,67 @@ import org.apache.qpid.server.message.ServerMessage;
 import org.apache.qpid.server.model.OverflowPolicy;
 import org.apache.qpid.server.model.Queue;
 
-public class FlowToDiskOverflowPolicyHandler implements OverflowPolicyHandler
-{
+public class FlowToDiskOverflowPolicyHandler implements OverflowPolicyHandler {
     private final Handler _handler;
 
-    FlowToDiskOverflowPolicyHandler(final Queue<?> queue)
-    {
+    FlowToDiskOverflowPolicyHandler(final Queue<?> queue) {
         _handler = new Handler(queue);
         queue.addChangeListener(_handler);
     }
 
     @Override
-    public void checkOverflow(final QueueEntry newlyEnqueued)
-    {
+    public void checkOverflow(final QueueEntry newlyEnqueued) {
         _handler.checkOverflow(newlyEnqueued);
 
     }
 
-    private static class Handler extends OverflowPolicyMaximumQueueDepthChangeListener
-    {
+    private static class Handler extends OverflowPolicyMaximumQueueDepthChangeListener {
         private final Queue<?> _queue;
 
-        private Handler(final Queue<?> queue)
-        {
+        private Handler(final Queue<?> queue) {
             super(OverflowPolicy.FLOW_TO_DISK);
             _queue = queue;
         }
 
         @Override
-        void onMaximumQueueDepthChange(final Queue<?> queue)
-        {
+        void onMaximumQueueDepthChange(final Queue<?> queue) {
             checkOverflow(null);
         }
 
-        private void checkOverflow(final QueueEntry newlyEnqueued)
-        {
+        private void checkOverflow(final QueueEntry newlyEnqueued) {
             long maximumQueueDepthBytes = _queue.getMaximumQueueDepthBytes();
             long maximumQueueDepthMessages = _queue.getMaximumQueueDepthMessages();
-            if (maximumQueueDepthBytes >= 0L || maximumQueueDepthMessages >= 0L)
-            {
-                if (newlyEnqueued == null)
-                {
+            if (maximumQueueDepthBytes >= 0L || maximumQueueDepthMessages >= 0L) {
+                if (newlyEnqueued == null) {
                     flowTailToDiskIfNecessary(maximumQueueDepthBytes, maximumQueueDepthMessages);
-                }
-                else
-                {
+                } else {
                     flowNewEntryToDiskIfNecessary(newlyEnqueued, maximumQueueDepthBytes, maximumQueueDepthMessages);
                 }
             }
         }
 
-        private void flowTailToDiskIfNecessary(final long maximumQueueDepthBytes, final long maximumQueueDepthMessages)
-        {
+        private void flowTailToDiskIfNecessary(final long maximumQueueDepthBytes, final long maximumQueueDepthMessages) {
             final long queueDepthBytes = _queue.getQueueDepthBytes();
             final long queueDepthMessages = _queue.getQueueDepthMessages();
 
             if ((maximumQueueDepthBytes >= 0L && queueDepthBytes > maximumQueueDepthBytes) ||
-                (maximumQueueDepthMessages >= 0L && queueDepthMessages > maximumQueueDepthMessages))
-            {
+                    (maximumQueueDepthMessages >= 0L && queueDepthMessages > maximumQueueDepthMessages)) {
 
                 long cumulativeDepthBytes = 0;
                 long cumulativeDepthMessages = 0;
 
                 QueueEntryIterator queueEntryIterator = _queue.queueEntryIterator();
-                while (queueEntryIterator.advance())
-                {
+                while (queueEntryIterator.advance()) {
                     QueueEntry node = queueEntryIterator.getNode();
 
-                    if (node != null && !node.isDeleted())
-                    {
+                    if (node != null && !node.isDeleted()) {
                         ServerMessage message = node.getMessage();
-                        if (message != null)
-                        {
+                        if (message != null) {
                             cumulativeDepthMessages++;
                             cumulativeDepthBytes += message.getSizeIncludingHeader();
 
                             if (cumulativeDepthBytes > maximumQueueDepthBytes
-                                || cumulativeDepthMessages > maximumQueueDepthMessages)
-                            {
+                                    || cumulativeDepthMessages > maximumQueueDepthMessages) {
                                 flowToDisk(node);
                             }
                         }
@@ -112,29 +95,22 @@ public class FlowToDiskOverflowPolicyHandler implements OverflowPolicyHandler
 
         private void flowNewEntryToDiskIfNecessary(final QueueEntry newlyEnqueued,
                                                    final long maximumQueueDepthBytes,
-                                                   final long maximumQueueDepthMessages)
-        {
+                                                   final long maximumQueueDepthMessages) {
             final long queueDepthBytes = _queue.getQueueDepthBytes();
             final long queueDepthMessages = _queue.getQueueDepthMessages();
 
             if ((maximumQueueDepthBytes >= 0L && queueDepthBytes > maximumQueueDepthBytes) ||
-                (maximumQueueDepthMessages >= 0L && queueDepthMessages > maximumQueueDepthMessages))
-            {
+                    (maximumQueueDepthMessages >= 0L && queueDepthMessages > maximumQueueDepthMessages)) {
                 flowToDisk(newlyEnqueued);
             }
         }
 
-        private void flowToDisk(final QueueEntry node)
-        {
-            try (MessageReference messageReference = node.getMessage().newReference())
-            {
-                if (node.getQueue().checkValid(node))
-                {
+        private void flowToDisk(final QueueEntry node) {
+            try (MessageReference messageReference = node.getMessage().newReference()) {
+                if (node.getQueue().checkValid(node)) {
                     messageReference.getMessage().getStoredMessage().flowToDisk();
                 }
-            }
-            catch (MessageDeletedException mde)
-            {
+            } catch (MessageDeletedException mde) {
                 // pass
             }
         }

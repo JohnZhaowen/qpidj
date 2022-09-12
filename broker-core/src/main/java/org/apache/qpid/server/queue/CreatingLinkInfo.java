@@ -24,8 +24,7 @@ import org.apache.qpid.server.model.ManagedAttributeValue;
 import org.apache.qpid.server.model.ManagedAttributeValueType;
 
 @ManagedAttributeValueType
-public interface CreatingLinkInfo extends ManagedAttributeValue
-{
+public interface CreatingLinkInfo extends ManagedAttributeValue {
     boolean isSendingLink();
 
     String getRemoteContainerId();

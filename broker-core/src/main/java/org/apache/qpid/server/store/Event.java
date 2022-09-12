@@ -19,8 +19,7 @@
  */
 package org.apache.qpid.server.store;
 
-public enum Event
-{
+public enum Event {
     PERSISTENT_MESSAGE_SIZE_OVERFULL,
     PERSISTENT_MESSAGE_SIZE_UNDERFULL
 }

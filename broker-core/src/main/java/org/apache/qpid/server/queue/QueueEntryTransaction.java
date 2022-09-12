@@ -28,16 +28,14 @@ import org.apache.qpid.server.message.ServerMessage;
 import org.apache.qpid.server.model.Queue;
 import org.apache.qpid.server.virtualhost.QueueManagingVirtualHost;
 
-abstract class QueueEntryTransaction implements QueueManagingVirtualHost.TransactionalOperation
-{
+abstract class QueueEntryTransaction implements QueueManagingVirtualHost.TransactionalOperation {
     private final Queue _sourceQueue;
     private final List<Long> _messageIds;
     private final MessageFilter _filter;
     private final List<Long> _modifiedMessageIds = new ArrayList<>();
     private int _limit;
 
-    QueueEntryTransaction(Queue sourceQueue, List<Long> messageIds, final MessageFilter filter, final int limit)
-    {
+    QueueEntryTransaction(Queue sourceQueue, List<Long> messageIds, final MessageFilter filter, final int limit) {
         _sourceQueue = sourceQueue;
         _messageIds = messageIds == null ? null : new ArrayList<>(messageIds);
         _filter = filter;
@@ -45,28 +43,21 @@ abstract class QueueEntryTransaction implements QueueManagingVirtualHost.Transac
     }
 
     @Override
-    public final void withinTransaction(final QueueManagingVirtualHost.Transaction txn)
-    {
-        if(_limit != 0)
-        {
-            _sourceQueue.visit(new QueueEntryVisitor()
-            {
+    public final void withinTransaction(final QueueManagingVirtualHost.Transaction txn) {
+        if (_limit != 0) {
+            _sourceQueue.visit(new QueueEntryVisitor() {
 
                 @Override
-                public boolean visit(final QueueEntry entry)
-                {
+                public boolean visit(final QueueEntry entry) {
                     final ServerMessage message = entry.getMessage();
                     boolean stop = false;
-                    if (message != null)
-                    {
+                    if (message != null) {
                         final long messageId = message.getMessageNumber();
                         if ((_messageIds == null || _messageIds.remove(messageId))
-                            && (_filter == null || _filter.matches(entry.asFilterable())))
-                        {
+                                && (_filter == null || _filter.matches(entry.asFilterable()))) {
                             stop = updateEntry(entry, txn);
                             _modifiedMessageIds.add(messageId);
-                            if (_limit > 0)
-                            {
+                            if (_limit > 0) {
                                 _limit--;
                             }
                         }
@@ -81,8 +72,7 @@ abstract class QueueEntryTransaction implements QueueManagingVirtualHost.Transac
     protected abstract boolean updateEntry(QueueEntry entry, QueueManagingVirtualHost.Transaction txn);
 
     @Override
-    public final List<Long> getModifiedMessageIds()
-    {
+    public final List<Long> getModifiedMessageIds() {
         return _modifiedMessageIds;
     }
 }

@@ -29,8 +29,7 @@ import org.apache.qpid.server.model.OverflowPolicy;
 import org.apache.qpid.server.model.Queue;
 import org.apache.qpid.server.virtualhost.QueueManagingVirtualHost;
 
-abstract class QueueSizeLimitRespectingTransaction extends QueueEntryTransaction
-{
+abstract class QueueSizeLimitRespectingTransaction extends QueueEntryTransaction {
     private final Queue _destinationQueue;
     private long _pendingQueueDepthBytes;
     private long _pendingQueueDepthMessages;
@@ -39,21 +38,18 @@ abstract class QueueSizeLimitRespectingTransaction extends QueueEntryTransaction
                                         List<Long> messageIds,
                                         Queue destinationQueue,
                                         final MessageFilter filter,
-                                        final int limit)
-    {
+                                        final int limit) {
         super(sourceQueue, messageIds, filter, limit);
         _destinationQueue = destinationQueue;
     }
 
     @Override
-    protected boolean updateEntry(QueueEntry entry, QueueManagingVirtualHost.Transaction txn)
-    {
+    protected boolean updateEntry(QueueEntry entry, QueueManagingVirtualHost.Transaction txn) {
         ServerMessage message = entry.getMessage();
         _pendingQueueDepthMessages++;
         _pendingQueueDepthBytes += message == null ? 0 : message.getSizeIncludingHeader();
         boolean underfull = isUnderfull();
-        if (message != null && !message.isReferenced(_destinationQueue) && underfull)
-        {
+        if (message != null && !message.isReferenced(_destinationQueue) && underfull) {
             performOperation(entry, txn, _destinationQueue);
         }
 
@@ -64,14 +60,13 @@ abstract class QueueSizeLimitRespectingTransaction extends QueueEntryTransaction
                                    final QueueManagingVirtualHost.Transaction txn,
                                    final Queue destinationQueue);
 
-    private boolean isUnderfull()
-    {
+    private boolean isUnderfull() {
         return _destinationQueue.getOverflowPolicy() == OverflowPolicy.NONE ||
-               ((_destinationQueue.getMaximumQueueDepthBytes() < 0
-                 || _destinationQueue.getQueueDepthBytes() + _pendingQueueDepthBytes
-                    <= _destinationQueue.getMaximumQueueDepthBytes())
-                && (_destinationQueue.getMaximumQueueDepthMessages() < 0
-                    || _destinationQueue.getQueueDepthMessages() + _pendingQueueDepthMessages
-                       <= _destinationQueue.getMaximumQueueDepthMessages()));
+                ((_destinationQueue.getMaximumQueueDepthBytes() < 0
+                        || _destinationQueue.getQueueDepthBytes() + _pendingQueueDepthBytes
+                        <= _destinationQueue.getMaximumQueueDepthBytes())
+                        && (_destinationQueue.getMaximumQueueDepthMessages() < 0
+                        || _destinationQueue.getQueueDepthMessages() + _pendingQueueDepthMessages
+                        <= _destinationQueue.getMaximumQueueDepthMessages()));
     }
 }

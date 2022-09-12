@@ -21,8 +21,7 @@
 
 package org.apache.qpid.server.transport.network;
 
-public interface Ticker
-{
+public interface Ticker {
     int getTimeToNextTick(long currentTime);
 
     int tick(long currentTime);

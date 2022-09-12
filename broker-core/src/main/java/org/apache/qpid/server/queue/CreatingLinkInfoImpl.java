@@ -20,36 +20,31 @@
 
 package org.apache.qpid.server.queue;
 
-public class CreatingLinkInfoImpl implements CreatingLinkInfo
-{
+public class CreatingLinkInfoImpl implements CreatingLinkInfo {
     private final boolean _isSendingLink;
     private final String _remoteContainerId;
     private final String _linkName;
 
     public CreatingLinkInfoImpl(final boolean isSendingLink,
                                 final String remoteContainerId,
-                                final String linkName)
-    {
+                                final String linkName) {
         _isSendingLink = isSendingLink;
         _remoteContainerId = remoteContainerId;
         _linkName = linkName;
     }
 
     @Override
-    public boolean isSendingLink()
-    {
+    public boolean isSendingLink() {
         return _isSendingLink;
     }
 
     @Override
-    public String getRemoteContainerId()
-    {
+    public String getRemoteContainerId() {
         return _remoteContainerId;
     }
 
     @Override
-    public String getLinkName()
-    {
+    public String getLinkName() {
         return _linkName;
     }
 }

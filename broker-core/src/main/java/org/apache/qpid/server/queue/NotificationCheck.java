@@ -28,19 +28,15 @@ import org.apache.qpid.server.model.Queue;
 import org.apache.qpid.server.model.QueueNotificationListener;
 
 
-public enum NotificationCheck
-{
+public enum NotificationCheck {
 
-    MESSAGE_COUNT_ALERT
-    {
+    MESSAGE_COUNT_ALERT {
         @Override
-        public boolean notifyIfNecessary(ServerMessage<?> msg, Queue<?> queue, QueueNotificationListener listener)
-        {
+        public boolean notifyIfNecessary(ServerMessage<?> msg, Queue<?> queue, QueueNotificationListener listener) {
             int msgCount;
             final long maximumMessageCount = queue.getAlertThresholdQueueDepthMessages();
-            if (maximumMessageCount!= 0 && (msgCount =  queue.getQueueDepthMessages()) >= maximumMessageCount)
-            {
-                String notificationMsg = msgCount + ": Maximum count on queue threshold ("+ maximumMessageCount +") breached.";
+            if (maximumMessageCount != 0 && (msgCount = queue.getQueueDepthMessages()) >= maximumMessageCount) {
+                String notificationMsg = msgCount + ": Maximum count on queue threshold (" + maximumMessageCount + ") breached.";
 
                 logNotification(this, queue, notificationMsg);
                 listener.notifyClients(this, queue, notificationMsg);
@@ -49,21 +45,17 @@ public enum NotificationCheck
             return false;
         }
     },
-    MESSAGE_SIZE_ALERT(true, true)
-    {
+    MESSAGE_SIZE_ALERT(true, true) {
         @Override
-        public boolean notifyIfNecessary(ServerMessage<?> msg, Queue<?> queue, QueueNotificationListener  listener)
-        {
+        public boolean notifyIfNecessary(ServerMessage<?> msg, Queue<?> queue, QueueNotificationListener listener) {
             final long maximumMessageSize = queue.getAlertThresholdMessageSize();
-            if(maximumMessageSize != 0)
-            {
+            if (maximumMessageSize != 0) {
                 // Check for threshold message size
                 long messageSize;
                 messageSize = (msg == null) ? 0 : msg.getSizeIncludingHeader();
 
-                if (messageSize >= maximumMessageSize)
-                {
-                    String notificationMsg = messageSize + "b : Maximum message size threshold ("+ maximumMessageSize +") breached. [Message ID=" + msg.getMessageNumber() + "]";
+                if (messageSize >= maximumMessageSize) {
+                    String notificationMsg = messageSize + "b : Maximum message size threshold (" + maximumMessageSize + ") breached. [Message ID=" + msg.getMessageNumber() + "]";
 
                     logNotification(this, queue, notificationMsg);
                     listener.notifyClients(this, queue, notificationMsg);
@@ -74,21 +66,17 @@ public enum NotificationCheck
         }
 
     },
-    QUEUE_DEPTH_ALERT
-    {
+    QUEUE_DEPTH_ALERT {
         @Override
-        public boolean notifyIfNecessary(ServerMessage<?> msg, Queue<?> queue, QueueNotificationListener  listener)
-        {
+        public boolean notifyIfNecessary(ServerMessage<?> msg, Queue<?> queue, QueueNotificationListener listener) {
             // Check for threshold queue depth in bytes
             final long maximumQueueDepth = queue.getAlertThresholdQueueDepthBytes();
 
-            if(maximumQueueDepth != 0)
-            {
+            if (maximumQueueDepth != 0) {
                 final long queueDepth = queue.getQueueDepthBytes();
 
-                if (queueDepth >= maximumQueueDepth)
-                {
-                    String notificationMsg = (queueDepth>>10) + "Kb : Maximum queue depth threshold ("+(maximumQueueDepth>>10)+"Kb) breached.";
+                if (queueDepth >= maximumQueueDepth) {
+                    String notificationMsg = (queueDepth >> 10) + "Kb : Maximum queue depth threshold (" + (maximumQueueDepth >> 10) + "Kb) breached.";
 
                     logNotification(this, queue, notificationMsg);
                     listener.notifyClients(this, queue, notificationMsg);
@@ -99,23 +87,19 @@ public enum NotificationCheck
         }
 
     },
-    MESSAGE_AGE_ALERT(false, false)
-    {
+    MESSAGE_AGE_ALERT(false, false) {
         @Override
-        public boolean notifyIfNecessary(ServerMessage<?> msg, Queue<?> queue, QueueNotificationListener  listener)
-        {
+        public boolean notifyIfNecessary(ServerMessage<?> msg, Queue<?> queue, QueueNotificationListener listener) {
 
             final long maxMessageAge = queue.getAlertThresholdMessageAge();
-            if(maxMessageAge != 0)
-            {
+            if (maxMessageAge != 0) {
                 final long currentTime = System.currentTimeMillis();
                 final long thresholdTime = currentTime - maxMessageAge;
                 final long firstArrivalTime = queue.getOldestMessageArrivalTime();
 
-                if(firstArrivalTime != 0 && firstArrivalTime < thresholdTime)
-                {
+                if (firstArrivalTime != 0 && firstArrivalTime < thresholdTime) {
                     long oldestAge = currentTime - firstArrivalTime;
-                    String notificationMsg = (oldestAge/1000) + "s : Maximum age on queue threshold ("+(maxMessageAge /1000)+"s) breached.";
+                    String notificationMsg = (oldestAge / 1000) + "s : Maximum age on queue threshold (" + (maxMessageAge / 1000) + "s) breached.";
 
                     logNotification(this, queue, notificationMsg);
                     listener.notifyClients(this, queue, notificationMsg);
@@ -127,8 +111,7 @@ public enum NotificationCheck
 
         }
 
-    }
-    ;
+    };
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NotificationCheck.class);
 
@@ -136,32 +119,27 @@ public enum NotificationCheck
     private final boolean _checkOnMessageArrival;
 
 
-    NotificationCheck()
-    {
+    NotificationCheck() {
         this(false, true);
     }
 
-    NotificationCheck(boolean messageSpecific, final boolean checkOnMessageArrival)
-    {
+    NotificationCheck(boolean messageSpecific, final boolean checkOnMessageArrival) {
         _messageSpecific = messageSpecific;
         _checkOnMessageArrival = checkOnMessageArrival;
     }
 
-    public boolean isMessageSpecific()
-    {
+    public boolean isMessageSpecific() {
         return _messageSpecific;
     }
 
-    public boolean isCheckOnMessageArrival()
-    {
+    public boolean isCheckOnMessageArrival() {
         return _checkOnMessageArrival;
     }
 
-    public abstract boolean notifyIfNecessary(ServerMessage<?> msg, Queue<?> queue, QueueNotificationListener  listener);
+    public abstract boolean notifyIfNecessary(ServerMessage<?> msg, Queue<?> queue, QueueNotificationListener listener);
 
     //A bit of a hack, only for use until we do the logging listener
-    private static void logNotification(NotificationCheck notification, Queue<?> queue, String notificationMsg)
-    {
+    private static void logNotification(NotificationCheck notification, Queue<?> queue, String notificationMsg) {
         LOGGER.info(notification.name() + " On Queue " + queue.getName() + " - " + notificationMsg);
     }
 }

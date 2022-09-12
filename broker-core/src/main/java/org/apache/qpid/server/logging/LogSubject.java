@@ -14,21 +14,19 @@
  *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
  *  KIND, either express or implied.  See the License for the
  *  specific language governing permissions and limitations
- *  under the License.    
+ *  under the License.
  *
- * 
+ *
  */
 package org.apache.qpid.server.logging;
 
 /**
  * Each LogSubject that wishes to be logged will implement this to provide their
  * own display representation.
- *
  */
-public interface LogSubject 
-{
+public interface LogSubject {
     /**
-     * Provides the log message as as String.
+     * Provides the log message as String.
      *
      * @return String the display representation of this LogSubject
      */

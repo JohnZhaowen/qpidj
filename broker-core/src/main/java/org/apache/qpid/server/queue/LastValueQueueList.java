@@ -36,60 +36,50 @@ import org.apache.qpid.server.store.MessageEnqueueRecord;
 import org.apache.qpid.server.txn.AutoCommitTransaction;
 import org.apache.qpid.server.txn.ServerTransaction;
 
-public class LastValueQueueList extends OrderedQueueEntryList
-{
+public class LastValueQueueList extends OrderedQueueEntryList {
     private static final Logger LOGGER = LoggerFactory.getLogger(LastValueQueueList.class);
 
-    private static final HeadCreator HEAD_CREATOR = new HeadCreator()
-    {
+    private static final HeadCreator HEAD_CREATOR = new HeadCreator() {
 
         @Override
-        public ConflationQueueEntry createHead(final QueueEntryList list)
-        {
-            return ((LastValueQueueList)list).createHead();
+        public ConflationQueueEntry createHead(final QueueEntryList list) {
+            return ((LastValueQueueList) list).createHead();
         }
     };
 
     private final String _conflationKey;
     private final ConcurrentMap<Object, AtomicReference<ConflationQueueEntry>> _latestValuesMap =
-        new ConcurrentHashMap<Object, AtomicReference<ConflationQueueEntry>>();
+            new ConcurrentHashMap<Object, AtomicReference<ConflationQueueEntry>>();
 
     private final ConflationQueueEntry _deleteInProgress = new ConflationQueueEntry(this);
     private final ConflationQueueEntry _newerEntryAlreadyBeenAndGone = new ConflationQueueEntry(this);
 
-    public LastValueQueueList(LastValueQueue<?> queue, QueueStatistics queueStatistics)
-    {
+    public LastValueQueueList(LastValueQueue<?> queue, QueueStatistics queueStatistics) {
         super(queue, queueStatistics, HEAD_CREATOR);
         _conflationKey = queue.getLvqKey();
     }
 
-    private ConflationQueueEntry createHead()
-    {
+    private ConflationQueueEntry createHead() {
         return new ConflationQueueEntry(this);
     }
 
     @Override
     protected ConflationQueueEntry createQueueEntry(ServerMessage message,
-                                                    final MessageEnqueueRecord enqueueRecord)
-    {
+                                                    final MessageEnqueueRecord enqueueRecord) {
         return new ConflationQueueEntry(this, message, enqueueRecord);
     }
-
 
 
     /**
      * Updates the list using super.add and also updates {@link #_latestValuesMap} and discards entries as necessary.
      */
     @Override
-    public ConflationQueueEntry add(final ServerMessage message, final MessageEnqueueRecord enqueueRecord)
-    {
+    public ConflationQueueEntry add(final ServerMessage message, final MessageEnqueueRecord enqueueRecord) {
         final ConflationQueueEntry addedEntry = (ConflationQueueEntry) super.add(message, enqueueRecord);
 
         final Object keyValue = message.getMessageHeader().getHeader(_conflationKey);
-        if (keyValue != null)
-        {
-            if(LOGGER.isDebugEnabled())
-            {
+        if (keyValue != null) {
+            if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Adding entry " + addedEntry + " for message " + message.getMessageNumber() + " with conflation key " + keyValue);
             }
 
@@ -101,40 +91,31 @@ public class LastValueQueueList extends OrderedQueueEntryList
             // entry, or the current entry has replaced it in the reference. Note that the _deletedEntryPlaceholder is a special value
             // indicating that the reference object is no longer valid (it is being removed from the map).
             boolean keepTryingToUpdateEntryReference;
-            do
-            {
-                do
-                {
+            do {
+                do {
                     entryReferenceFromMap = getOrPutIfAbsent(keyValue, referenceToEntry);
 
                     // entryFromMap can be either an older entry, a newer entry (added recently by another thread), or addedEntry (if it's for a new key value)  
                     entryFromMap = entryReferenceFromMap.get();
                 }
-                while(entryFromMap == _deleteInProgress);
+                while (entryFromMap == _deleteInProgress);
 
                 boolean entryFromMapIsOlder = entryFromMap != _newerEntryAlreadyBeenAndGone && entryFromMap.compareTo(addedEntry) < 0;
 
                 keepTryingToUpdateEntryReference = entryFromMapIsOlder
                         && !entryReferenceFromMap.compareAndSet(entryFromMap, addedEntry);
             }
-            while(keepTryingToUpdateEntryReference);
+            while (keepTryingToUpdateEntryReference);
 
-            if (entryFromMap == _newerEntryAlreadyBeenAndGone)
-            {
+            if (entryFromMap == _newerEntryAlreadyBeenAndGone) {
                 discardEntry(addedEntry);
-            }
-            else if (entryFromMap.compareTo(addedEntry) > 0)
-            {
-                if(LOGGER.isDebugEnabled())
-                {
+            } else if (entryFromMap.compareTo(addedEntry) > 0) {
+                if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("New entry " + addedEntry.getEntryId() + " for message " + addedEntry.getMessage().getMessageNumber() + " being immediately discarded because a newer entry arrived. The newer entry is: " + entryFromMap + " for message " + entryFromMap.getMessage().getMessageNumber());
                 }
                 discardEntry(addedEntry);
-            }
-            else if (entryFromMap.compareTo(addedEntry) < 0)
-            {
-                if(LOGGER.isDebugEnabled())
-                {
+            } else if (entryFromMap.compareTo(addedEntry) < 0) {
+                if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Entry " + addedEntry + " for message " + addedEntry.getMessage().getMessageNumber() + " replacing older entry " + entryFromMap + " for message " + entryFromMap.getMessage().getMessageNumber());
                 }
                 discardEntry(entryFromMap);
@@ -147,8 +128,7 @@ public class LastValueQueueList extends OrderedQueueEntryList
     }
 
     @Override
-    public QueueEntry getLeastSignificantOldestEntry()
-    {
+    public QueueEntry getLeastSignificantOldestEntry() {
         return getOldestEntry();
     }
 
@@ -162,89 +142,73 @@ public class LastValueQueueList extends OrderedQueueEntryList
      * adds and removes during execution of this method.</li>
      * </ul>
      */
-    private AtomicReference<ConflationQueueEntry> getOrPutIfAbsent(final Object key, final AtomicReference<ConflationQueueEntry> referenceToAddedValue)
-    {
+    private AtomicReference<ConflationQueueEntry> getOrPutIfAbsent(final Object key, final AtomicReference<ConflationQueueEntry> referenceToAddedValue) {
         AtomicReference<ConflationQueueEntry> latestValueReference = _latestValuesMap.putIfAbsent(key, referenceToAddedValue);
 
-        if(latestValueReference == null)
-        {
+        if (latestValueReference == null) {
             latestValueReference = _latestValuesMap.get(key);
-            if(latestValueReference == null)
-            {
+            if (latestValueReference == null) {
                 return new AtomicReference<ConflationQueueEntry>(_newerEntryAlreadyBeenAndGone);
             }
         }
         return latestValueReference;
     }
 
-    private void discardEntry(final QueueEntry entry)
-    {
-        if(entry.acquire())
-        {
+    private void discardEntry(final QueueEntry entry) {
+        if (entry.acquire()) {
             ServerTransaction txn = new AutoCommitTransaction(getQueue().getVirtualHost().getMessageStore());
             txn.dequeue(entry.getEnqueueRecord(),
-                                    new ServerTransaction.Action()
-                                {
-                                    @Override
-                                    public void postCommit()
-                                    {
-                                        entry.delete();
-                                    }
+                    new ServerTransaction.Action() {
+                        @Override
+                        public void postCommit() {
+                            entry.delete();
+                        }
 
-                                    @Override
-                                    public void onRollback()
-                                    {
+                        @Override
+                        public void onRollback() {
 
-                                    }
-                                });
+                        }
+                    });
         }
     }
 
-    final class ConflationQueueEntry extends OrderedQueueEntry
-    {
+    final class ConflationQueueEntry extends OrderedQueueEntry {
 
         private AtomicReference<ConflationQueueEntry> _latestValueReference;
 
-        private ConflationQueueEntry(final LastValueQueueList queueEntryList)
-        {
+        private ConflationQueueEntry(final LastValueQueueList queueEntryList) {
             super(queueEntryList);
         }
 
         public ConflationQueueEntry(LastValueQueueList queueEntryList,
                                     ServerMessage message,
-                                    final MessageEnqueueRecord messageEnqueueRecord)
-        {
+                                    final MessageEnqueueRecord messageEnqueueRecord) {
             super(queueEntryList, message, messageEnqueueRecord);
         }
 
         @Override
-        public void release()
-        {
+        public void release() {
             super.release();
 
             discardIfReleasedEntryIsNoLongerLatest();
         }
 
         @Override
-        public void release(MessageInstanceConsumer<?> consumer)
-        {
+        public void release(MessageInstanceConsumer<?> consumer) {
             super.release(consumer);
 
             discardIfReleasedEntryIsNoLongerLatest();
         }
 
         @Override
-        protected void onDelete()
-        {
-            if(_latestValueReference != null && _latestValueReference.compareAndSet(this, _deleteInProgress))
-            {
+        protected void onDelete() {
+            if (_latestValueReference != null && _latestValueReference.compareAndSet(this, _deleteInProgress)) {
                 Object key = getMessage().getMessageHeader().getHeader(_conflationKey);
-                _latestValuesMap.remove(key,_latestValueReference);
+                _latestValuesMap.remove(key, _latestValueReference);
             }
         }
 
-        void setLatestValueReference(final AtomicReference<ConflationQueueEntry> latestValueReference)
-        {
+        void setLatestValueReference(final AtomicReference<ConflationQueueEntry> latestValueReference) {
             _latestValueReference = latestValueReference;
 
             // When being added entry is deleted before setting #_latestValueReference (due to some unfortunate thread
@@ -252,18 +216,14 @@ public class LastValueQueueList extends OrderedQueueEntryList
             // by deleted LVQ entries linked with leaked one.
             // Thus, in order to avoid memory leaks, the entry (which gets deleted before #_latestValueReference is set)
             // needs to be attempted to remove from #_latestValuesMap.
-            if (isDeleted())
-            {
+            if (isDeleted()) {
                 onDelete();
             }
         }
 
-        private void discardIfReleasedEntryIsNoLongerLatest()
-        {
-            if(_latestValueReference != null)
-            {
-                if(_latestValueReference.get() != this)
-                {
+        private void discardIfReleasedEntryIsNoLongerLatest() {
+            if (_latestValueReference != null) {
+                if (_latestValueReference.get() != this) {
                     discardEntry(this);
                 }
             }
@@ -274,8 +234,7 @@ public class LastValueQueueList extends OrderedQueueEntryList
     /**
      * Exposed purposes of unit test only.
      */
-    Map<Object, AtomicReference<ConflationQueueEntry>> getLatestValuesMap()
-    {
+    Map<Object, AtomicReference<ConflationQueueEntry>> getLatestValuesMap() {
         return Collections.unmodifiableMap(_latestValuesMap);
     }
 }

@@ -26,14 +26,12 @@ import org.apache.qpid.server.filter.MessageFilter;
 import org.apache.qpid.server.model.Queue;
 import org.apache.qpid.server.virtualhost.QueueManagingVirtualHost;
 
-public class MoveMessagesTransaction extends QueueSizeLimitRespectingTransaction
-{
+public class MoveMessagesTransaction extends QueueSizeLimitRespectingTransaction {
     MoveMessagesTransaction(Queue sourceQueue,
                             List<Long> messageIds,
                             Queue destinationQueue,
                             final MessageFilter filter,
-                            final int limit)
-    {
+                            final int limit) {
         super(sourceQueue, messageIds, destinationQueue, filter, limit);
     }
 
@@ -41,8 +39,7 @@ public class MoveMessagesTransaction extends QueueSizeLimitRespectingTransaction
     @Override
     void performOperation(final QueueEntry entry,
                           final QueueManagingVirtualHost.Transaction txn,
-                          final Queue destinationQueue)
-    {
+                          final Queue destinationQueue) {
         txn.move(entry, destinationQueue);
     }
 }

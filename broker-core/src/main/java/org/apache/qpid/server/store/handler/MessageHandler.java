@@ -22,8 +22,7 @@ package org.apache.qpid.server.store.handler;
 
 import org.apache.qpid.server.store.StoredMessage;
 
-public interface MessageHandler
-{
+public interface MessageHandler {
 
     boolean handle(StoredMessage<?> storedMessage);
 
